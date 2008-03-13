@@ -20,4 +20,4 @@ require 'test/unit'
 require 'www/delicious'
 
 # testcase file path
-TESTCASE_PATH = FFile.dirname(__FILE__) + '/_files' unless defined?(TESTCASE_PATH)
+TESTCASE_PATH = File.dirname(__FILE__) + '/_files' unless defined?(TESTCASE_PATH)
