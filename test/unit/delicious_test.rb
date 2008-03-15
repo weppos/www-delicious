@@ -17,12 +17,10 @@ require File.dirname(__FILE__) + '/../helper'
 
 
 class DeliciousTest < Test::Unit::TestCase
-  TEST_USERNAME = 'username'
-  TEST_PASSWORD = 'password'
-
+  include WWW::Delicious::TestCase
+  
   def setup
-    @default_username = TEST_USERNAME
-    @default_password = TEST_USERNAME
+    super
   end
   
   
@@ -77,18 +75,43 @@ class DeliciousTest < Test::Unit::TestCase
     assert_match("Ruby/#{RUBY_VERSION}", useragent)
     assert_match("#{WWW::Delicious::NAME}/#{WWW::Delicious::VERSION}", useragent)
   end
+
   
+  # =========================================================================
+  # These tests check the low level HTTP request workflow
+  # Even if #request is a protected method, it is so important that
+  # we must test it separately as we did for a few other similar methods.
+  # =========================================================================
   
-  protected
-  #
-  # Returns a valid instance of <tt>WWW::Delicious</tt>
-  # initialized with given +options+.
-  #
-  def instance(options = {}, &block)
-    username = options.delete(:username) || @default_username
-    password = options.delete(:password) || @default_password
-    return WWW::Delicious.new(username, password, options, &block)
+  def test_request_raises_without_http_client
+    obj = instance
+    obj.http_client = nil
+    assert_raise(WWW::Delicious::Error) { obj.send(:request, '/foo') }
   end
   
+  def test_request_waits_necessary_time_between_requests
+    # use valid_account? as a safe request to prevent tests 
+    # run with invalid credential to fail
+    
+    obj = instance
+    obj.valid_account? # 1st request
+    s = Time.now
+    3.times do |time|
+      obj.valid_account? # N request
+      e = Time.now
+      diff = e - s
+      assert(diff > WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST)
+      s = e # update last request for next loop
+    end
+  end
 
+  
+  def test_update
+  end
+  
+  def test_parse_update_response
+    instance.send(:parse_update_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+  end
+  
+  
 end
