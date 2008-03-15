@@ -275,7 +275,7 @@ module WWW #:nodoc:
       begin
         @last_request = Time.now # see #wait_before_new_request
         response = http_client.start do |http|
-          req = Net::HTTP::Get.new(uri.request_uri)
+          req = Net::HTTP::Get.new(uri.request_uri, @headers)
           req.basic_auth(@username, @password)
           http.request(req)
         end
