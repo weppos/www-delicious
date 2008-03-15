@@ -14,10 +14,10 @@
 
 
 # Require helper file
-require  File.dirname(__FILE__) + '/helper'
+require File.dirname(__FILE__) + '/helper'
 
 # Load and run all tests
-Dir.glob('unit/**/*_test.rb') do |filename| 
+Dir.glob(File.dirname(__FILE__) + '/unit/**/*_test.rb') do |filename| 
   puts "Loaded file #{filename}"
   load filename
 end

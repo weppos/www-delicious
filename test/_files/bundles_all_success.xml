@@ -1,0 +1,5 @@
+<?xml version='1.0' standalone='yes'?>
+<bundles>
+  <bundle name="music" tags="ipod mp3 music" />
+  <bundle name="pc" tags="computer software hardware" />
+</bundles>

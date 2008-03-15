@@ -82,7 +82,6 @@ module WWW #:nodoc:
     SVN_REVISION    = '$Rev$'
     SVN_BUILD       = '$Date$'
     
-    
     # del.icio.us account username
     attr_reader :username
     
@@ -94,6 +93,8 @@ module WWW #:nodoc:
     API_BASE_URI    = 'https://api.del.icio.us'
     # API Path Update
     API_PATH_UPDATE = '/v1/posts/update';
+    # API Path All Bundles
+    API_PATH_BUNDLES_ALL = '/v1/tags/bundles/all';
     
     # Time to wait before sending a new request, in seconds
     SECONDS_BEFORE_NEW_REQUEST = 1
@@ -212,11 +213,25 @@ module WWW #:nodoc:
     public
     #
     # Check to see when a user last posted an item.
-    # Returns the last update time for the user. 
+    # 
+    # === Return
+    # The last update +Time+ for the user. 
     #
     def update()
       response = request(API_PATH_UPDATE)
       return parse_update_response(response.body)
+    end
+    
+    public
+    #
+    # Retrieve all of a user's bundles.
+    # 
+    # === Return
+    # An +Array+ of <tt>WWW::Delicious::Bundle</tt>.
+    #
+    def bundles_all()
+      response = request(API_PATH_BUNDLES_ALL)
+      return parse_bundles_all_response(response.body)
     end
 
     
@@ -267,11 +282,13 @@ module WWW #:nodoc:
     # or the custom user agent set by +user_agent+ option 
     # when this istance has been created.
     #
-    def request(path)
+    def request(path, params = {})
       raise Error, 'Invalid HTTP Client' unless http_client
       wait_before_new_request
       
       uri = @base_uri.merge(path)
+      uri.merge('?' + http_build_query(params)) unless params.empty?
+      
       begin
         @last_request = Time.now # see #wait_before_new_request
         response = http_client.start do |http|
@@ -299,6 +316,16 @@ module WWW #:nodoc:
     
     protected
     #
+    # Composes an HTTP query string from an hash of +params+.
+    #
+    def http_build_query(params = {})
+      return params.collect do |k,v| 
+        "#{URI.encode(k.to_s)}=#{URI.encode(v.to_s)}" unless v.nil?
+      end.compact.join('&')
+    end
+    
+    protected
+    #
     # Delicious API reference requests to wait AT LEAST ONE SECOND 
     # between queries or the client is likely to get automatically throttled.
     # 
@@ -317,39 +344,71 @@ module WWW #:nodoc:
     
     protected
     #
-    # Parses the response of an update request.
+    # Parses the response of an 'update' request.
     #
     def parse_update_response(body)
       dom = REXML::Document.new(body)
-      return xml_node_attribute_value(dom.root, :time) { |v| Time.parse(v) }
-    end
+      raise ResponseError, 
+        'Invalid response, root node is not `update`' unless dom.root.name == 'update'
 
+      return dom.root.attribute_value(:time) { |v| Time.parse(v) }
+    end
+    
     protected
     #
-    # Returns the +xmlattr+ attribute value for given +node+.
-    # 
-    # If block is given and attrivute value is not nil
-    # the content of the block is executed.
-    # 
-    # === Params
-    # node::
-    #   The REXML::Element node context
-    # xmlattr::
-    #   A String corresponding to the name of the XML attribute to search for
-    #   
-    # === Return
-    # The value of the +xmlattr+ if the attribute exists for given +node+,
-    # +nil+ otherwise.
+    # Parses the response of a 'bundles_all' request
+    # and returns an array of <tt>WWW::Delicious::Bundle</tt>.
     #
-    def xml_node_attribute_value(node, xmlattr, &block) # :yields: attribute_value
-      value = if attribute = node.attribute(xmlattr.to_s())
-          attribute.value()
-        else
-          nil
-        end
-      value = yield value if !value.nil? and block_given?
-      return value
+    def parse_bundles_all_response(body)
+      require File.dirname(__FILE__) + '/delicious/bundle'
+      bundles = []
+      
+      dom = REXML::Document.new(body)
+      raise ResponseError, 
+        'Invalid response, root node is not `bundles`' unless dom.root.name == 'bundles'
+      
+      dom.root.elements.each('bundle') { |xml| bundles << Bundle.from_rexml(xml) }
+      return bundles
     end
 
+    
+    module XMLUtils
+
+      public
+      #
+      # Returns the +xmlattr+ attribute value for given +node+.
+      # 
+      # If block is given and attrivute value is not nil
+      # the content of the block is executed.
+      # 
+      # === Params
+      # node::
+      #   The REXML::Element node context
+      # xmlattr::
+      #   A String corresponding to the name of the XML attribute to search for
+      #   
+      # === Return
+      # The value of the +xmlattr+ if the attribute exists for given +node+,
+      # +nil+ otherwise.
+      #
+      def attribute_value(xmlattr, &block) # :yields: attribute_value
+        value = if attr = self.attribute(xmlattr.to_s())
+            attr.value()
+          else
+            nil
+          end
+        value = yield value if !value.nil? and block_given?
+        return value
+      end
+
+    end
+
+  end
+end
+
+
+module REXML # :nodoc:
+  class Element < Parent # :nodoc:
+    include WWW::Delicious::XMLUtils
   end
 end

@@ -113,5 +113,49 @@ class DeliciousTest < Test::Unit::TestCase
     instance.send(:parse_update_response, File.read(TESTCASE_PATH + '/update_success.xml'))
   end
   
+  def test_parse_update_response_raises_without_update_root_node
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.send(:parse_update_response, File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
+    end
+    assert_match(/`update`/, exception.message)
+  end
+  
+  
+  def test_bundles_all
+  end
+  
+  def test_parse_bundles_all_response
+    response = instance.send(:parse_bundles_all_response, 
+      File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(2, response.length)
+    
+    results = [
+      ['music', %w(ipod mp3 music)],
+      ['pc', %w(computer software hardware)],
+    ]
+    
+    response.each_with_index do |bundle, index|
+      assert_instance_of(WWW::Delicious::Bundle, bundle)
+      name, tags = results[index]
+      assert_equal(name, bundle.name)
+      assert_equal(tags, bundle.tags)
+    end
+  end
+  
+  def test_parse_bundles_all_response_empty
+    response = instance.send(:parse_bundles_all_response, 
+      File.read(TESTCASE_PATH + '/bundles_all_success_empty.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(0, response.length)
+  end
+  
+  def test_parse_bundles_all_response_without_bundles_root_node
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.send(:parse_bundles_all_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+    end
+    assert_match(/`bundles`/, exception.message)
+  end
+  
   
 end

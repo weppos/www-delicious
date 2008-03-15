@@ -20,20 +20,22 @@ require 'test/unit'
 require 'www/delicious'
 
 # testcase file path
-TESTCASE_PATH = File.dirname(__FILE__) + '/_files' unless defined?(TESTCASE_PATH)
+TESTCASE_PATH   = File.dirname(__FILE__) + '/_files' unless defined?(TESTCASE_PATH)
+TEST_REAL_TESTS = ENV['DUSERNAME'] && ENV['DPASSWORD']
 
 
 module WWW
   class Delicious 
     module TestCase
 
-      TEST_USERNAME = 'u'
-      TEST_PASSWORD = 'p'
+      TEST_USERNAME = 'u' unless defined? TEST_USERNAME
+      TEST_PASSWORD = 'p' unless defined? TEST_PASSWORD
 
       def setup
         @default_username = ENV['DUSERNAME'] || TEST_USERNAME
         @default_password = ENV['DPASSWORD'] || TEST_PASSWORD
-        @run_online_tests = ENV['DUSERNAME'] && ENV['DPASSWORD']
+        @run_online_tests = false
+        @run_real_tests   = TEST_REAL_TESTS
       end
 
       protected
