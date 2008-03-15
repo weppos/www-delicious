@@ -69,15 +69,13 @@ module WWW #:nodoc:
   #
   class Delicious
     
-    # Library metadata
     NAME            = 'WWW::Delicious'
     GEM             = 'www_delicious'
     AUTHOR          = 'Simone Carletti <weppos@weppos.net>'
     VERSION         = '0.0.0'
     STATUS          = 'alpha'
     BUILD           = '$Rev$'.match(/(\d+)/)[1].to_s()
-
-    # SVN metadata
+    
     SVN_ID          = '$Id$'
     SVN_REVISION    = '$Rev$'
     SVN_BUILD       = '$Date$'
@@ -104,9 +102,9 @@ module WWW #:nodoc:
     # 
     # === Params
     # username::
-    #   A string with the account username
+    #   a +String+ with the account username
     # password::
-    #   A string with the account password
+    #   a +String+ with the account password
     # options::
     #   an +Hash+ with optional parameters to customize the library behavior
     #   
@@ -117,7 +115,7 @@ module WWW #:nodoc:
     # [<tt>:user_agent</tt>] 
     #   User agent to display in HTTP requests.
     # 
-    def initialize(username, password, options = {})
+    def initialize(username, password, options = {}, &block) #  :yields: delicious
       @username, @password = username, password
 
       # set API base URI
@@ -125,6 +123,9 @@ module WWW #:nodoc:
 
       init_user_agent(options)
       init_http_client(options)
+      
+      yield self if block_given?
+      self # ensure to always return self even if block is given
     end
     
 

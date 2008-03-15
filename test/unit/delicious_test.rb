@@ -36,6 +36,13 @@ class DeliciousTest < Test::Unit::TestCase
     assert_instance_of(WWW::Delicious, obj)
   end
   
+  def test_initialize_with_block
+    obj = instance do |delicious|
+      assert_instance_of(WWW::Delicious, delicious)
+    end
+    assert_instance_of(WWW::Delicious, obj)
+  end
+  
   def test_initialize_with_options
     obj = nil
     assert_nothing_raised() { obj = WWW::Delicious.new(TEST_USERNAME, TEST_PASSWORD, {:user_agent => 'ruby/test'}) }
@@ -52,20 +59,20 @@ class DeliciousTest < Test::Unit::TestCase
   # These tests check constructor options
   # =========================================================================
   
-  def test_initialize_account()
+  def test_initialize_account
     obj = instance()
     assert_equal(@default_username, obj.username)
     assert_equal(@default_password, obj.password)
   end
   
-  def test_initialize_option_user_agent()
+  def test_initialize_option_user_agent
     obj = nil
     useragent = 'MyClass/1.0 (Foo/Bar +http://foo.com/)'
     assert_nothing_raised() { obj = instance(:user_agent => useragent) }
     assert_equal(useragent, obj.user_agent)
   end
   
-  def test_initialize_option_user_agent_default()
+  def test_initialize_option_user_agent_default
     useragent = instance.user_agent
     assert_match("Ruby/#{RUBY_VERSION}", useragent)
     assert_match("#{WWW::Delicious::NAME}/#{WWW::Delicious::VERSION}", useragent)
@@ -77,10 +84,10 @@ class DeliciousTest < Test::Unit::TestCase
   # Returns a valid instance of <tt>WWW::Delicious</tt>
   # initialized with given +options+.
   #
-  def instance(options = {})
+  def instance(options = {}, &block)
     username = options.delete(:username) || @default_username
     password = options.delete(:password) || @default_password
-    return WWW::Delicious.new(username, password, options)
+    return WWW::Delicious.new(username, password, options, &block)
   end
   
 
