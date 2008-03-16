@@ -314,6 +314,20 @@ class DeliciousTest < Test::Unit::TestCase
     end
     assert_match(/`dates`/, exception.message)
   end
+  
+  # =========================================================================
+  # These tests check posts_add call and all related methods.
+  # =========================================================================
+  
+  def test_posts_add
+    params = {:url => 'http://localhost', :title => 'Just a test'}
+    
+    set_response(File.read(TESTCASE_PATH + '/posts_add_success.xml'))
+    assert_nothing_raised() { instance.posts_add(WWW::Delicious::Post.new(params)) }
+    
+    set_response(File.read(TESTCASE_PATH + '/posts_add_success.xml'))
+    assert_nothing_raised() { instance.posts_add(params) }
+  end
 
   
   # =========================================================================
@@ -332,7 +346,7 @@ class DeliciousTest < Test::Unit::TestCase
     end
     assert_match(/`result`/, exception.message)
   end
-  
+
   
   
   def test_prepare_posts_params

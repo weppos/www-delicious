@@ -431,6 +431,16 @@ module WWW #:nodoc:
 
     public
     #
+    # Add a post to del.icio.us.
+    #
+    def posts_add(args)
+      params = prepare_posts_add_params(args.clone)
+      response = request(API_PATH_POSTS_ADD, params)
+      return parse_and_eval_execution_response(response.body)
+    end
+
+    public
+    #
     # Deletes a post from del.icio.us.
     # 
     # === Params
@@ -734,6 +744,29 @@ module WWW #:nodoc:
       end
       
       return params
+    end
+    
+    protected
+    #
+    # Prepares the params for a `post_add` request.
+    # 
+    # === Returns
+    # An +Hash+ with params to supply to the HTTP request.
+    # 
+    # Raises::
+    #
+    def prepare_posts_add_params(args)
+      post = case args
+      when WWW::Delicious::Post
+        args
+      when Hash
+        value = Post.new(args)
+        raise ArgumentError, 'Both `url` and `title` are required' unless value.api_valid?
+        value
+      else
+        raise ArgumentError, 'Expected `args` to be `WWW::Delicious::Post` or `Hash`'
+      end
+      return post.to_params()
     end
     
     protected

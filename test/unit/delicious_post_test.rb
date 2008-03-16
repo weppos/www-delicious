@@ -59,6 +59,11 @@ class DeliciousPostTest < Test::Unit::TestCase
   # =========================================================================
     
   def test_initialize_values_kind_of_hash
+    params = {
+      # TODO
+    }
+    obj = WWW::Delicious::Post.new(params)
+    assert_instance_of(WWW::Delicious::Post, obj)
   end
 
 
