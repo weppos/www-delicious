@@ -20,10 +20,11 @@ module WWW #:nodoc:
     class Tag
       
       # The name of the tag
-      attr_accessor :name
+      attr_reader :name
+      
       # The number of links tagged with this tag.
       # It should be set only from an API response.
-      attr_accessor :count
+      attr_reader :count
       
       
       public
@@ -35,7 +36,8 @@ module WWW #:nodoc:
         when REXML::Element
           initialize_from_rexml(name_or_rexml)
         else
-          self.name = name_or_rexml.to_s()
+          self.name  = name_or_rexml.to_s()
+          self.count = 0
         end
         
         yield(self) if block_given?
@@ -47,9 +49,37 @@ module WWW #:nodoc:
       # Initializes <tt>WWW::Delicious::Tag</tt> from a REXML fragment.
       #
       def initialize_from_rexml(element)
-        self.name  = element.attribute_value(:tag)  { |v| v.to_s() }
-        self.count = element.attribute_value(:count) { |v| v.to_i() }
+        self.name  = element.attribute_value(:tag)
+        self.count = element.attribute_value(:count).to_i()
       end
+      
+      
+      public
+      #
+      # Sets +name+ for this instance to given +value+.
+      # +value+ is always cast to a +String+.
+      # 
+      def name=(value)
+	@name = value.to_s()
+      end
+      
+      public
+      #
+      # Sets +count+ for this instance to given +value+.
+      # +value+ is always cast to +Integer+.
+      # 
+      def count=(value)
+	@count = value.to_i()
+      end
+      
+      public
+      #
+      # Returns a string representation of this Tag.
+      #
+      def to_s()
+	return self.name
+      end
+      
       
     end
     

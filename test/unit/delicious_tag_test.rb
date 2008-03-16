@@ -55,8 +55,8 @@ class DeliciousTagTest < Test::Unit::TestCase
     assert_nothing_raised() { obj = instance(name) }
     assert_instance_of(WWW::Delicious::Tag, obj)
     assert_equal(name, obj.name)
+    assert_equal(0, obj.count)
   end
-
 
   def test_initialize_name_kind_of_rexml
     xml = '<tag count="1" tag="activedesktop" />'
@@ -65,6 +65,33 @@ class DeliciousTagTest < Test::Unit::TestCase
     assert_instance_of(WWW::Delicious::Tag, obj)
     assert_equal('activedesktop', obj.name)
     assert_equal(1, obj.count)
+  end
+
+  
+  def test_setter_getter_name
+    instance('foo') do |tag|
+      assert_equal('foo', tag.name)
+      tag.name = 12
+      assert_equal('12', tag.name)
+      tag.name = :foo
+      assert_equal('foo', tag.name)
+    end
+  end
+
+  def test_setter_getter_count
+    instance('foo') do |tag|
+      assert_equal(0, tag.count)
+      tag.count = 12
+      assert_equal(12, tag.count)
+      tag.count = '23'
+      assert_equal(23, tag.count)
+    end
+  end
+  
+  def test_to_s
+    instance('foobar') do |tag|
+      assert_equal('foobar', tag.to_s)
+    end
   end
 
 
