@@ -95,13 +95,11 @@ class DeliciousTest < Test::Unit::TestCase
     
     obj = instance
     obj.valid_account? # 1st request
-    s = Time.now
+
     3.times do |time|
+      diff = Time.now - obj.instance_variable_get(:@last_request)
+      assert(diff < WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST)
       obj.valid_account? # N request
-      e = Time.now
-      diff = e - s
-      assert(diff > WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST)
-      s = e # update last request for next loop
     end
   end
 
@@ -249,35 +247,6 @@ class DeliciousTest < Test::Unit::TestCase
   def test_posts_get
   end
   
-  def test_parse_posts_get_response
-    response = instance.send(:parse_posts_get_response, 
-      File.read(TESTCASE_PATH + '/posts_get_success.xml'))
-    assert_instance_of(Array, response)
-    assert_equal(1, response.length)
-    
-    results = [
-      ['http://stacktrace.it/articoli/2008/03/i-7-peccati-capitali-del-recruitment-di-hacker/', 'Stacktrace.it: I 7 peccati capitali del recruitment di hacker'],
-    ]
-    
-    response.each_with_index do |post, index|
-      assert_instance_of(WWW::Delicious::Post, post)
-      url, title = results[index]
-      assert_equal(URI.parse(url), post.url)
-      assert_equal(title, post.title)
-    end
-  end
-  
-  def test_parse_posts_get_response_empty
-    response = instance.send(:parse_posts_get_response, 
-      File.read(TESTCASE_PATH + '/posts_get_success_empty.xml'))
-    assert_instance_of(Array, response)
-    assert_equal(0, response.length)
-  end
-  
-  def test_parse_posts_get_response_without_bundles_root_node
-    _test_parse_invalid_node(:parse_posts_get_response, /`posts`/)
-  end
-  
   def test_prepare_posts_get_params
     tag = 'foo'
     url = 'http://localhost'
@@ -308,6 +277,37 @@ class DeliciousTest < Test::Unit::TestCase
     end
     assert_match(/`foo`, `bar`|`bar`, `foo`/, exception.message)
   end
+
+
+  def test_parse_posts_response
+    response = instance.send(:parse_posts_response, 
+      File.read(TESTCASE_PATH + '/posts_get_success.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(1, response.length)
+    
+    results = [
+      ['http://stacktrace.it/articoli/2008/03/i-7-peccati-capitali-del-recruitment-di-hacker/', 'Stacktrace.it: I 7 peccati capitali del recruitment di hacker'],
+    ]
+    
+    response.each_with_index do |post, index|
+      assert_instance_of(WWW::Delicious::Post, post)
+      url, title = results[index]
+      assert_equal(URI.parse(url), post.url)
+      assert_equal(title, post.title)
+    end
+  end
+  
+  def test_parse_posts_response_empty
+    response = instance.send(:parse_posts_response, 
+      File.read(TESTCASE_PATH + '/posts_get_success_empty.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(0, response.length)
+  end
+  
+  def test_parse_posts_response_without_bundles_root_node
+    _test_parse_invalid_node(:parse_posts_response, /`posts`/)
+  end
+
   
   
   protected

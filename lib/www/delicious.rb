@@ -368,7 +368,7 @@ module WWW #:nodoc:
     def posts_get(params = {})
       params = prepare_posts_get_params(params.clone)
       response = request(API_PATH_POSTS_GET, params)
-      return parse_posts_get_response(response.body)
+      return parse_posts_response(response.body)
     end
 
     
@@ -566,10 +566,10 @@ module WWW #:nodoc:
     
     protected
     #
-    # Parses the response of a 'posts_get' request
+    # Parses a response containing a list of Posts
     # and returns an array of <tt>WWW::Delicious::Post</tt>.
     #
-    def parse_posts_get_response(body)
+    def parse_posts_response(body)
       dom = parse_and_validate_response(body, :root_name => 'posts')
       posts = []
       
