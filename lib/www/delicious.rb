@@ -307,7 +307,7 @@ module WWW #:nodoc:
     def bundles_set(bundle_or_name, tags = [])
       params = prepare_bundles_set_params(bundle_or_name, tags)
       response = request(API_PATH_BUNDLES_SET, params)
-      return parse_bundles_set_response(response.body)
+      return parse_and_eval_execution_response(response.body)
     end
     
     public
@@ -321,7 +321,7 @@ module WWW #:nodoc:
     def bundles_delete(bundle_or_name)
       params = prepare_bundles_delete_params(bundle_or_name)
       response = request(API_PATH_BUNDLES_DELETE, params)
-      return parse_bundles_delete_response(response.body)
+      return parse_and_eval_execution_response(response.body)
     end
     
     public
@@ -351,7 +351,7 @@ module WWW #:nodoc:
     def tags_rename(from_name_or_tag, to_name_or_tag)
       params = prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
       response = request(API_PATH_TAGS_RENAME, params)
-      return parse_tags_rename_response(response.body)
+      return parse_and_eval_execution_response(response.body)
     end
     
     public
@@ -377,7 +377,7 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::ResponseError
     #
     def posts_get(options = {})
-      params = prepare_posts_get_params(options.clone, [:dt, :tag, :url])
+      params = prepare_posts_params(options.clone, [:dt, :tag, :url])
       response = request(API_PATH_POSTS_GET, params)
       return parse_posts_response(response.body)
     end
@@ -394,7 +394,7 @@ module WWW #:nodoc:
     #   number of items to retrieve. (default: 15, maximum: 100).
     #
     def posts_recent(options = {})
-      params = prepare_posts_recent_params(options.clone, [:count, :tag])
+      params = prepare_posts_params(options.clone, [:count, :tag])
       response = request(API_PATH_POSTS_RECENT, params)
       return parse_posts_response(response.body)
     end
@@ -409,9 +409,39 @@ module WWW #:nodoc:
     #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     #
     def posts_all(options = {})
-      params = prepare_posts_recent_params(options.clone, [:tag])
+      params = prepare_posts_params(options.clone, [:tag])
       response = request(API_PATH_POSTS_ALL, params)
       return parse_posts_response(response.body)
+    end
+
+    public
+    #
+    # Returns a list of dates with the number of posts at each date.
+    # 
+    # === Options
+    # tag::
+    #   a tag to filter by. 
+    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    #
+    def posts_dates(options = {})
+      params = prepare_posts_params(options.clone, [:tag])
+      response = request(API_PATH_POSTS_DATES, params)
+      return parse_posts_dates_response(response.body)
+    end
+
+    public
+    #
+    # Deletes a post from del.icio.us.
+    # 
+    # === Params
+    # url::
+    #   the url of the item.
+    #   It can be either an +URI+ or a +String+.
+    #
+    def posts_delete(url)
+      params = prepare_posts_params({:url => url}, [:url])
+      response = request(API_PATH_POSTS_DELETE, params)
+      return parse_and_eval_execution_response(response.body)
     end
 
     
@@ -547,6 +577,19 @@ module WWW #:nodoc:
     
     protected
     #
+    # Parses and evaluates the response returned by an execution,
+    # usually an update/delete/insert operation.
+    #
+    def parse_and_eval_execution_response(body)
+      dom = parse_and_validate_response(body, :root_name => 'result')
+
+      rsp = dom.root.attribute_value(:code)
+      rsp = dom.root.text if rsp.nil?
+      raise Error, "Invalid response, #{rsp}" unless %w(done ok).include?(rsp)
+    end
+    
+    protected
+    #
     # Parses the response of an 'update' request.
     #
     def parse_update_response(body)
@@ -569,24 +612,6 @@ module WWW #:nodoc:
     
     protected
     #
-    # Parses the response of a 'bundles_set' request.
-    #
-    def parse_bundles_set_response(body)
-      parse_and_validate_response(body, 
-        :root_name => 'result', :root_value => 'ok')
-    end
-    
-    protected
-    #
-    # Parses the response of a 'bundles_delete' request.
-    #
-    def parse_bundles_delete_response(body)
-      parse_and_validate_response(body, 
-        :root_name => 'result', :root_value => 'done')
-    end
-    
-    protected
-    #
     # Parses the response of a 'tags_get' request
     # and returns an array of <tt>WWW::Delicious::Tag</tt>.
     #
@@ -600,15 +625,6 @@ module WWW #:nodoc:
     
     protected
     #
-    # Parses the response of a 'tags_rename' request.
-    #
-    def parse_tags_rename_response(body)
-      parse_and_validate_response(body, 
-        :root_name => 'result', :root_value => 'done')
-    end
-    
-    protected
-    #
     # Parses a response containing a list of Posts
     # and returns an array of <tt>WWW::Delicious::Post</tt>.
     #
@@ -618,6 +634,23 @@ module WWW #:nodoc:
       
       dom.root.elements.each('post') { |xml| posts << Post.new(xml) }
       return posts
+    end
+    
+    protected
+    #
+    # Parses the response of a 'posts_dates' request
+    # and returns an +Hash+ of date => count.
+    #
+    def parse_posts_dates_response(body)
+      dom = parse_and_validate_response(body, :root_name => 'dates')
+      results = {}
+      
+      dom.root.elements.each('date') do |xml|
+        date  = xml.attribute_value(:date) 
+        count = xml.attribute_value(:count).to_i()
+        results[date] = count
+      end
+      return results
     end
     
     
@@ -651,8 +684,8 @@ module WWW #:nodoc:
     # 
     # Raises::
     #
-    def prepare_bundles_delete_params(name_or_bundle, tags = [])
-      bundle = prepare_param_bundle(name_or_bundle, tags) do |b|
+    def prepare_bundles_delete_params(name_or_bundle)
+      bundle = prepare_param_bundle(name_or_bundle) do |b|
         raise Error, "Bundle name is empty" if b.name.empty?
       end
       return { :bundle => bundle.name }

@@ -108,85 +108,99 @@ class DeliciousTest < Test::Unit::TestCase
   end
 
   
+  # =========================================================================
+  # These tests check bundles_all call and all related methods.
+  # =========================================================================
+  
   def test_update
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    results = nil
+    assert_nothing_raised() { results = instance.update() }
+    assert_equal(results, Time.parse("2008-03-12T08:41:20Z"))
   end
   
-  def test_parse_update_response
-    instance.send(:parse_update_response, File.read(TESTCASE_PATH + '/update_success.xml'))
-  end
-  
-  def test_parse_update_response_raises_without_update_root_node
+  def test_update_raises_without_update_root_node
+    set_response(File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
-      instance.send(:parse_update_response, File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
+      instance.update()
     end
     assert_match(/`update`/, exception.message)
-  end
+  end  
+
   
+  # =========================================================================
+  # These tests check bundles_all call and all related methods.
+  # =========================================================================
   
   def test_bundles_all
-  end
-  
-  def test_parse_bundles_all_response
-    response = instance.send(:parse_bundles_all_response, 
-      File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
-    assert_instance_of(Array, response)
-    assert_equal(2, response.length)
+    set_response(File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
+    results = nil
     
-    results = [
+    assert_nothing_raised() { results = instance.bundles_all() }
+    assert_instance_of(Array, results)
+    assert_equal(2, results.length)
+    
+    expected = [
       ['music', %w(ipod mp3 music)],
       ['pc', %w(computer software hardware)],
     ]
     
-    response.each_with_index do |bundle, index|
+    results.each_with_index do |bundle, index|
       assert_instance_of(WWW::Delicious::Bundle, bundle)
-      name, tags = results[index]
+      name, tags = expected[index]
       assert_equal(name, bundle.name)
       assert_equal(tags, bundle.tags)
     end
   end
   
-  def test_parse_bundles_all_response_empty
-    response = instance.send(:parse_bundles_all_response, 
-      File.read(TESTCASE_PATH + '/bundles_all_success_empty.xml'))
-    assert_instance_of(Array, response)
-    assert_equal(0, response.length)
+  def test_bundles_all_empty
+    set_response(File.read(TESTCASE_PATH + '/bundles_all_success_empty.xml'))
+    results = nil
+    assert_nothing_raised() { results = instance.bundles_all() }
+    assert_instance_of(Array, results)
+    assert_equal(0, results.length)
   end
   
-  def test_parse_bundles_all_response_without_bundles_root_node
+  def test_bundles_all_raises_without_bundles_root_node
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
-      instance.send(:parse_bundles_all_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+      instance.bundles_all()
     end
     assert_match(/`bundles`/, exception.message)
   end
+
   
+  # =========================================================================
+  # These tests check bundles_set call and all related methods.
+  # =========================================================================
   
   def test_bundles_set
+    set_response(File.read(TESTCASE_PATH + '/bundles_set_success.xml'))
+    assert_nothing_raised() { instance.bundles_set('name', %w(foo bar)) }
   end
   
-  def test_parse_bundles_set_response
-    assert_nothing_raised(Exception) { instance.send(:parse_bundles_set_response, 
-      File.read(TESTCASE_PATH + '/bundles_set_success.xml')) }
-  end
-  
-  def test_parse_bundles_set_response_without_result_root_node
+  def test_bundles_delete_raises_without_result_root_node
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
-      instance.send(:parse_bundles_set_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+      instance.bundles_set('name', %w(foo bar))
     end
     assert_match(/`result`/, exception.message)
   end
+
   
+  # =========================================================================
+  # These tests check bundles_delete call and all related methods.
+  # =========================================================================
   
   def test_bundles_delete
+    set_response(File.read(TESTCASE_PATH + '/bundles_delete_success.xml'))
+    assert_nothing_raised() { instance.bundles_delete('name') }
   end
   
-  def test_parse_bundles_delete_response
-    assert_nothing_raised(Exception) { instance.send(:parse_bundles_delete_response, 
-      File.read(TESTCASE_PATH + '/bundles_delete_success.xml')) }
-  end
-  
-  def test_parse_bundles_delete_response_without_result_root_node
+  def test_bundles_delete_raises_without_result_root_node
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
-      instance.send(:parse_bundles_delete_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+      instance.bundles_delete('name')
     end
     assert_match(/`result`/, exception.message)
   end
@@ -198,7 +212,9 @@ class DeliciousTest < Test::Unit::TestCase
   
   def test_tags_get
     set_response(File.read(TESTCASE_PATH + '/tags_get_success.xml'))
-    results = instance.tags_get()
+    results = nil
+
+    assert_nothing_raised() { results = instance.tags_get() }
     assert_instance_of(Array, results)
     assert_equal(2, results.length)
     
@@ -217,7 +233,8 @@ class DeliciousTest < Test::Unit::TestCase
   
   def test_tags_get_empty
     set_response(File.read(TESTCASE_PATH + '/tags_get_success_empty.xml'))
-    results = instance.tags_get()
+    results = nil
+    assert_nothing_raised() { results = instance.tags_get() }
     assert_instance_of(Array, results)
     assert_equal(0, results.length)
   end
@@ -229,18 +246,23 @@ class DeliciousTest < Test::Unit::TestCase
     end
     assert_match(/`tags`/, exception.message)
   end
+
   
+  # =========================================================================
+  # These tests check tags_rename call and all related methods.
+  # =========================================================================
   
   def test_tags_rename
+    set_response(File.read(TESTCASE_PATH + '/tags_rename_success.xml'))
+    assert_nothing_raised() { instance.tags_rename('old', 'new') }
   end
   
-  def test_parse_tags_rename_response
-    assert_nothing_raised(Exception) { instance.send(:parse_tags_rename_response, 
-      File.read(TESTCASE_PATH + '/tags_rename_success.xml')) }
-  end
-  
-  def test_parse_tags_rename_response_without_result_root_node
-    _test_parse_invalid_node(:parse_tags_rename_response, /`result`/)
+  def test_tags_rename_raises_without_result_root_node
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.tags_rename('old', 'new')
+    end
+    assert_match(/`result`/, exception.message)
   end
 
   
@@ -271,6 +293,44 @@ class DeliciousTest < Test::Unit::TestCase
   # =========================================================================
   
   def test_posts_all
+  end
+  
+  
+  # =========================================================================
+  # These tests check posts_dates call and all related methods.
+  # =========================================================================
+  
+  def test_posts_dates
+    set_response(File.read(TESTCASE_PATH + '/posts_dates_success.xml'))
+    results = nil
+    assert_nothing_raised() { results = instance.posts_dates() }
+    assert_instance_of(Hash, results)
+  end
+  
+  def test_posts_dates_raises_without_dates_root_node
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.posts_dates()
+    end
+    assert_match(/`dates`/, exception.message)
+  end
+
+  
+  # =========================================================================
+  # These tests check posts_delete call and all related methods.
+  # =========================================================================
+  
+  def test_posts_delete
+    set_response(File.read(TESTCASE_PATH + '/posts_delete_success.xml'))
+    assert_nothing_raised() { instance.posts_delete('test') }
+  end
+  
+  def test_posts_delete_raises_without_result_root_node
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.posts_delete('test')
+    end
+    assert_match(/`result`/, exception.message)
   end
   
   
@@ -311,7 +371,7 @@ class DeliciousTest < Test::Unit::TestCase
 
   def test_parse_posts_response
     response = instance.send(:parse_posts_response, 
-      File.read(TESTCASE_PATH + '/posts_get_success.xml'))
+      File.read(TESTCASE_PATH + '/posts_success.xml'))
     assert_instance_of(Array, response)
     assert_equal(1, response.length)
     
@@ -326,10 +386,10 @@ class DeliciousTest < Test::Unit::TestCase
       assert_equal(title, post.title)
     end
   end
-  
+
   def test_parse_posts_response_empty
     response = instance.send(:parse_posts_response, 
-      File.read(TESTCASE_PATH + '/posts_get_success_empty.xml'))
+      File.read(TESTCASE_PATH + '/posts_success_empty.xml'))
     assert_instance_of(Array, response)
     assert_equal(0, response.length)
   end
@@ -339,16 +399,6 @@ class DeliciousTest < Test::Unit::TestCase
   end
 
   
-  
-  protected
-  #
-  # Tests a typical empty response.
-  #
-  def _test_parse_empty_response(method, testcase)
-    response = instance.send(method, File.read(testcase))
-    assert_instance_of(Array, response)
-    assert_equal(0, response.length)
-  end
   
   protected
   #
