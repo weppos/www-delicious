@@ -156,6 +156,7 @@ module WWW #:nodoc:
     # 
     def initialize(username, password, options = {}, &block) #  :yields: delicious
       @username, @password = username, password
+      self.debug = options[:debug]
 
       # set API base URI
       @base_uri = URI.parse(API_BASE_URI)
@@ -222,6 +223,23 @@ module WWW #:nodoc:
     #
     def user_agent()
       return @headers['User-Agent']
+    end
+    
+    public
+    #
+    # Turns debug on/off.
+    #
+    def debug=(value)
+      bool = proc { |str| !['false', false, '0', 0, nil, ''].include?(str) }
+      @debug = bool.call(value)
+    end
+    
+    public
+    #
+    # Returns whether this library is in debug mode.
+    #
+    def debug?
+      return @debug
     end
      
     
@@ -458,8 +476,12 @@ module WWW #:nodoc:
     #
     def wait_before_new_request()
       return unless @last_request # this is the first request
-      diff = @last_request - Time.now
-      sleep(SECONDS_BEFORE_NEW_REQUEST - diff) if diff < SECONDS_BEFORE_NEW_REQUEST
+      puts "Last request at #{TIME_CONVERTER.call(@last_request)}" if debug?
+      diff = Time.now - @last_request
+      if diff < SECONDS_BEFORE_NEW_REQUEST
+        puts "Sleeping for #{diff} before new request..." if debug?
+        sleep(SECONDS_BEFORE_NEW_REQUEST - diff) 
+      end
     end
     
     
