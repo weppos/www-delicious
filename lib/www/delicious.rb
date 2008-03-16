@@ -347,8 +347,8 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
     #
-    def posts_get(options = {})
-      params = prepare_posts_get_params(options)
+    def posts_get(params = {})
+      params = prepare_posts_get_params(params.clone)
       response = request(API_PATH_POSTS_GET, params)
       return parse_posts_get_response(response.body)
     end
@@ -603,13 +603,10 @@ module WWW #:nodoc:
     # Raises::
     #
     def prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
-      from = prepare_param_tag(from_name_or_tag) do |t|
-        raise Error, "Original tag name is empty"    if t.name.empty?
+      from, to = [from_name_or_tag, to_name_or_tag].collect do |v|
+        prepare_param_tag(v)
       end
-      to   = prepare_param_tag(to_name_or_tag) do |t|
-        raise Error, "Destination tag name is empty" if t.name.empty?
-      end
-      return { :old => from.name, :new => to.name }
+      return { :old => from, :new => to }
     end
     
     protected
@@ -621,12 +618,16 @@ module WWW #:nodoc:
     # 
     # Raises::
     #
-    def prepare_post_get_params(options)
-      diff = options.keys - [:url, :tag, :dt]
-      raise Error, "Invalid options: `#{diff.join('`, `')}`" unless diff.empty?
+    def prepare_posts_get_params(params)
+      raise ArgumentError, 'Expected `params` to be an `Hash`' unless params.kind_of?(Hash)
+
+      compare_params(params, [:tag, :dt, :url])
       
-      # TODO: filter values
-      return options
+      params[:tag] = prepare_param_tag(params[:tag])  if params[:tag]
+      params[:dt]  = TIME_CONVERTER.call(params[:dt]) if params[:dt]
+      params[:url] = URI.parse(params[:url]) if params[:url]
+      
+      return params
     end
     
     protected
@@ -664,8 +665,43 @@ module WWW #:nodoc:
       else
         Tag.new(name_or_tag.to_s())
       end
+      
       yield(tag) if block_given?
+      raise "Invalid `tag` value supplied" unless tag.valid?
+
       return tag
+    end
+    
+    protected
+    #
+    # Checks whether user given params are valid against valid params.
+    # 
+    # === Params
+    # params::
+    #   an +Hash+ with user given params to validate
+    # valid_params::
+    #   an +Array+ of valid params keys to check against
+    #   
+    # === Examples
+    # 
+    #   params = {:foo => 1, :bar => 2}
+    #   compare_params(params, [:foo, :bar])
+    #   # => valid
+    #   compare_params(params, [:foo, :bar, :baz])
+    #   # => raises
+    #   compare_params(params, [:foo])
+    #   # => raises
+    # 
+    # Raises::  WWW::Delicious::Error
+    #
+    def compare_params(params, valid_params)
+      raise ArgumentError, "`params` expected to be a kind of `Hash`" unless params.kind_of?(Hash)
+      raise ArgumentError, "`valid_params` expected to be a kind of `Array`" unless valid_params.kind_of?(Array)
+
+      # compute options difference
+      difference = params.keys - valid_params
+      raise Error, 
+        "Invalid params: `#{difference.join('`, `')}`" unless difference.empty?
     end
 
     

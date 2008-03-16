@@ -238,7 +238,13 @@ class DeliciousTest < Test::Unit::TestCase
   def test_parse_tags_rename_response_without_result_root_node
     _test_parse_invalid_node(:parse_tags_rename_response, /`result`/)
   end
+
   
+  # =========================================================================
+  # These tests check posts_get call and all related methods.
+  # TODO: as soon as a full offline test system is ready,
+  # remove protected methods tests .
+  # =========================================================================
   
   def test_posts_get
   end
@@ -270,6 +276,37 @@ class DeliciousTest < Test::Unit::TestCase
   
   def test_parse_posts_get_response_without_bundles_root_node
     _test_parse_invalid_node(:parse_posts_get_response, /`posts`/)
+  end
+  
+  def test_prepare_posts_get_params
+    tag = 'foo'
+    url = 'http://localhost'
+    dt  = Time.now
+    
+    params = { :tag => tag, :url => url, :dt => dt }
+    results = instance.send(:prepare_posts_get_params, params)
+
+    assert_kind_of(WWW::Delicious::Tag, results[:tag])
+    assert_equal(tag, results[:tag].to_s)
+    assert_equal(URI.parse(url), results[:url])
+    assert_equal(dt.iso8601(), results[:dt])
+  end
+  
+  def test_prepare_posts_get_params_raises_unless_hash
+    ['foo', %w(foo bar)].each do |params|
+      exception = assert_raise(ArgumentError) do 
+        instance.send(:prepare_posts_get_params, params)
+      end
+      assert_match(/`Hash`/, exception.message)
+    end
+  end
+  
+  def test_prepare_posts_get_params_raises_with_unknown_params
+    params = {:tag => 'foo', :foo => 'bar', :bar => 'bar'}
+    exception = assert_raise(WWW::Delicious::Error) do 
+      instance.send(:prepare_posts_get_params, params)
+    end
+    assert_match(/`foo`, `bar`|`bar`, `foo`/, exception.message)
   end
   
   
