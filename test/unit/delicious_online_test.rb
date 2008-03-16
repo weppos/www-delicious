@@ -88,6 +88,17 @@ class DeliciousOnlineTest < Test::Unit::TestCase
     
     assert_nothing_raised() { obj.tags_rename(ftag, otag) }
   end
+  
+  def test_posts_get
+    obj = instance()
+    results = nil
+    assert_nothing_raised() { results = obj.posts_get() }
+    
+    assert_kind_of(Array, results)
+    results.each do |post|
+      assert_kind_of(WWW::Delicious::Post, result)
+    end
+  end
 
   
   protected

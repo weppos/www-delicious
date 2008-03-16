@@ -14,7 +14,7 @@
 
 
 require File.dirname(__FILE__) + '/../helper'
-require 'www/delicious/bundle'
+require 'www/delicious/tag'
 
 
 class DeliciousTagTest < Test::Unit::TestCase

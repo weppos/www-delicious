@@ -236,11 +236,62 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   def test_parse_tags_rename_response_without_result_root_node
-    exception = assert_raise(WWW::Delicious::ResponseError) do
-      instance.send(:parse_tags_rename_response, File.read(TESTCASE_PATH + '/update_success.xml'))
-    end
-    assert_match(/`result`/, exception.message)
+    _test_parse_invalid_node(:parse_tags_rename_response, /`result`/)
   end
   
+  
+  def test_posts_get
+  end
+  
+  def test_parse_posts_get_response
+    response = instance.send(:parse_posts_get_response, 
+      File.read(TESTCASE_PATH + '/posts_get_success.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(1, response.length)
+    
+    results = [
+      ['http://stacktrace.it/articoli/2008/03/i-7-peccati-capitali-del-recruitment-di-hacker/', 'Stacktrace.it: I 7 peccati capitali del recruitment di hacker'],
+    ]
+    
+    response.each_with_index do |post, index|
+      assert_instance_of(WWW::Delicious::Post, post)
+      url, title = results[index]
+      assert_equal(URI.parse(url), post.url)
+      assert_equal(title, post.title)
+    end
+  end
+  
+  def test_parse_posts_get_response_empty
+    response = instance.send(:parse_posts_get_response, 
+      File.read(TESTCASE_PATH + '/posts_get_success_empty.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(0, response.length)
+  end
+  
+  def test_parse_posts_get_response_without_bundles_root_node
+    _test_parse_invalid_node(:parse_posts_get_response, /`posts`/)
+  end
+  
+  
+  protected
+  #
+  # Tests a typical empty response.
+  #
+  def _test_parse_empty_response(method, testcase)
+    response = instance.send(method, File.read(testcase))
+    assert_instance_of(Array, response)
+    assert_equal(0, response.length)
+  end
+  
+  protected
+  #
+  # Tests a typical invalid node response.
+  #
+  def _test_parse_invalid_node(method, match)
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.send(method, File.read(TESTCASE_PATH + '/invalid_root.xml'))
+    end
+    assert_match(match, exception.message)
+  end
   
 end

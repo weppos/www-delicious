@@ -17,6 +17,7 @@ require 'net/https'
 require 'rexml/document'
 require 'time'
 require File.dirname(__FILE__) + '/delicious/bundle'
+require File.dirname(__FILE__) + '/delicious/post'
 require File.dirname(__FILE__) + '/delicious/tag'
 require File.dirname(__FILE__) + '/delicious/errors'
 
@@ -93,21 +94,41 @@ module WWW #:nodoc:
     
     # API Base URL
     API_BASE_URI    = 'https://api.del.icio.us'
+
     # API Path Update
     API_PATH_UPDATE         = '/v1/posts/update';
+
     # API Path All Bundles
     API_PATH_BUNDLES_ALL    = '/v1/tags/bundles/all';
     # API Path Set Bundle
     API_PATH_BUNDLES_SET    = '/v1/tags/bundles/set';
     # API Path Delete Bundle
     API_PATH_BUNDLES_DELETE = '/v1/tags/bundles/delete';
+
     # API Path Get Tags
-    API_PATH_TAGS_GET    = '/v1/tags/get';
+    API_PATH_TAGS_GET       = '/v1/tags/get';
     # API Path Rename Tag
-    API_PATH_TAGS_RENAME = '/v1/tags/rename';
+    API_PATH_TAGS_RENAME    = '/v1/tags/rename';
+
+    # API Path Get Posts
+    API_PATH_POSTS_GET      = '/v1/posts/get';
+    # API Path Recent Posts
+    API_PATH_POSTS_RECENT   = '/v1/posts/recent';
+    # API Path All Posts
+    API_PATH_POSTS_ALL      = '/v1/posts/all';
+    # API Path Posts by Dates
+    API_PATH_POSTS_DATES    = '/v1/posts/dates';
+    # API Path Add Post
+    API_PATH_POSTS_ADD      = '/v1/posts/add';
+    # API Path Delete Post
+    API_PATH_POSTS_DELETE   = '/v1/posts/delete';
     
     # Time to wait before sending a new request, in seconds
     SECONDS_BEFORE_NEW_REQUEST = 1
+    
+    # Time converter converts a Time instance into the format
+    # requested by Delicious API
+    TIME_CONVERTER = lambda { |time| time.iso8601() }
     
     
     public
@@ -211,6 +232,10 @@ module WWW #:nodoc:
     # This method is not "exception safe".
     # It doesn't return false if an HTTP error or any kind of other error occurs,
     # it raises back the exception to the caller instead.
+    # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
     #
     def valid_account?
       update()
@@ -226,6 +251,10 @@ module WWW #:nodoc:
     # 
     # === Return
     # The last update +Time+ for the user. 
+    # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
     #
     def update()
       response = request(API_PATH_UPDATE)
@@ -238,6 +267,10 @@ module WWW #:nodoc:
     # 
     # === Return
     # An +Array+ of <tt>WWW::Delicious::Bundle</tt>.
+    # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
     #
     def bundles_all()
       response = request(API_PATH_BUNDLES_ALL)
@@ -249,6 +282,10 @@ module WWW #:nodoc:
     # Assignes a set of tags to a single bundle, 
     # wipes away previous settings for bundle.
     # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
+    #
     def bundles_set(bundle_or_name, tags = [])
       params = prepare_bundles_set_params(bundle_or_name, tags)
       response = request(API_PATH_BUNDLES_SET, params)
@@ -259,6 +296,10 @@ module WWW #:nodoc:
     #
     # Deletes a bundle.
     # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
+    #
     def bundles_delete(bundle_or_name)
       params = prepare_bundles_delete_params(bundle_or_name)
       response = request(API_PATH_BUNDLES_DELETE, params)
@@ -271,6 +312,10 @@ module WWW #:nodoc:
     # 
     # === Return
     # An +Array+ of <tt>WWW::Delicious::Tag</tt>.
+    # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
     #
     def tags_get()
       response = request(API_PATH_TAGS_GET)
@@ -281,10 +326,31 @@ module WWW #:nodoc:
     #
     # Renames an existing tag with a new tag name.
     # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
+    #
     def tags_rename(from_name_or_tag, to_name_or_tag)
       params = prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
       response = request(API_PATH_TAGS_RENAME, params)
       return parse_tags_rename_response(response.body)
+    end
+    
+    public
+    #
+    # Retrieves the list of tags and number of times used by the user.
+    # 
+    # === Return
+    # An +Array+ of <tt>WWW::Delicious::Post</tt>.
+    # 
+    # Raises::  WWW::Delicious::Error
+    # Raises::  WWW::Delicious::HTTPError
+    # Raises::  WWW::Delicious::ResponseError
+    #
+    def posts_get(options = {})
+      params = prepare_posts_get_params(options)
+      response = request(API_PATH_POSTS_GET, params)
+      return parse_posts_get_response(response.body)
     end
 
     
@@ -324,6 +390,16 @@ module WWW #:nodoc:
       return "#{NAME}/#{VERSION} (Ruby/#{RUBY_VERSION})"
     end
     
+    
+    protected
+    #
+    # Composes an HTTP query string from an hash of +params+.
+    #
+    def http_build_query(params = {})
+      return params.collect do |k,v| 
+        "#{URI.encode(k.to_s)}=#{URI.encode(v.to_s)}" unless v.nil?
+      end.compact.join('&')
+    end
     
     protected
     #
@@ -370,16 +446,6 @@ module WWW #:nodoc:
     
     protected
     #
-    # Composes an HTTP query string from an hash of +params+.
-    #
-    def http_build_query(params = {})
-      return params.collect do |k,v| 
-        "#{URI.encode(k.to_s)}=#{URI.encode(v.to_s)}" unless v.nil?
-      end.compact.join('&')
-    end
-    
-    protected
-    #
     # Delicious API reference requests to wait AT LEAST ONE SECOND 
     # between queries or the client is likely to get automatically throttled.
     # 
@@ -395,6 +461,7 @@ module WWW #:nodoc:
       diff = @last_request - Time.now
       sleep(SECONDS_BEFORE_NEW_REQUEST - diff) if diff < SECONDS_BEFORE_NEW_REQUEST
     end
+    
     
     protected
     #
@@ -475,6 +542,19 @@ module WWW #:nodoc:
         :root_name => 'result', :root_value => 'done')
     end
     
+    protected
+    #
+    # Parses the response of a 'posts_get' request
+    # and returns an array of <tt>WWW::Delicious::Post</tt>.
+    #
+    def parse_posts_get_response(body)
+      dom = parse_and_validate_response(body, :root_name => 'posts')
+      posts = []
+      
+      dom.root.elements.each('post') { |xml| posts << Post.new(xml) }
+      return posts
+    end
+    
     
     protected
     #
@@ -530,6 +610,23 @@ module WWW #:nodoc:
         raise Error, "Destination tag name is empty" if t.name.empty?
       end
       return { :old => from.name, :new => to.name }
+    end
+    
+    protected
+    #
+    # Prepares the params for a `post_get` request.
+    # 
+    # === Returns
+    # An +Hash+ with params to supply to the HTTP request.
+    # 
+    # Raises::
+    #
+    def prepare_post_get_params(options)
+      diff = options.keys - [:url, :tag, :dt]
+      raise Error, "Invalid options: `#{diff.join('`, `')}`" unless diff.empty?
+      
+      # TODO: filter values
+      return options
     end
     
     protected
