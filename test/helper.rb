@@ -64,6 +64,17 @@ module WWW
       def load_response(path)
         return Marshal.load(File.read(path))
       end
+
+      protected
+      #
+      # Loads a marshaled response for given +path+.
+      #
+      def set_response(content, path = nil)
+        path ||= TESTCASE_PATH + '/marshaled_response'
+        response = Marshal.load(File.read(path))
+        response.instance_variable_set(:@body, content)
+        Net::HTTP.response = response
+      end
       
     end
   end
@@ -71,12 +82,27 @@ end
 
 module Net
   class HTTP < Protocol
+    @@offline_response = nil
+    
+    class << self
+      def response()
+        r = @@offline_response ||= Marshal.load(File.read(TESTCASE_PATH + '/marshaled_response'))
+        @@offline_response = nil
+        r
+      end
+      def response=(r)
+        @@offline_response = r
+      end
+    end
+    
     alias :request_online :request
     def request_offline(req, body = nil, &block)
-      response = @offline_response
-      @offline_response = nil
-      return response
+      return self.class.response
     end
+    
+    # prepare for offline tests
+    remove_method :request 
+    alias :request :request_offline
   end
 end
 

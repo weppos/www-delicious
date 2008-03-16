@@ -23,6 +23,16 @@ else
 end
 
 
+module Net
+  class HTTP < Protocol
+    # prepare for online tests
+    remove_method :request 
+    alias :request :request_online
+    puts 'Changed :request for online tests'
+  end
+end if TEST_REAL_TESTS
+
+
 class DeliciousOnlineTest < Test::Unit::TestCase
   include WWW::Delicious::TestCase
   
@@ -99,6 +109,17 @@ class DeliciousOnlineTest < Test::Unit::TestCase
       assert_kind_of(WWW::Delicious::Post, result)
     end
   end
+  
+  def test_posts_recent
+    obj = instance()
+    results = nil
+    assert_nothing_raised() { results = obj.posts_recent() }
+    
+    assert_kind_of(Array, results)
+    results.each do |post|
+      assert_kind_of(WWW::Delicious::Post, result)
+    end
+  end
 
   
   protected
@@ -108,3 +129,15 @@ class DeliciousOnlineTest < Test::Unit::TestCase
   end
 
 end if TEST_REAL_TESTS
+
+
+module Net
+  class HTTP < Protocol
+    # prepare for offline tests
+    remove_method :request 
+    alias :request :request_offline
+    puts 'Changed :request for offline tests'
+  end
+end if TEST_REAL_TESTS
+
+

@@ -356,7 +356,18 @@ module WWW #:nodoc:
     
     public
     #
-    # Retrieves the list of tags and number of times used by the user.
+    # Returns posts matching +options+. 
+    # If no date or url is given, most recent date will be used.
+    # 
+    # === Options
+    # tag::
+    #   a tag to filter by. 
+    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    # dt::
+    #   a +Time+ with a tate to filter by.
+    # url::
+    #   a valid URI to filter by.
+    #   It can be either an instance of +URI+ or a +String+.
     # 
     # === Return
     # An +Array+ of <tt>WWW::Delicious::Post</tt>.
@@ -365,9 +376,41 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
     #
-    def posts_get(params = {})
-      params = prepare_posts_get_params(params.clone)
+    def posts_get(options = {})
+      params = prepare_posts_get_params(options.clone, [:dt, :tag, :url])
       response = request(API_PATH_POSTS_GET, params)
+      return parse_posts_response(response.body)
+    end
+
+    public
+    #
+    # Returns a list of the most recent posts, filtered by argument.
+    # 
+    # === Options
+    # tag::
+    #   a tag to filter by. 
+    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    # count::
+    #   number of items to retrieve. (default: 15, maximum: 100).
+    #
+    def posts_recent(options = {})
+      params = prepare_posts_recent_params(options.clone, [:count, :tag])
+      response = request(API_PATH_POSTS_RECENT, params)
+      return parse_posts_response(response.body)
+    end
+
+    public
+    #
+    # Returns a list of the most recent posts, filtered by argument.
+    # 
+    # === Options
+    # tag::
+    #   a tag to filter by. 
+    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    #
+    def posts_all(options = {})
+      params = prepare_posts_recent_params(options.clone, [:tag])
+      response = request(API_PATH_POSTS_ALL, params)
       return parse_posts_response(response.body)
     end
 
@@ -633,21 +676,29 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the params for a `post_get` request.
+    # Prepares the params for a `post_*` request.
     # 
     # === Returns
     # An +Hash+ with params to supply to the HTTP request.
     # 
     # Raises::
     #
-    def prepare_posts_get_params(params)
-      raise ArgumentError, 'Expected `params` to be an `Hash`' unless params.kind_of?(Hash)
-
-      compare_params(params, [:tag, :dt, :url])
+    def prepare_posts_params(params, allowed_params = [])
+      compare_params(params, allowed_params)
       
-      params[:tag] = prepare_param_tag(params[:tag])  if params[:tag]
-      params[:dt]  = TIME_CONVERTER.call(params[:dt]) if params[:dt]
-      params[:url] = URI.parse(params[:url]) if params[:url]
+      # we don't need to check whether the following parameters
+      # are valid for this request because compare_params
+      # would raise if an invalid param is supplied
+      
+      params[:tag]    = prepare_param_tag(params[:tag])  if params[:tag]
+      params[:dt]     = TIME_CONVERTER.call(params[:dt]) if params[:dt]
+      params[:url]    = URI.parse(params[:url])          if params[:url]
+      params[:count]  = if value = params[:count]
+        raise Error, 'Expected `count` <= 100' if value.to_i() > 100 # requirement
+        value.to_i()
+      else
+        15 # default value
+      end
       
       return params
     end
@@ -717,8 +768,8 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     #
     def compare_params(params, valid_params)
-      raise ArgumentError, "`params` expected to be a kind of `Hash`" unless params.kind_of?(Hash)
-      raise ArgumentError, "`valid_params` expected to be a kind of `Array`" unless valid_params.kind_of?(Array)
+      raise ArgumentError, "Expected `params` to be a kind of `Hash`" unless params.kind_of?(Hash)
+      raise ArgumentError, "Expected `valid_params` to be a kind of `Array`" unless valid_params.kind_of?(Array)
 
       # compute options difference
       difference = params.keys - valid_params

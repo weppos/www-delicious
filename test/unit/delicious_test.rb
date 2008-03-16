@@ -92,14 +92,18 @@ class DeliciousTest < Test::Unit::TestCase
   def test_request_waits_necessary_time_between_requests
     # use valid_account? as a safe request to prevent tests 
     # run with invalid credential to fail
+    r = File.read(TESTCASE_PATH + '/update_success.xml')
     
     obj = instance
+    set_response(r)
     obj.valid_account? # 1st request
 
     3.times do |time|
-      diff = Time.now - obj.instance_variable_get(:@last_request)
-      assert(diff < WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST)
+      lr = obj.instance_variable_get(:@last_request)
+      set_response(r)
       obj.valid_account? # N request
+      nr = obj.instance_variable_get(:@last_request)
+      assert((nr - lr) > WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST)
     end
   end
 
@@ -186,40 +190,42 @@ class DeliciousTest < Test::Unit::TestCase
     end
     assert_match(/`result`/, exception.message)
   end
+
   
+  # =========================================================================
+  # These tests check tags_get call and all related methods.
+  # =========================================================================
   
   def test_tags_get
-  end
-  
-  def test_parse_tags_get_response
-    response = instance.send(:parse_tags_get_response, 
-      File.read(TESTCASE_PATH + '/tags_get_success.xml'))
-    assert_instance_of(Array, response)
-    assert_equal(2, response.length)
+    set_response(File.read(TESTCASE_PATH + '/tags_get_success.xml'))
+    results = instance.tags_get()
+    assert_instance_of(Array, results)
+    assert_equal(2, results.length)
     
-    results = [
+    expected = [
       ['activedesktop', 1],
       ['business', 14],
     ]
     
-    response.each_with_index do |tag, index|
+    results.each_with_index do |tag, index|
       assert_instance_of(WWW::Delicious::Tag, tag)
-      name, count = results[index]
+      name, count = expected[index]
       assert_equal(name, tag.name)
       assert_equal(count, tag.count)
     end
   end
   
-  def test_parse_tags_get_response_empty
-    response = instance.send(:parse_tags_get_response, 
-      File.read(TESTCASE_PATH + '/tags_get_success_empty.xml'))
-    assert_instance_of(Array, response)
-    assert_equal(0, response.length)
+  def test_tags_get_empty
+    set_response(File.read(TESTCASE_PATH + '/tags_get_success_empty.xml'))
+    results = instance.tags_get()
+    assert_instance_of(Array, results)
+    assert_equal(0, results.length)
   end
   
-  def test_parse_tags_get_response_without_bundles_root_node
+  def test_tags_get_raises_without_bundles_root_node
+    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
-      instance.send(:parse_tags_get_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+      instance.tags_get()
     end
     assert_match(/`tags`/, exception.message)
   end
@@ -246,36 +252,60 @@ class DeliciousTest < Test::Unit::TestCase
   
   def test_posts_get
   end
+
   
-  def test_prepare_posts_get_params
+  # =========================================================================
+  # These tests check posts_recent call and all related methods.
+  # TODO: as soon as a full offline test system is ready,
+  # remove protected methods tests .
+  # =========================================================================
+  
+  def test_posts_recent
+  end
+  
+  
+  # =========================================================================
+  # These tests check posts_all call and all related methods.
+  # TODO: as soon as a full offline test system is ready,
+  # remove protected methods tests .
+  # =========================================================================
+  
+  def test_posts_all
+  end
+  
+  
+  
+  def test_prepare_posts_params
     tag = 'foo'
+    count = 30
     url = 'http://localhost'
     dt  = Time.now
-    
-    params = { :tag => tag, :url => url, :dt => dt }
-    results = instance.send(:prepare_posts_get_params, params)
+
+    params = { :tag => tag, :url => url, :dt => dt, :count => count }
+    results = instance.send(:prepare_posts_params, params, [:tag, :count, :url, :dt])
 
     assert_kind_of(WWW::Delicious::Tag, results[:tag])
     assert_equal(tag, results[:tag].to_s)
+    assert_equal(count, results[:count])
     assert_equal(URI.parse(url), results[:url])
     assert_equal(dt.iso8601(), results[:dt])
   end
   
-  def test_prepare_posts_get_params_raises_unless_hash
+  def test_prepare_posts_params_raises_unless_hash
     ['foo', %w(foo bar)].each do |params|
       exception = assert_raise(ArgumentError) do 
-        instance.send(:prepare_posts_get_params, params)
+        instance.send(:prepare_posts_params, params)
       end
       assert_match(/`Hash`/, exception.message)
     end
   end
   
-  def test_prepare_posts_get_params_raises_with_unknown_params
-    params = {:tag => 'foo', :foo => 'bar', :bar => 'bar'}
+  def test_prepare_posts_params_raises_with_unknown_params
+    params = {:tag => 'foo', :foo => 'bar'}
     exception = assert_raise(WWW::Delicious::Error) do 
-      instance.send(:prepare_posts_get_params, params)
+      instance.send(:prepare_posts_params, params, [:tag])
     end
-    assert_match(/`foo`, `bar`|`bar`, `foo`/, exception.message)
+    assert_match(/`foo`/, exception.message)
   end
 
 
