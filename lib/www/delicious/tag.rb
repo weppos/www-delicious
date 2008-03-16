@@ -59,8 +59,10 @@ module WWW #:nodoc:
       # Sets +name+ for this instance to given +value+.
       # +value+ is always cast to a +String+.
       # 
+      # Leading and trailing whitespaces are stripped.
+      #
       def name=(value)
-	@name = value.to_s()
+	@name = value.to_s().strip()
       end
       
       public
@@ -80,6 +82,17 @@ module WWW #:nodoc:
 	return self.name
       end
       
+      
+      public
+      #
+      # Returns wheter this object is valid.
+      # 
+      # To be valid +name+ must not be empty.
+      # +count+ can be 0.
+      #
+      def valid?
+	return !name.empty?
+      end
       
     end
     

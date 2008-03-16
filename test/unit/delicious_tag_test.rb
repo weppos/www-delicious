@@ -68,7 +68,7 @@ class DeliciousTagTest < Test::Unit::TestCase
   end
 
   
-  def test_setter_getter_name
+  def test_name_setter_getter
     instance('foo') do |tag|
       assert_equal('foo', tag.name)
       tag.name = 12
@@ -78,7 +78,13 @@ class DeliciousTagTest < Test::Unit::TestCase
     end
   end
 
-  def test_setter_getter_count
+  def test_name_strip_whitespaces
+    [' foo   ', 'foo  ', ' foo ', '  foo'].each do |v|
+      assert_equal(v.strip, instance(v).name) # => 'foo'
+    end
+  end
+
+  def test_count_setter_getter
     instance('foo') do |tag|
       assert_equal(0, tag.count)
       tag.count = 12
@@ -91,6 +97,15 @@ class DeliciousTagTest < Test::Unit::TestCase
   def test_to_s
     instance('foobar') do |tag|
       assert_equal('foobar', tag.to_s)
+    end
+  end
+  
+  def test_valid
+    ['foo', ' foo '].each do |v|
+      assert(instance(v).valid?)
+    end
+    ['', '  '].each do |v|
+      assert(!instance(v).valid?)
     end
   end
 
