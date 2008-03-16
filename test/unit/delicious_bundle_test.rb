@@ -52,7 +52,7 @@ class DeliciousBundleTest < Test::Unit::TestCase
     assert_instance_of(WWW::Delicious::Bundle, obj)
     assert_equal(name, obj.name)
   end
-    
+
   def test_initialize_tags
     obj = nil
     name = 'test_name'
@@ -61,8 +61,12 @@ class DeliciousBundleTest < Test::Unit::TestCase
     assert_instance_of(WWW::Delicious::Bundle, obj)
     assert_equal(tags, obj.tags)
   end
-  
-  
+
+  def test_initialize_raises_without_tags_kind_of_array
+    assert_raise(ArgumentError) { instance('foo', 'foo') }
+  end
+
+
   def test_from_rexml
     xml = '<bundle name="music" tags="ipod mp3 music" />'
     dom = REXML::Document.new(xml)

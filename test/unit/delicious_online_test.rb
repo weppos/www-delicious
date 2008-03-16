@@ -47,5 +47,33 @@ class DeliciousOnlineTest < Test::Unit::TestCase
       assert_instance_of(Array, bundle.tags)
     end
   end
+  
+  def test_bundles_set
+    bundle = WWW::Delicious::Bundle.new('test_bundle', %w(ruby python).sort)
+    obj = instance()
+    
+    # create the bundle
+    assert_nothing_raised() { obj.bundles_set(bundle) }
+    # search for the bundle
+    assert_not_nil(search_for_bundle(bundle, obj))
+  end
+  
+  def test_bundles_delete
+    bundle = WWW::Delicious::Bundle.new('test_bundle', %w(ruby python).sort)
+    obj = instance()
+    
+    # search for the bundle
+    assert_not_nil(search_for_bundle(bundle, obj))
+    # delete the bundle
+    assert_nothing_raised() { obj.bundles_delete(bundle) }
+    # search for the bundle again
+    assert_nil(search_for_bundle(bundle, obj))
+  end
+
+  protected
+  def search_for_bundle(bundle, obj)
+    bundles = obj.bundles_all()
+    return bundles.detect { |b| b.name == bundle.name && b.tags.sort == bundle.tags }
+  end
 
 end if TEST_REAL_TESTS

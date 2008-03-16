@@ -18,9 +18,6 @@ module WWW #:nodoc:
   class Delicious
 
     class Bundle
-
-      # mix into this class
-      include WWW::Delicious::XMLUtils 
       
       # The name of the bundle
       attr_accessor :name
@@ -34,9 +31,10 @@ module WWW #:nodoc:
       # and adds given array of +tags+ to current tags collection.
       #
       def initialize(name, tags = [], &block) #  :yields: bundle
-	self.name = name
+        raise ArgumentError, '`tags` expected to be an Array' unless tags.kind_of?(Array)
+        
+	self.name = name.to_s()
         self.tags = tags
-
         yield(self) if block_given?
         self
       end

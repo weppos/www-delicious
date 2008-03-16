@@ -158,4 +158,36 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   
+  def test_bundles_set
+  end
+  
+  def test_parse_bundles_set_response
+    assert_nothing_raised(Exception) { instance.send(:parse_bundles_set_response, 
+      File.read(TESTCASE_PATH + '/bundles_set_success.xml')) }
+  end
+  
+  def test_parse_bundles_set_response_without_result_root_node
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.send(:parse_bundles_set_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+    end
+    assert_match(/`result`/, exception.message)
+  end
+  
+  
+  def test_bundles_delete
+  end
+  
+  def test_parse_bundles_delete_response
+    assert_nothing_raised(Exception) { instance.send(:parse_bundles_delete_response, 
+      File.read(TESTCASE_PATH + '/bundles_delete_success.xml')) }
+  end
+  
+  def test_parse_bundles_delete_response_without_result_root_node
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.send(:parse_bundles_delete_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+    end
+    assert_match(/`result`/, exception.message)
+  end
+  
+  
 end

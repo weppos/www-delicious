@@ -21,7 +21,7 @@ require 'www/delicious'
 
 # testcase file path
 TESTCASE_PATH   = File.dirname(__FILE__) + '/_files' unless defined?(TESTCASE_PATH)
-TEST_REAL_TESTS = ENV['DUSERNAME'] && ENV['DPASSWORD']
+TEST_REAL_TESTS = ENV['DUSERNAME'] && ENV['DPASSWORD'] unless defined?(TEST_REAL_TESTS)
 
 
 module WWW

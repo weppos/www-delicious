@@ -16,6 +16,7 @@
 require 'net/https'
 require 'rexml/document'
 require 'time'
+require File.dirname(__FILE__) + '/delicious/bundle'
 require File.dirname(__FILE__) + '/delicious/errors'
 
 
@@ -92,9 +93,13 @@ module WWW #:nodoc:
     # API Base URL
     API_BASE_URI    = 'https://api.del.icio.us'
     # API Path Update
-    API_PATH_UPDATE = '/v1/posts/update';
+    API_PATH_UPDATE         = '/v1/posts/update';
     # API Path All Bundles
-    API_PATH_BUNDLES_ALL = '/v1/tags/bundles/all';
+    API_PATH_BUNDLES_ALL    = '/v1/tags/bundles/all';
+    # API Path Set Bundle
+    API_PATH_BUNDLES_SET    = '/v1/tags/bundles/set';
+    # API Path Delete Bundle
+    API_PATH_BUNDLES_DELETE = '/v1/tags/bundles/delete';
     
     # Time to wait before sending a new request, in seconds
     SECONDS_BEFORE_NEW_REQUEST = 1
@@ -136,22 +141,6 @@ module WWW #:nodoc:
       self # ensure to always return self even if block is given
     end
     
-    
-    public
-    #
-    # Returns true if given account credentials are valid.
-    # 
-    # This method is not "exception safe".
-    # It doesn't return false if an HTTP error or any kind of other error occurs,
-    # it raises back the exception to the caller instead.
-    #
-    def valid_account?
-      update()
-      return true
-    rescue HTTPError => e
-      return false if e.message =~ /invalid username or password/i
-      raise 
-    end
 
     public
     #
@@ -208,11 +197,27 @@ module WWW #:nodoc:
     def user_agent()
       return @headers['User-Agent']
     end
-    
+     
     
     public
     #
-    # Check to see when a user last posted an item.
+    # Returns true if given account credentials are valid.
+    # 
+    # This method is not "exception safe".
+    # It doesn't return false if an HTTP error or any kind of other error occurs,
+    # it raises back the exception to the caller instead.
+    #
+    def valid_account?
+      update()
+      return true
+    rescue HTTPError => e
+      return false if e.message =~ /invalid username or password/i
+      raise 
+    end
+
+    public
+    #
+    # Checks to see when a user last posted an item.
     # 
     # === Return
     # The last update +Time+ for the user. 
@@ -224,7 +229,7 @@ module WWW #:nodoc:
     
     public
     #
-    # Retrieve all of a user's bundles.
+    # Retrieves all of a user's bundles.
     # 
     # === Return
     # An +Array+ of <tt>WWW::Delicious::Bundle</tt>.
@@ -232,6 +237,27 @@ module WWW #:nodoc:
     def bundles_all()
       response = request(API_PATH_BUNDLES_ALL)
       return parse_bundles_all_response(response.body)
+    end
+    
+    public
+    #
+    # Assignes a set of tags to a single bundle, 
+    # wipes away previous settings for bundle.
+    # 
+    def bundles_set(bundle_or_name, tags = [])
+      params = prepare_bundles_set_params(bundle_or_name, tags)
+      response = request(API_PATH_BUNDLES_SET, params)
+      return parse_bundles_set_response(response.body)
+    end
+    
+    public
+    #
+    # Deletes a bundle.
+    # 
+    def bundles_delete(bundle_or_name)
+      params = prepare_bundles_delete_params(bundle_or_name)
+      response = request(API_PATH_BUNDLES_DELETE, params)
+      return parse_bundles_delete_response(response.body)
     end
 
     
@@ -285,12 +311,13 @@ module WWW #:nodoc:
     def request(path, params = {})
       raise Error, 'Invalid HTTP Client' unless http_client
       wait_before_new_request
-      
+
       uri = @base_uri.merge(path)
-      uri.merge('?' + http_build_query(params)) unless params.empty?
-      
+      uri.query = http_build_query(params) unless params.empty?
+
       begin
-        @last_request = Time.now # see #wait_before_new_request
+        @last_request = Time.now  # see #wait_before_new_request
+        @last_request_uri = uri   # useful for debug
         response = http_client.start do |http|
           req = Net::HTTP::Get.new(uri.request_uri, @headers)
           req.basic_auth(@username, @password)
@@ -344,13 +371,27 @@ module WWW #:nodoc:
     
     protected
     #
+    # Parses the response +body+ and runs a common set of validators.
+    #
+    def parse_and_validate_response(body, options = {})
+      dom = REXML::Document.new(body)
+      
+      if (value = options[:root_name]) && dom.root.name != value
+        raise ResponseError, "Invalid response, root node is not `#{value}`"
+      end
+      if (value = options[:root_text]) && dom.root.text != value
+        raise ResponseError, value
+      end
+
+      return dom
+    end
+    
+    protected
+    #
     # Parses the response of an 'update' request.
     #
     def parse_update_response(body)
-      dom = REXML::Document.new(body)
-      raise ResponseError, 
-        'Invalid response, root node is not `update`' unless dom.root.name == 'update'
-
+      dom = parse_and_validate_response(body, :root_name => 'update')
       return dom.root.attribute_value(:time) { |v| Time.parse(v) }
     end
     
@@ -360,15 +401,86 @@ module WWW #:nodoc:
     # and returns an array of <tt>WWW::Delicious::Bundle</tt>.
     #
     def parse_bundles_all_response(body)
-      require File.dirname(__FILE__) + '/delicious/bundle'
+      dom = parse_and_validate_response(body, :root_name => 'bundles')
       bundles = []
-      
-      dom = REXML::Document.new(body)
-      raise ResponseError, 
-        'Invalid response, root node is not `bundles`' unless dom.root.name == 'bundles'
       
       dom.root.elements.each('bundle') { |xml| bundles << Bundle.from_rexml(xml) }
       return bundles
+    end
+    
+    protected
+    #
+    # Parses the response of a 'bundles_set' request.
+    #
+    def parse_bundles_set_response(body)
+      parse_and_validate_response(body, 
+        :root_name => 'result', :root_value => 'ok')
+    end
+    
+    protected
+    #
+    # Parses the response of a 'bundles_delete' request.
+    #
+    def parse_bundles_delete_response(body)
+      parse_and_validate_response(body, 
+        :root_name => 'result', :root_value => 'done')
+    end
+    
+    protected
+    #
+    # Prepares the params for a `bundles_set` request.
+    # 
+    # === Returns
+    # An +Hash+ with params to supply to the HTTP request.
+    # 
+    # Raises::
+    #
+    def prepare_bundles_set_params(name_or_bundle, tags = [])
+      bundle = prepare_param_bundle(name_or_bundle, tags) do |b|
+        raise Error, "Bundle name is empty" if b.name.empty?
+        raise Error, "Bundle must contain at least one tag" if b.tags.empty?
+      end
+
+      return {
+        :bundle => bundle.name,
+        :tags   => bundle.tags.join(' '),
+      }
+    end
+    
+    protected
+    #
+    # Prepares the params for a `bundles_set` request.
+    # 
+    # === Returns
+    # An +Hash+ with params to supply to the HTTP request.
+    # 
+    # Raises::
+    #
+    def prepare_bundles_delete_params(name_or_bundle, tags = [])
+      bundle = prepare_param_bundle(name_or_bundle, tags) do |b|
+        raise Error, "Bundle name is empty" if b.name.empty?
+      end
+      return { :bundle => bundle.name }
+    end
+    
+    protected
+    #
+    # Prepares the +bundle+ params.
+    # 
+    # If +name_or_bundle+ is a string,
+    # creates a new <tt>WWW::Delicious::Bundle</tt> with
+    # +name_or_bundle+ as name and a collection of +tags+.
+    # If +name_or_bundle+, +tags+ is ignored.
+    #
+    def prepare_param_bundle(name_or_bundle, tags = [], &block) #  :yields: bundle
+      bundle = case name_or_bundle
+      when WWW::Delicious::Bundle
+        name_or_bundle
+      else
+        Bundle.new(name_or_bundle.to_s(), tags)
+      end
+      yield(bundle) if block_given?
+      return bundle
     end
 
     
