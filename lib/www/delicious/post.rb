@@ -92,6 +92,16 @@ module WWW #:nodoc:
       # Returns wheter this object is valid for an API request.
       # 
       # To be valid +url+ and +title+ must not be empty.
+      # 
+      # === Examples
+      # 
+      #   post = WWW::Delicious::Post.new(:url => 'http://localhost', :title => 'foo')
+      #   post.api_valid?
+      #   # => true
+      #
+      #   post = WWW::Delicious::Post.new(:url => 'http://localhost')
+      #   post.api_valid?
+      #   # => false
       #
       def api_valid?
 	return !(url.nil? or url.empty? or title.nil? or title.empty?)

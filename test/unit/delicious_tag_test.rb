@@ -102,10 +102,10 @@ class DeliciousTagTest < Test::Unit::TestCase
   
   def test_valid
     ['foo', ' foo '].each do |v|
-      assert(instance(v).valid?)
+      assert(instance(v).api_valid?)
     end
     ['', '  '].each do |v|
-      assert(!instance(v).valid?)
+      assert(!instance(v).api_valid?)
     end
   end
 

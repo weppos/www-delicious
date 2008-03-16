@@ -806,7 +806,7 @@ module WWW #:nodoc:
       end
       
       yield(tag) if block_given?
-      raise "Invalid `tag` value supplied" unless tag.valid?
+      raise "Invalid `tag` value supplied" unless tag.api_valid?
 
       return tag
     end

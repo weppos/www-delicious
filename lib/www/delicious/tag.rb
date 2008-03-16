@@ -85,12 +85,22 @@ module WWW #:nodoc:
       
       public
       #
-      # Returns wheter this object is valid.
+      # Returns wheter this object is valid for an API request.
       # 
       # To be valid +name+ must not be empty.
       # +count+ can be 0.
+      # 
+      # === Examples
+      # 
+      #   tag = WWW::Delicious::Tag.new(:name => 'foo')
+      #   tag.api_api_valid?
+      #   # => true
       #
-      def valid?
+      #   tag = WWW::Delicious::Tag.new(:name => '  ')
+      #   tag.api_api_valid?
+      #   # => false
+      #
+      def api_valid?
 	return !name.empty?
       end
       
