@@ -17,6 +17,7 @@ require 'net/https'
 require 'rexml/document'
 require 'time'
 require File.dirname(__FILE__) + '/delicious/bundle'
+require File.dirname(__FILE__) + '/delicious/tag'
 require File.dirname(__FILE__) + '/delicious/errors'
 
 
@@ -100,6 +101,10 @@ module WWW #:nodoc:
     API_PATH_BUNDLES_SET    = '/v1/tags/bundles/set';
     # API Path Delete Bundle
     API_PATH_BUNDLES_DELETE = '/v1/tags/bundles/delete';
+    # API Path Get Tags
+    API_PATH_TAGS_GET    = '/v1/tags/get';
+    # API Path Rename Tag
+    API_PATH_TAGS_RENAME = '/v1/tags/rename';
     
     # Time to wait before sending a new request, in seconds
     SECONDS_BEFORE_NEW_REQUEST = 1
@@ -258,6 +263,28 @@ module WWW #:nodoc:
       params = prepare_bundles_delete_params(bundle_or_name)
       response = request(API_PATH_BUNDLES_DELETE, params)
       return parse_bundles_delete_response(response.body)
+    end
+    
+    public
+    #
+    # Retrieves the list of tags and number of times used by the user.
+    # 
+    # === Return
+    # An +Array+ of <tt>WWW::Delicious::Tag</tt>.
+    #
+    def tags_get()
+      response = request(API_PATH_TAGS_GET)
+      return parse_tags_get_response(response.body)
+    end
+    
+    public
+    #
+    # Renames an existing tag with a new tag name.
+    # 
+    def tags_rename(from_name_or_tag, to_name_or_tag)
+      params = prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
+      response = request(API_PATH_TAGS_RENAME, params)
+      return parse_tags_rename_response(response.body)
     end
 
     
@@ -428,6 +455,29 @@ module WWW #:nodoc:
     
     protected
     #
+    # Parses the response of a 'tags_get' request
+    # and returns an array of <tt>WWW::Delicious::Tag</tt>.
+    #
+    def parse_tags_get_response(body)
+      dom = parse_and_validate_response(body, :root_name => 'tags')
+      tags = []
+      
+      dom.root.elements.each('tag') { |xml| tags << Tag.new(xml) }
+      return tags
+    end
+    
+    protected
+    #
+    # Parses the response of a 'tags_rename' request.
+    #
+    def parse_tags_rename_response(body)
+      parse_and_validate_response(body, 
+        :root_name => 'result', :root_value => 'done')
+    end
+    
+    
+    protected
+    #
     # Prepares the params for a `bundles_set` request.
     # 
     # === Returns
@@ -465,6 +515,25 @@ module WWW #:nodoc:
     
     protected
     #
+    # Prepares the params for a `tags_rename` request.
+    # 
+    # === Returns
+    # An +Hash+ with params to supply to the HTTP request.
+    # 
+    # Raises::
+    #
+    def prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
+      from = prepare_param_tag(from_name_or_tag) do |t|
+        raise Error, "Original tag name is empty"    if t.name.empty?
+      end
+      to   = prepare_param_tag(to_name_or_tag) do |t|
+        raise Error, "Destination tag name is empty" if t.name.empty?
+      end
+      return { :old => from.name, :new => to.name }
+    end
+    
+    protected
+    #
     # Prepares the +bundle+ params.
     # 
     # If +name_or_bundle+ is a string,
@@ -481,6 +550,25 @@ module WWW #:nodoc:
       end
       yield(bundle) if block_given?
       return bundle
+    end
+    
+    protected
+    #
+    # Prepares the +tag+ params.
+    # 
+    # If +name_or_tag+ is a string,
+    # it creates a new <tt>WWW::Delicious::Tag</tt> with
+    # +name_or_tag+ as name.
+    #
+    def prepare_param_tag(name_or_tag, &block) #  :yields: tag
+      tag = case name_or_tag
+      when WWW::Delicious::Tag
+        name_or_tag
+      else
+        Tag.new(name_or_tag.to_s())
+      end
+      yield(tag) if block_given?
+      return tag
     end
 
     

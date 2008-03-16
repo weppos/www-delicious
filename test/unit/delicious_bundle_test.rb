@@ -82,8 +82,8 @@ class DeliciousBundleTest < Test::Unit::TestCase
   # Returns a valid instance of <tt>WWW::Delicious::Bundle</tt>
   # initialized with given +options+.
   #
-  def instance(name, tags = [])
-    return WWW::Delicious::Bundle.new(name, tags)
+  def instance(name, tags = [], &block)
+    return WWW::Delicious::Bundle.new(name, tags, &block)
   end
   
   

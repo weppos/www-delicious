@@ -190,4 +190,57 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   
+  def test_tags_get
+  end
+  
+  def test_parse_tags_get_response
+    response = instance.send(:parse_tags_get_response, 
+      File.read(TESTCASE_PATH + '/tags_get_success.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(2, response.length)
+    
+    results = [
+      ['activedesktop', 1],
+      ['business', 14],
+    ]
+    
+    response.each_with_index do |tag, index|
+      assert_instance_of(WWW::Delicious::Tag, tag)
+      name, count = results[index]
+      assert_equal(name, tag.name)
+      assert_equal(count, tag.count)
+    end
+  end
+  
+  def test_parse_tags_get_response_empty
+    response = instance.send(:parse_tags_get_response, 
+      File.read(TESTCASE_PATH + '/tags_get_success_empty.xml'))
+    assert_instance_of(Array, response)
+    assert_equal(0, response.length)
+  end
+  
+  def test_parse_tags_get_response_without_bundles_root_node
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.send(:parse_tags_get_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+    end
+    assert_match(/`tags`/, exception.message)
+  end
+  
+  
+  def test_tags_rename
+  end
+  
+  def test_parse_tags_rename_response
+    assert_nothing_raised(Exception) { instance.send(:parse_tags_rename_response, 
+      File.read(TESTCASE_PATH + '/tags_rename_success.xml')) }
+  end
+  
+  def test_parse_tags_rename_response_without_result_root_node
+    exception = assert_raise(WWW::Delicious::ResponseError) do
+      instance.send(:parse_tags_rename_response, File.read(TESTCASE_PATH + '/update_success.xml'))
+    end
+    assert_match(/`result`/, exception.message)
+  end
+  
+  
 end

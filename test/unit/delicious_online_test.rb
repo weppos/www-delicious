@@ -69,7 +69,27 @@ class DeliciousOnlineTest < Test::Unit::TestCase
     # search for the bundle again
     assert_nil(search_for_bundle(bundle, obj))
   end
+  
+  def test_tags_get
+    result = nil
+    assert_nothing_raised() { result = instance.tags_get() }
+    assert_not_nil(result)
+    result.each do |tag|
+      assert_instance_of(WWW::Delicious::Tag, tag)
+      assert_not_nil(tag.name)
+      assert_not_nil(tag.count)
+    end
+  end
+  
+  def test_tags_rename
+    ftag = WWW::Delicious::Tag.new('old_tag')
+    otag = WWW::Delicious::Tag.new('new_tag')
+    obj = instance()
+    
+    assert_nothing_raised() { obj.tags_rename(ftag, otag) }
+  end
 
+  
   protected
   def search_for_bundle(bundle, obj)
     bundles = obj.bundles_all()
