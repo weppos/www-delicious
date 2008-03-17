@@ -802,7 +802,7 @@ module WWW #:nodoc:
       when WWW::Delicious::Tag
         name_or_tag
       else
-        Tag.new(name_or_tag.to_s())
+        Tag.new(:name => name_or_tag.to_s())
       end
       
       yield(tag) if block_given?

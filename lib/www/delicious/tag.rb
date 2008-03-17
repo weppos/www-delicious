@@ -29,15 +29,16 @@ module WWW #:nodoc:
       
       public
       #
-      # Creates a new <tt>WWW::Delicious::Tag</tt> with given +name+.
+      # Creates a new <tt>WWW::Delicious::Tag</tt>.
       #
-      def initialize(name_or_rexml, &block) #  :yields: tag
-        case name_or_rexml
+      def initialize(values_or_rexml, &block) # :yields: tag
+        case values_or_rexml
+        when Hash
+          initialize_from_hash(values_or_rexml)
         when REXML::Element
-          initialize_from_rexml(name_or_rexml)
+          initialize_from_rexml(values_or_rexml)
         else
-          self.name  = name_or_rexml.to_s()
-          self.count = 0
+          raise ArgumentError, 'Expected `values_or_rexml` to be `Hash` or `REXML::Element`'
         end
         
         yield(self) if block_given?
@@ -50,7 +51,16 @@ module WWW #:nodoc:
       #
       def initialize_from_rexml(element)
         self.name  = element.attribute_value(:tag)
-        self.count = element.attribute_value(:count).to_i()
+        self.count = element.attribute_value(:count)
+      end
+      
+      public
+      #
+      # Initializes <tt>WWW::Delicious::Tag</tt> from an Hash.
+      #
+      def initialize_from_hash(values)
+        self.name  = values[:name]
+        self.count = values[:count]
       end
       
       

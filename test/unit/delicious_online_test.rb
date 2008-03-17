@@ -92,8 +92,8 @@ class DeliciousOnlineTest < Test::Unit::TestCase
   end
   
   def test_tags_rename
-    ftag = WWW::Delicious::Tag.new('old_tag')
-    otag = WWW::Delicious::Tag.new('new_tag')
+    ftag = WWW::Delicious::Tag.new(:name => 'old_tag')
+    otag = WWW::Delicious::Tag.new(:name => 'new_tag')
     obj = instance()
     
     assert_nothing_raised() { obj.tags_rename(ftag, otag) }
