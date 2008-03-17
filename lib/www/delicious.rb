@@ -433,8 +433,8 @@ module WWW #:nodoc:
     #
     # Add a post to del.icio.us.
     #
-    def posts_add(args)
-      params = prepare_posts_add_params(args.clone)
+    def posts_add(post_or_values)
+      params = prepare_posts_add_params(post_or_values.clone)
       response = request(API_PATH_POSTS_ADD, params)
       return parse_and_eval_execution_response(response.body)
     end
@@ -755,12 +755,12 @@ module WWW #:nodoc:
     # 
     # Raises::
     #
-    def prepare_posts_add_params(args)
-      post = case args
+    def prepare_posts_add_params(post_or_values)
+      post = case post_or_values
       when WWW::Delicious::Post
-        args
+        post_or_values
       when Hash
-        value = Post.new(args)
+        value = Post.new(post_or_values)
         raise ArgumentError, 'Both `url` and `title` are required' unless value.api_valid?
         value
       else
