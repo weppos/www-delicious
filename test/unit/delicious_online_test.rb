@@ -9,7 +9,7 @@
 # Author::     Simone Carletti <weppos@weppos.net>
 #
 #--
-# SVN: $Id: delicious_test.rb 13 2008-03-15 13:03:13Z weppos $
+# SVN: $Id$
 #++
 
 
