@@ -533,7 +533,7 @@ module WWW #:nodoc:
 
       case response
       when Net::HTTPSuccess
-        response
+        return response
       when Net::HTTPUnauthorized        # 401
         raise HTTPError, 'Invalid username or password'
       when Net::HTTPServiceUnavailable  # 503
