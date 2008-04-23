@@ -1,7 +1,7 @@
 # 
 # = WWW::Delicious
 #
-# Web service library for del.icio.us API
+# Ruby client for del.icio.us API.
 # 
 #
 # Category::   WWW
