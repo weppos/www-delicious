@@ -20,6 +20,7 @@ require File.dirname(__FILE__) + '/delicious/bundle'
 require File.dirname(__FILE__) + '/delicious/post'
 require File.dirname(__FILE__) + '/delicious/tag'
 require File.dirname(__FILE__) + '/delicious/errors'
+require File.dirname(__FILE__) + '/delicious/version'
 
 
 module WWW #:nodoc:
@@ -77,7 +78,7 @@ module WWW #:nodoc:
     NAME            = 'WWW::Delicious'
     GEM             = 'www_delicious'
     AUTHOR          = 'Simone Carletti <weppos@weppos.net>'
-    VERSION         = '0.0.0'
+    VERSION         = defined?(Version) ? Version::STRING : nil
     STATUS          = 'alpha'
     BUILD           = '$Rev$'.match(/(\d+)/)[1].to_s()
     
