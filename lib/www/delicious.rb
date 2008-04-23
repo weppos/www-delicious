@@ -29,46 +29,33 @@ module WWW #:nodoc:
   #
   # = WWW::Delicious
   # 
-  # //
-  # //
+  # WWW::Delicious is a Ruby client for http://del.icio.us XML API.
   # 
-  # == Download and Installation
+  # It provides both read and write functionalities. 
+  # You can read user Posts, Tags and Bundles 
+  # but you can create new Posts, Tags and Bundles as well.
   # 
-  # //
   # 
   # == Documentation
   # 
-  # //
+  # See the README file or the website for a full documentation.
   #
-  # == Example Usage
-  # 
-  # //
   #
   # == Basic Usage
   # 
-  # //
-  # 
-  # == Author
-  # 
-  # //
-  # 
-  # == License
-  # 
-  # //
-  # 
-  # == FeedBack and Bug reports
-  # 
-  # //
-  # 
-  # == Changelog
-  # 
-  # //
-  # 
-  # == Roadmap
+  # The following is just a basic demonstration of the main features.
+  # See the README file for a deeper explanation about how to get the best
+  # from WWW::Delicious library.
   # 
   # //
   # 
   # 
+  # == Example Usage
+  # 
+  # //
+  # 
+  # 
+  #
   # Category::   WWW
   # Package::    WWW::Delicious
   # Author::     Simone Carletti <weppos@weppos.net>
