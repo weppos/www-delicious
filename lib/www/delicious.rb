@@ -34,11 +34,6 @@ module WWW #:nodoc:
   # It provides both read and write functionalities. 
   # You can read user Posts, Tags and Bundles 
   # but you can create new Posts, Tags and Bundles as well.
-  # 
-  # 
-  # == Documentation
-  # 
-  # See the README file or the website for a full documentation.
   #
   #
   # == Basic Usage
@@ -47,12 +42,85 @@ module WWW #:nodoc:
   # See the README file for a deeper explanation about how to get the best
   # from WWW::Delicious library.
   # 
-  # //
+  # The examples in this page make the following assumptions
+  # * you have a valid del.icio.us account
+  # * +username+ is your account username
+  # * +password+ is your account password
+  # 
+  # In order to make a query you first need to create
+  # a new WWW::Delicious instance as follows:
+  # 
+  #   username = 'my delicious username'
+  #   password = 'my delicious password'
+  #   d = WWW::Delicious.new(username, password)
+  # 
+  # The constructor accepts some additional options.
+  # For instance, if you want to customize the user agent:
+  # 
+  #   d = WWW::Delicious.new(username, password, :user_agent => 'FooAgent')
+  #   
+  # Now you can any of the API methods available.
+  # 
+  # === Update
+  # 
+  # For example, you may want to know when your account was last updated
+  # to check whether someone else made some changes on behalf of you:
+  # 
+  #   datetime = d.update # => Wed Mar 12 08:41:20 UTC 2008
+  #   
+  # Because the answer is a valid +Time+ instance, you can format it with +strftime+.
+  #   
+  #   datetime = d.update # => Wed Mar 12 08:41:20 UTC 2008
+  #   datetime.strftime('%Y') # => 2008
+  #   
+  # === Posts
+  # 
+  # Let's play with something more funny.
+  # Because you are a del.icio.us user, you probably want to get a list
+  # of all your posts.
+  # 
+  #   d = WWW::Delicious.new(username, password)
+  #   posts = d.posts_all() # => Array of WWW::Delicious::Post
+  #   
+  # The request returns an array of WWW::Delicious::Post that you can easily
+  # loop and print.
+  # 
+  #   posts.each_with_index {|p,i| puts "#{i.succ}. #{p.title}" }
+  #   # => 1. Foo Bar title
+  #   # => 2. An other item
+  #   # ...
+  #   
+  # Because this query is really expensive you can also fetch your posts
+  # filtered by tag.
+  # 
+  #   d = WWW::Delicious.new(username, password)
+  #   posts = d.posts_all(:tag => 'php') # => Array of WWW::Delicious::Post
+  #   posts.each {|p| puts p.title}
+  #   # => Post about PHP
+  #   # => An other post about PHP
+  #   # ...
+  #   
+  # === Tags and Bundles
+  # 
+  # WWW::Delicious provides the ability to play with Tags and Bundles
+  # more or less in the same way you play with Posts.
+  # You can fetch, read, update and delete them.
+  # 
+  # As you probably guess there's an easy to unserstand relationship between
+  # WWW::Delicious API methods and WWW::Delicious classes.
+  # * posts_* calls works with WWW::Delicious::Post objects
+  # * tags_* calls works with WWW::Delicious::Tag objects
+  # * bundle_* calls works with WWW::Delicious::Bundle objects
+  # 
+  # 
+  # == Documentation
+  # 
+  # See the README file or the website for a full documentation.
   # 
   # 
   # == Example Usage
   # 
-  # //
+  # See the README file for some example usage.
   # 
   # 
   #
