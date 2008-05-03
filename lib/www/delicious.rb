@@ -542,10 +542,10 @@ module WWW #:nodoc:
     #
     def wait_before_new_request()
       return unless @last_request # this is the first request
-      puts "Last request at #{TIME_CONVERTER.call(@last_request)}" if debug?
+      # puts "Last request at #{TIME_CONVERTER.call(@last_request)}" if debug?
       diff = Time.now - @last_request
       if diff < SECONDS_BEFORE_NEW_REQUEST
-        puts "Sleeping for #{diff} before new request..." if debug?
+        # puts "Sleeping for #{diff} before new request..." if debug?
         sleep(SECONDS_BEFORE_NEW_REQUEST - diff) 
       end
     end
