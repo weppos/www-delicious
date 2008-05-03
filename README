@@ -32,11 +32,11 @@ Installing WWW::Delicious as a GEM is probably the best and easiest way.
 You must have RubyGems[http://rubyforge.org/projects/rubygems/] installed
 for the following instruction to work:
 
-  $ sudo gem install www_delicious
+  $ sudo gem install www-delicious
 
-Please note that the GEM name is www_delicious, this is not a typo!
+Please note that the GEM name is www-delicious, this is not a typo!
 Because the name WWW::Delicious cannot be used within the GEM repository,
-www_delicious is the best normalized name I found to identify the library.
+www-delicious is the best normalized name I found to identify the library.
 
 You can also grab the source code from the website and install it manually.
 Navigate to the root library directory and enter:

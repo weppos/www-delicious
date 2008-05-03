@@ -131,7 +131,7 @@ module WWW #:nodoc:
   class Delicious
     
     NAME            = 'WWW::Delicious'
-    GEM             = 'www_delicious'
+    GEM             = 'www-delicious'
     AUTHOR          = 'Simone Carletti <weppos@weppos.net>'
     VERSION         = defined?(Version) ? Version::STRING : nil
     STATUS          = 'alpha'

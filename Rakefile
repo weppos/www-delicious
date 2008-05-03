@@ -134,19 +134,9 @@ else
 
     ## Author and project details
 
-    s.homepage  = "http://trac.weppos.net/www_delicious/"
+    s.homepage  = "http://redmine.weppos.net/projects/show/www-delicious"
     s.author    = "Simone Carletti"
     s.email     = "weppos@weppos.net"
 
-  end
-  
-  # 
-  # task::
-  #   :gem
-  # desc::
-  #   Build the default package
-  #
-  Rake::GemPackageTask.new(spec) do |p|
-    p.need_tar_gz = true
   end
 end
