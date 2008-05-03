@@ -24,7 +24,7 @@ require File.dirname(__FILE__) + '/delicious/version'
 
 
 module WWW #:nodoc:
-  
+
 
   #
   # = WWW::Delicious
@@ -49,9 +49,12 @@ module WWW #:nodoc:
   # 
   # In order to make a query you first need to create
   # a new WWW::Delicious instance as follows:
+  #
+  #   require 'www/delicious'
   # 
   #   username = 'my delicious username'
   #   password = 'my delicious password'
+  #
   #   d = WWW::Delicious.new(username, password)
   # 
   # The constructor accepts some additional options.
@@ -59,9 +62,7 @@ module WWW #:nodoc:
   # 
   #   d = WWW::Delicious.new(username, password, :user_agent => 'FooAgent')
   #   
-  # Now you can any of the API methods available.
-  # 
-  # === Update
+  # Now you can use any of the API methods available.
   # 
   # For example, you may want to know when your account was last updated
   # to check whether someone else made some changes on behalf of you:
@@ -72,58 +73,9 @@ module WWW #:nodoc:
   #   
   #   datetime = d.update # => Wed Mar 12 08:41:20 UTC 2008
   #   datetime.strftime('%Y') # => 2008
-  #   
-  # === Posts
-  # 
-  # Let's play with something more funny.
-  # Because you are a del.icio.us user, you probably want to get a list
-  # of all your posts.
-  # 
-  #   d = WWW::Delicious.new(username, password)
-  #   posts = d.posts_all() # => Array of WWW::Delicious::Post
-  #   
-  # The request returns an array of WWW::Delicious::Post that you can easily
-  # loop and print.
-  # 
-  #   posts.each_with_index {|p,i| puts "#{i.succ}. #{p.title}" }
-  #   # => 1. Foo Bar title
-  #   # => 2. An other item
-  #   # ...
-  #   
-  # Because this query is really expensive you can also fetch your posts
-  # filtered by tag.
-  # 
-  #   d = WWW::Delicious.new(username, password)
-  #   posts = d.posts_all(:tag => 'php') # => Array of WWW::Delicious::Post
-  #   posts.each {|p| puts p.title}
-  #   # => Post about PHP
-  #   # => An other post about PHP
-  #   # ...
-  #   
-  # === Tags and Bundles
-  # 
-  # WWW::Delicious provides the ability to play with Tags and Bundles
-  # more or less in the same way you play with Posts.
-  # You can fetch, read, update and delete them.
-  # 
-  # As you probably guess there's an easy to unserstand relationship between
-  # WWW::Delicious API methods and WWW::Delicious classes.
-  # * posts_* calls works with WWW::Delicious::Post objects
-  # * tags_* calls works with WWW::Delicious::Tag objects
-  # * bundle_* calls works with WWW::Delicious::Bundle objects
   # 
   # 
-  # == Documentation
   # 
-  # See the README file or the website for a full documentation.
-  # 
-  # 
-  # == Example Usage
-  # 
-  # See the README file for some example usage.
-  # 
-  # 
-  #
   # Category::   WWW
   # Package::    WWW::Delicious
   # Author::     Simone Carletti <weppos@weppos.net>
@@ -227,7 +179,7 @@ module WWW #:nodoc:
 
     public
     #
-    # Returns the reference to current http client.
+    # Returns the reference to current http client or +nil+.
     # A new http client is created if none has been initialized before.
     #
     # === Return
@@ -239,7 +191,6 @@ module WWW #:nodoc:
     #   obj.http_client # => nil
     #   
     #   # valid client
-    #   # obj.http_client = Net::HTTP.new()
     #   obj.http_client # => Net::HTTP
     #
     def http_client()
@@ -258,8 +209,10 @@ module WWW #:nodoc:
     # 
     #   # nil client
     #   obj.http_client = nil
+    # 
     #   # http client
     #   obj.http_client = Net::HTTP.new()
+    # 
     #   # invalid client
     #   obj.http_client = 'foo' # => ArgumentError
     # 
@@ -273,9 +226,6 @@ module WWW #:nodoc:
     public
     #
     # Returns current user agent string.
-    #
-    # === Return
-    # A string with current user agent value.
     #
     def user_agent()
       return @headers['User-Agent']
@@ -880,10 +830,13 @@ module WWW #:nodoc:
     # === Examples
     # 
     #   params = {:foo => 1, :bar => 2}
+    #
     #   compare_params(params, [:foo, :bar])
     #   # => valid
+    # 
     #   compare_params(params, [:foo, :bar, :baz])
     #   # => raises
+    # 
     #   compare_params(params, [:foo])
     #   # => raises
     # 

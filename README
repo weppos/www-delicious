@@ -48,14 +48,129 @@ from the SVN repository at http://svn.simonecarletti.com/www_delicious/.
 Beware that the code might not as stable as the official release.
 
 
-== Getting Started
-
-//
-
-
 == Usage
 
-//
+In order to use this library you need a valid del.icio.us account.
+Go to http://del.icio.us/ and register for a new account if you don't
+already have one.
+
+Then create a valid instance of WWW::Delicious with the account credentials.
+
+  require 'www/delicious'
+  
+  # create a new instance with given username and password
+  d = WWW::Delicious.new('username', 'password')
+  
+Now you can use your delicious instance to call on of the API methods available.
+
+
+=== Last account update
+
+The following example show you how to get the last account update Time.
+
+  require 'www/delicious'
+  d = WWW::Delicious.new('username', 'password')
+  
+  time = d.update # => Fri May 02 18:02:48 UTC 2008
+
+
+=== Reading Posts
+
+You can fetch your posts in 3 different ways:
+
+  require 'www/delicious'
+  d = WWW::Delicious.new('username', 'password')
+
+  # 1. get all posts
+  posts = d.posts_all
+  
+  # 2. get recent posts
+  posts = d.posts_recent
+  
+  # 3. get a single post (the latest one if no criteria is given)
+  posts = d.posts_get(:tag => 'ruby')
+
+Each post call accepts some options to refine your search.
+For example, you can always search for posts matching a specific tag.
+
+  posts = d.posts_all(:tag => 'ruby')
+  posts = d.posts_recent(:tag => 'ruby')
+  posts = d.posts_get(:tag => 'ruby')
+
+
+=== Creating a new Post
+
+  require 'www/delicious'
+  d = WWW::Delicious.new('username', 'password')
+  
+  # add a post from options
+  d.posts_add(:url => 'http://www.simoencarlett.com/', :title => 'Cool site!')
+  
+  # add a post from WWW::Delicious::Post
+  d.posts_add(WWW::Delicious::Post.new(:url => 'http://www.simoencarlett.com/', :title => 'Cool site!'))
+
+
+=== Deleting a Posts
+
+  require 'www/delicious'
+  d = WWW::Delicious.new('username', 'password')
+  
+  # delete given post (the URL can be either a string or an URI)
+  d.posts_delete('http://www.foobar.com/')
+
+Note. Actually you cannot delete a post from a WWW::Delicious::Post instance.
+It means, the following example doesn't work as some ActiveRecord user might expect.
+
+  post = WWW::Delicious::Post.new(:url => 'http://foobar.com')
+  post.delete
+
+This feature is already in the TODO list. For now, use the following workaround
+to delete a given Post.
+
+  # delete a post from an existing post = WWW::Delicious::Post
+  d.posts_delete(post.url)
+
+
+=== Tags
+
+Working with tags it's really easy. You can get all your tags or rename an existing tag.
+
+  require 'www/delicious'
+  d = WWW::Delicious.new('username', 'password')
+  
+  # get all tags
+  tags = d.tags_get
+  
+  # print all tag names
+  tags.each { |t| puts t.name }
+  
+  # rename the tag gems to gem
+  d.tags_rename('gems', 'gem')
+
+
+=== Bundles
+
+WWW::Delicious enables you to get all bundles from given account.
+
+  require 'www/delicious'
+  d = WWW::Delicious.new('username', 'password')
+  
+  # get all bundles
+  bundles = d.bundles_all
+  
+  # print all bundle names
+  bundles.each { |b| puts b.name } 
+
+You can also create new bundles or delete existing ones.
+
+  require 'www/delicious'
+  d = WWW::Delicious.new('username', 'password')
+  
+  # set a new bundle for tags ruby, rails and gem
+  d.bundles_set('MyBundle', %w(ruby rails gem))
+  
+  # delete the old bundle
+  d.bundles_delete('OldBundle')
 
 
 == Documentation
@@ -76,6 +191,14 @@ with any questions or feedback.
 
 Please submit your bug reports to the Redmine installation for WWW::Delicious
 available at http://redmine.weppos.net/.
+
+
+== TODO
+
+  * allow Tags and Bundles to be passed as params for API calls
+  * allow Tags, Bundles and Posts to be used for API call (no longer readonly)
+  * improve the way new posts are created and updated
+  * more (see issue tracker on the website)
 
 
 == Changelog

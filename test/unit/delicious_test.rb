@@ -19,13 +19,9 @@ require File.dirname(__FILE__) + '/../helper'
 class DeliciousTest < Test::Unit::TestCase
   include WWW::Delicious::TestCase
   
-  def setup
-    super
-  end
-  
   
   # =========================================================================
-  # These tests check object constructor behavior 
+  # Constructor behavior
   # =========================================================================
   
   def test_initialize
@@ -54,7 +50,7 @@ class DeliciousTest < Test::Unit::TestCase
 
   
   # =========================================================================
-  # These tests check constructor options
+  # Constructor options
   # =========================================================================
   
   def test_initialize_account
@@ -109,7 +105,7 @@ class DeliciousTest < Test::Unit::TestCase
 
   
   # =========================================================================
-  # These tests check bundles_all call and all related methods.
+  # Update
   # =========================================================================
   
   def test_update
@@ -129,8 +125,12 @@ class DeliciousTest < Test::Unit::TestCase
 
   
   # =========================================================================
-  # These tests check bundles_all call and all related methods.
+  # Bundles
   # =========================================================================
+  # Test all bundle calls and related methods.
+  # * bundles_all
+  # * bundles_set
+  # * bundles_delete
   
   def test_bundles_all
     set_response(File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
@@ -169,11 +169,7 @@ class DeliciousTest < Test::Unit::TestCase
     assert_match(/`bundles`/, exception.message)
   end
 
-  
-  # =========================================================================
-  # These tests check bundles_set call and all related methods.
-  # =========================================================================
-  
+
   def test_bundles_set
     set_response(File.read(TESTCASE_PATH + '/bundles_set_success.xml'))
     assert_nothing_raised() { instance.bundles_set('name', %w(foo bar)) }
@@ -187,10 +183,6 @@ class DeliciousTest < Test::Unit::TestCase
     assert_match(/`result`/, exception.message)
   end
 
-  
-  # =========================================================================
-  # These tests check bundles_delete call and all related methods.
-  # =========================================================================
   
   def test_bundles_delete
     set_response(File.read(TESTCASE_PATH + '/bundles_delete_success.xml'))
@@ -207,8 +199,12 @@ class DeliciousTest < Test::Unit::TestCase
 
   
   # =========================================================================
-  # These tests check tags_get call and all related methods.
+  # Tags
   # =========================================================================
+  # Test all tag calls and related methods.
+  # * tags_get
+  # * tags_rename
+
   
   def test_tags_get
     set_response(File.read(TESTCASE_PATH + '/tags_get_success.xml'))
@@ -247,10 +243,6 @@ class DeliciousTest < Test::Unit::TestCase
     assert_match(/`tags`/, exception.message)
   end
 
-  
-  # =========================================================================
-  # These tests check tags_rename call and all related methods.
-  # =========================================================================
   
   def test_tags_rename
     set_response(File.read(TESTCASE_PATH + '/tags_rename_success.xml'))

@@ -75,7 +75,7 @@ module WWW #:nodoc:
       # Returns a params-style representation suitable for API calls.
       #
       def to_params()
-	params = {}
+        params = {}
         params[:url] = self.url
         params[:description] = self.title
         params[:extended] = self.notes if self.notes
