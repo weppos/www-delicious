@@ -10,7 +10,7 @@ require 'www/delicious'
 # Common package properties
 PKG_NAME    = ENV['PKG_NAME'] || WWW::Delicious::GEM
 PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
-PKG_SUMMARY = "Web service library for del.icio.us API"
+PKG_SUMMARY = "Ruby client for del.icio.us API."
 PKG_FILES   = FileList[
   "Rakefile",
   "[A-Z]*",
@@ -26,7 +26,7 @@ PKG_FILES.exclude('TODO')
 # task::
 #   :test
 # desc::
-#   Run all the tests
+#   Run all the tests.
 #
 desc "Run all the tests"
 Rake::TestTask.new(:test) do |t|
@@ -40,7 +40,7 @@ end
 # task::
 #   :rcov
 # desc::
-#   Create code coverage report
+#   Create code coverage report.
 #
 begin
   require 'rcov/rcovtask'
@@ -48,12 +48,8 @@ begin
   desc "Create code coverage report"
   Rcov::RcovTask.new(:rcov) do |t|
     t.libs << "test"
-    t.rcov_opts = [
-      "-xRakefile"
-    ]
-    t.test_files = FileList[
-      "test/unit/*.rb"
-    ]
+    t.rcov_opts = ["-xRakefile"]
+    t.test_files = FileList["test/unit/*.rb"]
     t.output_dir = "coverage"
     t.verbose = true
   end
@@ -66,14 +62,14 @@ end
 # task::
 #   :rdoc
 # desc::
-#   Generate RDoc documentation
+#   Generate RDoc documentation.
 #
 desc "Generate RDoc documentation"
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir   = 'doc'
   rdoc.title      = "#{PKG_NAME} -- #{PKG_SUMMARY}"
   rdoc.main       = "README"
-  rdoc.options << "--title" << "#{PKG_NAME} -- #{PKG_SUMMARY}"
+  rdoc.options   << "--title" << "#{PKG_NAME} -- #{PKG_SUMMARY}"
   rdoc.options   << "--inline-source" << "--line-numbers"
   rdoc.options   << '--charset' << 'utf-8'
   rdoc.options   << "--main" << "README"
@@ -88,7 +84,7 @@ if ! defined?(Gem)
 else
 
   # Package requirements
-  spec = Gem::Specification.new do |s|
+  GEM_SPEC = Gem::Specification.new do |s|
 
     ## Basic information
 
@@ -96,8 +92,8 @@ else
     s.version     = PKG_VERSION
     s.summary     = PKG_SUMMARY
     s.description = <<-EOF
-      WWW::Delicious is a del.icio.us API client implemented in Ruby.
-      It provides access to all available del.icio.us API queries 
+      WWW::Delicious is a del.icio.us API client implemented in Ruby. \
+      It provides access to all available del.icio.us API queries \
       and returns the original XML response as a friendly Ruby object.
       EOF
     s.platform  = Gem::Platform::RUBY
@@ -139,4 +135,30 @@ else
     s.email     = "weppos@weppos.net"
 
   end
+  
+  # 
+  # task::
+  #   :gem
+  # desc::
+  #   Generate the GEM package and all stuff.
+  #
+  Rake::GemPackageTask.new(GEM_SPEC) do |p|
+    p.gem_spec = GEM_SPEC
+    p.need_tar = true
+    p.need_zip = true
+  end
+end
+
+
+# 
+# task::
+#   :clean
+# desc::
+#   Clean up generated directories and files.
+#
+desc "Clean up generated directories and files"
+task :clean do
+  rm_rf "pkg"
+  rm_rf "doc"
+  rm_rf "coverage"
 end

@@ -146,25 +146,24 @@ module WWW #:nodoc:
     #   
     #   # create a new object with username 'user' and password 'psw
     #   obj = WWW::Delicious('user', 'psw')
+    #   # => self
     # 
-    # === Params
-    # username::
-    #   a +String+ with the account username
-    # password::
-    #   a +String+ with the account password
-    # options::
-    #   an +Hash+ with optional parameters to customize the library behavior
+    # If a block is given, the instance is passed to the block
+    # but this method always returns the instance itself.
+    # 
+    #   WWW::Delicious('user', 'psw') do |d|
+    #     d.update() # => Fri May 02 18:02:48 UTC 2008
+    #   end
+    #   # => self
     #   
     # === Options
-    # This class accepts additional options provided as a +Hash+ reference.
-    # Here's the supported keys reference:
+    # This class accepts an Hash with additional options.
+    # Here's the list of valid keys:
     #
-    # [<tt>:user_agent</tt>] 
-    #   User agent to display in HTTP requests.
+    # <tt>:user_agent</tt>:: User agent to display in HTTP requests.
     # 
     def initialize(username, password, options = {}, &block) #  :yields: delicious
-      @username, @password = username, password
-      self.debug = options[:debug]
+      @username, @password = username.to_s, password.to_s
 
       # set API base URI
       @base_uri = URI.parse(API_BASE_URI)
@@ -179,13 +178,8 @@ module WWW #:nodoc:
 
     public
     #
-    # Returns the reference to current http client or +nil+.
-    # A new http client is created if none has been initialized before.
-    #
-    # === Return
-    # The <tt>Net::HTTP</tt> instance or +nil+
-    # 
-    # === Examples
+    # Returns the reference to current <tt>@http_client</tt>.
+    # The http is always valid unless it has been previously set to +nil+.
     # 
     #   # nil client
     #   obj.http_client # => nil
@@ -199,14 +193,8 @@ module WWW #:nodoc:
 
     public
     #
-    # Sets the internal http client to +client+.
+    # Sets the internal <tt>@http_client</tt> to +client+.
     #
-    # === Params
-    # client::
-    #   a <tt>Net::HTTP</tt> instance or +nil+ to reset the http client
-    # 
-    # === Examples
-    # 
     #   # nil client
     #   obj.http_client = nil
     # 
@@ -231,27 +219,16 @@ module WWW #:nodoc:
       return @headers['User-Agent']
     end
     
-    public
-    #
-    # Turns debug on/off.
-    #
-    def debug=(value)
-      bool = proc { |str| !['false', false, '0', 0, nil, ''].include?(str) }
-      @debug = bool.call(value)
-    end
-    
-    public
-    #
-    # Returns whether this library is in debug mode.
-    #
-    def debug?
-      return @debug
-    end
-     
     
     public
     #
     # Returns true if given account credentials are valid.
+    # 
+    #   d = WWW::Delicious.new('username', 'password')
+    #   d.valid_account? # => true
+    # 
+    #   d = WWW::Delicious.new('username', 'invalid_password')
+    #   d.valid_account? # => false
     # 
     # This method is not "exception safe".
     # It doesn't return false if an HTTP error or any kind of other error occurs,
@@ -271,10 +248,11 @@ module WWW #:nodoc:
 
     public
     #
-    # Checks to see when a user last posted an item.
+    # Checks to see when a user last posted an item
+    # and returns the last update +Time+ for the user.
     # 
-    # === Return
-    # The last update +Time+ for the user. 
+    #   d.update() # => Fri May 02 18:02:48 UTC 2008
+    # 
     # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
@@ -287,10 +265,12 @@ module WWW #:nodoc:
     
     public
     #
-    # Retrieves all of a user's bundles.
+    # Retrieves all of a user's bundles
+    # and returns an array of <tt>WWW::Delicious::Bundle</tt>.
     # 
-    # === Return
-    # An +Array+ of <tt>WWW::Delicious::Bundle</tt>.
+    #   d.bundles_all() # => [#<WWW::Delicious::Bundle>, #<WWW::Delicious::Bundle>, ...]
+    #   d.bundles_all() # => []
+    # 
     # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
@@ -306,6 +286,13 @@ module WWW #:nodoc:
     # Assignes a set of tags to a single bundle, 
     # wipes away previous settings for bundle.
     # 
+    #   # create from a bundle
+    #   d.bundles_set(WWW::Delicious::Bundle.new('MyBundle'), %w(foo bar))
+    # 
+    #   # create from a string
+    #   d.bundles_set('MyBundle', %w(foo bar))
+    # 
+    # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
@@ -320,6 +307,13 @@ module WWW #:nodoc:
     #
     # Deletes a bundle.
     # 
+    #   # delete from a bundle
+    #   d.bundles_delete(WWW::Delicious::Bundle.new('MyBundle'))
+    # 
+    #   # delete from a string
+    #   d.bundles_delete('MyBundle', %w(foo bar))
+    # 
+    # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
@@ -332,10 +326,8 @@ module WWW #:nodoc:
     
     public
     #
-    # Retrieves the list of tags and number of times used by the user.
-    # 
-    # === Return
-    # An +Array+ of <tt>WWW::Delicious::Tag</tt>.
+    # Retrieves the list of tags and number of times used by the user
+    # and returns an array of <tt>WWW::Delicious::Tag</tt>.
     # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
@@ -362,21 +354,14 @@ module WWW #:nodoc:
     
     public
     #
-    # Returns posts matching +options+. 
+    # Returns an array of <tt>WWW::Delicious::Post</tt> matching +options+.
+    # If no option is given, the last post is returned.
     # If no date or url is given, most recent date will be used.
     # 
     # === Options
-    # tag::
-    #   a tag to filter by. 
-    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
-    # dt::
-    #   a +Time+ with a tate to filter by.
-    # url::
-    #   a valid URI to filter by.
-    #   It can be either an instance of +URI+ or a +String+.
-    # 
-    # === Return
-    # An +Array+ of <tt>WWW::Delicious::Post</tt>.
+    # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    # <tt>:dt</tt>::  a +Time+ with a date to filter by.
+    # <tt>:url</tt>:: a valid URI to filter by. It can be either an instance of +URI+ or a +String+.
     # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
@@ -393,11 +378,8 @@ module WWW #:nodoc:
     # Returns a list of the most recent posts, filtered by argument.
     # 
     # === Options
-    # tag::
-    #   a tag to filter by. 
-    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
-    # count::
-    #   number of items to retrieve. (default: 15, maximum: 100).
+    # <tt>:tag</tt>::   a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    # <tt>:count</tt>:: number of items to retrieve. (default: 15, maximum: 100).
     #
     def posts_recent(options = {})
       params = prepare_posts_params(options.clone, [:count, :tag])
@@ -410,9 +392,7 @@ module WWW #:nodoc:
     # Returns a list of the most recent posts, filtered by argument.
     # 
     # === Options
-    # tag::
-    #   a tag to filter by. 
-    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     #
     def posts_all(options = {})
       params = prepare_posts_params(options.clone, [:tag])
@@ -425,9 +405,7 @@ module WWW #:nodoc:
     # Returns a list of dates with the number of posts at each date.
     # 
     # === Options
-    # tag::
-    #   a tag to filter by. 
-    #   It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     #
     def posts_dates(options = {})
       params = prepare_posts_params(options.clone, [:tag])
@@ -500,7 +478,7 @@ module WWW #:nodoc:
     
     protected
     #
-    # Composes an HTTP query string from an hash of +params+.
+    # Composes an HTTP query string from an hash of +options+.
     #
     def http_build_query(params = {})
       return params.collect do |k,v| 
@@ -510,7 +488,7 @@ module WWW #:nodoc:
     
     protected
     #
-    # Sends and HTTP GET request to Delicious API.
+    # Sends an HTTP GET request to +path+ and appends given +params+.
     # 
     # This method is 100% compliant with Delicious API reference.
     # It waits at least 1 second between each HTTP request and
@@ -538,16 +516,15 @@ module WWW #:nodoc:
       end
 
       case response
-      when Net::HTTPSuccess
-        return response
-      when Net::HTTPUnauthorized        # 401
-        raise HTTPError, 'Invalid username or password'
-      when Net::HTTPServiceUnavailable  # 503
-        raise HTTPError, 
-          'You have been throttled.' +
-          'Please ensure you are waiting at least one second before each request.'
-      else
-        raise HTTPError, "HTTP #{response.code}: #{response.message}"
+        when Net::HTTPSuccess
+          return response
+        when Net::HTTPUnauthorized        # 401
+          raise HTTPError, 'Invalid username or password'
+        when Net::HTTPServiceUnavailable  # 503
+          raise HTTPError, 'You have been throttled.' +
+            'Please ensure you are waiting at least one second before each request.'
+        else
+          raise HTTPError, "HTTP #{response.code}: #{response.message}"
       end
     end
     
@@ -853,7 +830,7 @@ module WWW #:nodoc:
     end
 
     
-    module XMLUtils
+    module XMLUtils #:nodoc:
 
       public
       #
@@ -872,7 +849,7 @@ module WWW #:nodoc:
       # The value of the +xmlattr+ if the attribute exists for given +node+,
       # +nil+ otherwise.
       #
-      def attribute_value(xmlattr, &block) # :yields: attribute_value
+      def attribute_value(xmlattr, &block) #:nodoc:
         value = if attr = self.attribute(xmlattr.to_s())
             attr.value()
           else

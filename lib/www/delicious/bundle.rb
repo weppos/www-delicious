@@ -22,7 +22,7 @@ module WWW #:nodoc:
       # The name of the bundle
       attr_accessor :name
       
-      # The collection of <tt>WWW::Delicios::Tags</tt>
+      # The collection of <tt>WWW::Delicious::Tags</tt>
       attr_accessor :tags
       
       public
@@ -33,7 +33,7 @@ module WWW #:nodoc:
       def initialize(name, tags = [], &block) #  :yields: bundle
         raise ArgumentError, '`tags` expected to be an Array' unless tags.kind_of?(Array)
         
-	self.name = name.to_s()
+        self.name = name.to_s()
         self.tags = tags
         yield(self) if block_given?
         self

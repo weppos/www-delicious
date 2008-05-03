@@ -31,12 +31,12 @@ module WWW #:nodoc:
       #
       def initialize(values_or_rexml, &block) #  :yields: post
         case values_or_rexml
-        when Hash
-          initialize_from_hash(values_or_rexml)
-        when REXML::Element
-          initialize_from_rexml(values_or_rexml)
-        else
-          raise ArgumentError, 'Expected `values_or_rexml` to be `Hash` or `REXML::Element`'
+          when Hash
+            initialize_from_hash(values_or_rexml)
+          when REXML::Element
+            initialize_from_rexml(values_or_rexml)
+          else
+            raise ArgumentError, 'Expected `values_or_rexml` to be `Hash` or `REXML::Element`'
         end
         
         yield(self) if block_given?
@@ -104,7 +104,7 @@ module WWW #:nodoc:
       #   # => false
       #
       def api_valid?
-	return !(url.nil? or url.empty? or title.nil? or title.empty?)
+        return !(url.nil? or url.empty? or title.nil? or title.empty?)
       end
       
     end
