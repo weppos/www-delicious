@@ -26,6 +26,11 @@ WWW::Delicious will try to give you the most with less efforts.
 * Ruby 1.8.6
 
 
+== Source
+
+SVN Repository is located at: http://svn.simonecarletti.com/www_delicious
+
+
 == Download and Installation
 
 Installing WWW::Delicious as a GEM is probably the best and easiest way.
@@ -34,12 +39,8 @@ for the following instruction to work:
 
   $ sudo gem install www-delicious
 
-Please note that the GEM name is www-delicious, this is not a typo!
-Because the name WWW::Delicious cannot be used within the GEM repository,
-www-delicious is the best normalized name I found to identify the library.
-
-You can also grab the source code from the website and install it manually.
-Navigate to the root library directory and enter:
+To install the library manually grab the source code from the website, 
+navigate to the root library directory and enter:
 
   $ sudo ruby setup.rb
 
