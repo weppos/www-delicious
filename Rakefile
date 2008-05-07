@@ -11,15 +11,10 @@ require 'www/delicious'
 PKG_NAME    = ENV['PKG_NAME'] || WWW::Delicious::GEM
 PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
 PKG_SUMMARY = "Ruby client for del.icio.us API."
-PKG_FILES   = FileList[
-  "Rakefile",
-  "[A-Z]*",
-  "lib/**/*.rb",
-  # "doc/**/*", # exclude docs, it's auto generated
-  "examples/**/*.rb",
-  "test/**/*.rb"
-]
-PKG_FILES.exclude('TODO')
+PKG_FILES   = FileList.new("{lib,test}/**/*.rb") do |fl|
+  fl.exclude 'TODO'
+  fl.include %w(CHANGELOG MIT-LICENSE README)
+end
 
 
 # 
@@ -30,7 +25,6 @@ PKG_FILES.exclude('TODO')
 #
 desc "Run all the tests"
 Rake::TestTask.new(:test) do |t|
-  t.libs       << "test"
   t.test_files  = FileList["test/unit/*.rb"]
   t.verbose     = true
 end
@@ -47,7 +41,6 @@ begin
 
   desc "Create code coverage report"
   Rcov::RcovTask.new(:rcov) do |t|
-    t.libs << "test"
     t.rcov_opts = ["-xRakefile"]
     t.test_files = FileList["test/unit/*.rb"]
     t.output_dir = "coverage"
@@ -69,11 +62,8 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir   = 'doc'
   rdoc.title      = "#{PKG_NAME} -- #{PKG_SUMMARY}"
   rdoc.main       = "README"
-  rdoc.options   << "--title" << "#{PKG_NAME} -- #{PKG_SUMMARY}"
   rdoc.options   << "--inline-source" << "--line-numbers"
   rdoc.options   << '--charset' << 'utf-8'
-  rdoc.options   << "--main" << "README"
-  rdoc.template   = "#{ENV['template']}.rb" if ENV['template']
   rdoc.rdoc_files.include("README", "CHANGELOG")
   rdoc.rdoc_files.include("lib/**/*.rb")
 end
@@ -86,8 +76,6 @@ else
   # Package requirements
   GEM_SPEC = Gem::Specification.new do |s|
 
-    ## Basic information
-
     s.name        = PKG_NAME
     s.version     = PKG_VERSION
     s.summary     = PKG_SUMMARY
@@ -96,43 +84,26 @@ else
       It provides access to all available del.icio.us API queries \
       and returns the original XML response as a friendly Ruby object.
       EOF
-    s.platform  = Gem::Platform::RUBY
-
-    ## Dependencies and requirements
+    s.platform    = Gem::Platform::RUBY
 
     s.required_ruby_version = '>= 1.8.6'
-
     s.requirements << 'Rake 0.7.3 or later'
     s.add_dependency('rake', '>= 0.7.3')
 
-    ## Which files are to be included in this gem?
-
     s.files = PKG_FILES.to_a()
 
-    ## Documentation and testing
-
     s.has_rdoc = true
-    # Set RDoc title
     s.rdoc_options << "--title" << "#{s.name} -- #{s.summary}"
-    # Show source inline with line numbers
     s.rdoc_options << "--inline-source" << "--line-numbers"
-    # Make the readme file the start page for the generated html
     s.rdoc_options << "--main" << "README"
     s.rdoc_options << '--charset' << 'utf-8'
-    s.extra_rdoc_files = ["CHANGELOG", "README"]
+    s.extra_rdoc_files = %w(CHANGELOG README)
 
     s.test_files    = PKG_FILES.to_a
 
-    ## Load-time details: library and application
-
-    s.require_paths  = ["lib", "lib/www"]
-    s.autorequire = 'www/delicious'
-
-    ## Author and project details
-
-    s.homepage  = "http://redmine.weppos.net/projects/show/www-delicious"
     s.author    = "Simone Carletti"
     s.email     = "weppos@weppos.net"
+    s.homepage  = "http://redmine.weppos.net/projects/show/www-delicious"
 
   end
   
