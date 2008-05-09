@@ -23,12 +23,12 @@ WWW::Delicious will try to give you the most with less efforts.
 
 == Dependencies
 
-* Ruby 1.8.6
+  * Ruby 1.8.6
 
 
 == Source
 
-SVN Repository is located at: http://svn.simonecarletti.com/www_delicious
+WWW::Delicious source code is managed via GIT and hosted at GitHub: http://github.com/weppos/www-delicious/.
 
 
 == Download and Installation
@@ -45,7 +45,7 @@ navigate to the root library directory and enter:
   $ sudo ruby setup.rb
 
 If you need the latest development version you can download the source code
-from the SVN repository at http://svn.simonecarletti.com/www_delicious/.
+from the GIT repository at http://github.com/weppos/www-delicious/.
 Beware that the code might not as stable as the official release.
 
 
@@ -105,10 +105,10 @@ For example, you can always search for posts matching a specific tag.
   d = WWW::Delicious.new('username', 'password')
   
   # add a post from options
-  d.posts_add(:url => 'http://www.simoencarlett.com/', :title => 'Cool site!')
+  d.posts_add(:url => 'http://www.simoencarletti.com/', :title => 'Cool site!')
   
   # add a post from WWW::Delicious::Post
-  d.posts_add(WWW::Delicious::Post.new(:url => 'http://www.simoencarlett.com/', :title => 'Cool site!'))
+  d.posts_add(WWW::Delicious::Post.new(:url => 'http://www.simoencarletti.com/', :title => 'Cool site!'))
 
 
 === Deleting a Posts
@@ -182,7 +182,8 @@ and more examples.
 
 == Website and Project Home
 
-http://redmine.weppos.net/
+  * {Project Homepage}[http://redmine.weppos.net/]
+  * {On GitHub}[http://github.com/weppos/www-delicious/]
 
 
 == FeedBack and Bug reports
