@@ -105,10 +105,10 @@ For example, you can always search for posts matching a specific tag.
   d = WWW::Delicious.new('username', 'password')
   
   # add a post from options
-  d.posts_add(:url => 'http://www.simoencarletti.com/', :title => 'Cool site!')
+  d.posts_add(:url => 'http://www.simonecarletti.com/', :title => 'Cool site!')
   
   # add a post from WWW::Delicious::Post
-  d.posts_add(WWW::Delicious::Post.new(:url => 'http://www.simoencarletti.com/', :title => 'Cool site!'))
+  d.posts_add(WWW::Delicious::Post.new(:url => 'http://www.simonecarletti.com/', :title => 'Cool site!'))
 
 
 === Deleting a Posts
@@ -122,7 +122,7 @@ For example, you can always search for posts matching a specific tag.
 Note. Actually you cannot delete a post from a WWW::Delicious::Post instance.
 It means, the following example doesn't work as some ActiveRecord user might expect.
 
-  post = WWW::Delicious::Post.new(:url => 'http://foobar.com')
+  post = WWW::Delicious::Post.new(:url => 'http://www.foobar.com/')
   post.delete
 
 This feature is already in the TODO list. For now, use the following workaround
@@ -176,14 +176,15 @@ You can also create new bundles or delete existing ones.
 
 == Documentation
 
-Visit the website[http://redmine.weppos.net/] for the full documentation
+Visit the website[http://code.simonecarletti.com/] for the full documentation
 and more examples.
 
 
 == Website and Project Home
 
-  * {Project Homepage}[http://redmine.weppos.net/]
-  * {On GitHub}[http://github.com/weppos/www-delicious/]
+  * {Project Homepage}[http://code.simonecarletti.com/]
+  * {At GitHub}[http://github.com/weppos/www-delicious/]
+  * {At RubyForge}[http://rubyforge.org/projects/www-delicious/]
 
 
 == FeedBack and Bug reports
@@ -192,7 +193,7 @@ Feel free to email {Simone Carletti}[mailto:weppos@weppos.net]
 with any questions or feedback.
 
 Please submit your bug reports to the Redmine installation for WWW::Delicious
-available at http://redmine.weppos.net/.
+available at http://code.simonecarletti.com/.
 
 
 == TODO
