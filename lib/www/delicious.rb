@@ -87,11 +87,7 @@ module WWW #:nodoc:
     AUTHOR          = 'Simone Carletti <weppos@weppos.net>'
     VERSION         = defined?(Version) ? Version::STRING : nil
     STATUS          = 'alpha'
-    BUILD           = '$Rev$'.match(/(\d+)/)[1].to_s()
-    
-    SVN_ID          = '$Id$'
-    SVN_REVISION    = '$Rev$'
-    SVN_BUILD       = '$Date$'
+    BUILD           = ''.match(/(\d+)/).to_a.first
     
     # del.icio.us account username
     attr_reader :username
