@@ -48,6 +48,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.main       = "README"
   rdoc.options   << "--inline-source" << "--line-numbers"
   rdoc.options   << '--charset' << 'utf-8'
+  rdoc.options   << '--force-update'
   rdoc.rdoc_files.include("README", "CHANGELOG", "MIT-LICENSE")
   rdoc.rdoc_files.include("lib/**/*.rb")
 end
