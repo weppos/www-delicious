@@ -1,5 +1,9 @@
 = Changelog
 
+== repository
+
+  * FIXED: a wrong indentation in README file causes all list items to be rendered as source code
+
 == Release 0.1.0 (2008-05-11)
 
   * Initial public release.
