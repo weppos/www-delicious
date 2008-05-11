@@ -14,6 +14,7 @@ PKG_SUMMARY = "Ruby client for del.icio.us API."
 PKG_FILES   = FileList.new("{lib,test}/**/*.rb") do |fl|
   fl.exclude 'TODO'
   fl.include %w(README CHANGELOG MIT-LICENSE)
+  fl.include %w(Rakefile setup.rb)
 end
 RUBYFORGE_PROJECT = 'www-delicious'
 
@@ -70,7 +71,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 end
 
 
-if ! defined?(Gem)
+unless defined?(Gem)
   puts "Package Target requires RubyGEMs"
 else
 
