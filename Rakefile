@@ -13,8 +13,9 @@ PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
 PKG_SUMMARY = "Ruby client for del.icio.us API."
 PKG_FILES   = FileList.new("{lib,test}/**/*.rb") do |fl|
   fl.exclude 'TODO'
-  fl.include %w(CHANGELOG MIT-LICENSE README)
+  fl.include %w(README CHANGELOG MIT-LICENSE)
 end
+RUBYFORGE_PROJECT = 'www-delicious'
 
 
 # 
@@ -41,10 +42,10 @@ begin
 
   desc "Create code coverage report"
   Rcov::RcovTask.new(:rcov) do |t|
-    t.rcov_opts = ["-xRakefile"]
-    t.test_files = FileList["test/unit/*.rb"]
-    t.output_dir = "coverage"
-    t.verbose = true
+    t.rcov_opts   = ["-xRakefile"]
+    t.test_files  = FileList["test/unit/*.rb"]
+    t.output_dir  = "coverage"
+    t.verbose     = true
   end
 rescue LoadError
   puts "RCov is not available"
@@ -64,7 +65,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.main       = "README"
   rdoc.options   << "--inline-source" << "--line-numbers"
   rdoc.options   << '--charset' << 'utf-8'
-  rdoc.rdoc_files.include("README", "CHANGELOG")
+  rdoc.rdoc_files.include("README", "CHANGELOG", "MIT-LICENSE")
   rdoc.rdoc_files.include("lib/**/*.rb")
 end
 
@@ -85,6 +86,7 @@ else
       and returns the original XML response as a friendly Ruby object.
       EOF
     s.platform    = Gem::Platform::RUBY
+    s.rubyforge_project = RUBYFORGE_PROJECT
 
     s.required_ruby_version = '>= 1.8.6'
     s.requirements << 'Rake 0.7.3 or later'
@@ -97,13 +99,13 @@ else
     s.rdoc_options << "--inline-source" << "--line-numbers"
     s.rdoc_options << "--main" << "README"
     s.rdoc_options << '--charset' << 'utf-8'
-    s.extra_rdoc_files = %w(CHANGELOG README)
+    s.extra_rdoc_files = %w(README CHANGELOG MIT-LICENSE)
 
-    s.test_files    = PKG_FILES.to_a
+    s.test_files    = FileList["test/unit/*.rb"]
 
     s.author    = "Simone Carletti"
     s.email     = "weppos@weppos.net"
-    s.homepage  = "http://redmine.weppos.net/projects/show/www-delicious"
+    s.homepage  = "http://code.simonecarletti.com/www-delicious"
 
   end
   
