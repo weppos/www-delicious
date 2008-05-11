@@ -90,7 +90,6 @@ else
     s.rubyforge_project = RUBYFORGE_PROJECT
 
     s.required_ruby_version = '>= 1.8.6'
-    s.requirements << 'Rake 0.7.3 or later'
     s.add_dependency('rake', '>= 0.7.3')
 
     s.files = PKG_FILES.to_a()
