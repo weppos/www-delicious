@@ -19,12 +19,6 @@ end
 RUBYFORGE_PROJECT = 'www-delicious'
 
 
-# 
-# task::
-#   :test
-# desc::
-#   Run all the tests.
-#
 desc "Run all the tests"
 Rake::TestTask.new(:test) do |t|
   t.test_files  = FileList["test/unit/*.rb"]
@@ -32,12 +26,6 @@ Rake::TestTask.new(:test) do |t|
 end
 
 
-# 
-# task::
-#   :rcov
-# desc::
-#   Create code coverage report.
-#
 begin
   require 'rcov/rcovtask'
 
@@ -53,12 +41,6 @@ rescue LoadError
 end
 
 
-# 
-# task::
-#   :rdoc
-# desc::
-#   Generate RDoc documentation.
-#
 desc "Generate RDoc documentation"
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir   = 'doc'
@@ -109,12 +91,6 @@ else
 
   end
   
-  # 
-  # task::
-  #   :gem
-  # desc::
-  #   Generate the GEM package and all stuff.
-  #
   Rake::GemPackageTask.new(GEM_SPEC) do |p|
     p.gem_spec = GEM_SPEC
     p.need_tar = true
@@ -123,15 +99,37 @@ else
 end
 
 
-# 
-# task::
-#   :clean
-# desc::
-#   Clean up generated directories and files.
-#
+begin 
+  require 'code_statistics'
+  desc "Show library's code statistics"
+  task :stats do
+    CodeStatistics.new(["WWW::Delicious", "lib"], 
+                       ["Tests", "test"]).to_s
+  end
+rescue LoadError
+  puts "CodeStatistics (Rails) is not available"
+end
+
+
+desc "Generated and upload current documentation to Rubyforge"
+task :upload_docs => [:clean_rdoc, :rdoc] do
+  host        = "weppos@rubyforge.org"
+  remote_dir  = "/var/www/gforge-projects/www-delicious/"
+  local_dir   = 'doc'
+  sh %{rsync -av --delete #{local_dir}/ #{host}:#{remote_dir}}
+end
+
+
+desc "Clean up rdoc directory"
+task :clean_rdoc do
+  dir = File.expand_path("doc")
+  rm_rf dir
+  puts "Removed rdoc directory (#{dir})"
+end
+
+
 desc "Clean up generated directories and files"
-task :clean do
+task :clean => [:clean_rdoc] do
   rm_rf "pkg"
-  rm_rf "doc"
   rm_rf "coverage"
 end
