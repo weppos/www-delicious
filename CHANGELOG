@@ -2,7 +2,8 @@
 
 == repository
 
-  * FIXED: a wrong indentation in README file causes all list items to be rendered as source code
+  * CHANGED: improved documentation and added more examples (closes #21).
+  * FIXED: a wrong indentation in README file causes all list items to be rendered as source code.
 
 == Release 0.1.0 (2008-05-11)
 
