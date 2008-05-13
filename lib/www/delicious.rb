@@ -230,6 +230,7 @@ module WWW #:nodoc:
     # It doesn't return false if an HTTP error or any kind of other error occurs,
     # it raises back the exception to the caller instead.
     # 
+    # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
@@ -301,7 +302,12 @@ module WWW #:nodoc:
     
     public
     #
-    # Deletes a bundle.
+    # Deletes +bundle_or_name+ bundle from del.icio.us.
+    # +bundle_or_name+ can be either a WWW::Delicious::Bundle instance 
+    # or a string with the name of the bundle.
+    # 
+    # This method doesn't care whether the exists.
+    # If not, the execution will silently return without rising any error.
     # 
     #   # delete from a bundle
     #   d.bundles_delete(WWW::Delicious::Bundle.new('MyBundle'))
@@ -325,6 +331,10 @@ module WWW #:nodoc:
     # Retrieves the list of tags and number of times used by the user
     # and returns an array of <tt>WWW::Delicious::Tag</tt>.
     # 
+    #   d.tags_get() # => [#<WWW::Delicious::Tag>, #<WWW::Delicious::Tag>, ...]
+    #   d.tags_get() # => []
+    # 
+    # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
@@ -337,6 +347,13 @@ module WWW #:nodoc:
     public
     #
     # Renames an existing tag with a new tag name.
+    # 
+    #   # rename from a tag
+    #   d.bundles_set(WWW::Delicious::Tag.new('old'), WWW::Delicious::Tag.new('new'))
+    # 
+    #   # rename from a string
+    #   d.bundles_set('old', 'new')
+    # 
     # 
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
@@ -353,6 +370,20 @@ module WWW #:nodoc:
     # Returns an array of <tt>WWW::Delicious::Post</tt> matching +options+.
     # If no option is given, the last post is returned.
     # If no date or url is given, most recent date will be used.
+    # 
+    #   d.posts_get() # => [#<WWW::Delicious::Post>, #<WWW::Delicious::Post>, ...]
+    #   d.posts_get() # => []
+    # 
+    #   # get all posts tagged with ruby
+    #   d.posts_get(:tag => WWW::Delicious::Tag.new('ruby))
+    # 
+    #   # get all posts matching URL 'http://www.simonecarletti.com'
+    #   d.posts_get(:url => URI.parse('http://www.simonecarletti.com'))
+    # 
+    #   # get all posts tagged with ruby and matching URL 'http://www.simonecarletti.com'
+    #   d.posts_get(:tag => WWW::Delicious::Tag.new('ruby),
+    #               :url => URI.parse('http://www.simonecarletti.com'))
+    # 
     # 
     # === Options
     # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
@@ -373,6 +404,13 @@ module WWW #:nodoc:
     #
     # Returns a list of the most recent posts, filtered by argument.
     # 
+    #   # get the most recent posts
+    #   d.posts_recent()
+    # 
+    #   # get the 10 most recent posts
+    #   d.posts_recent(:count => 10)
+    # 
+    # 
     # === Options
     # <tt>:tag</tt>::   a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     # <tt>:count</tt>:: number of items to retrieve. (default: 15, maximum: 100).
@@ -385,7 +423,14 @@ module WWW #:nodoc:
 
     public
     #
-    # Returns a list of the most recent posts, filtered by argument.
+    # Returns a list of all posts, filtered by argument.
+    # 
+    #   # get all (this is a very expensive query)
+    #   d.posts_all()
+    # 
+    #   # get all posts matching ruby
+    #   d.posts_all(:tag => WWW::Delicious::Tag.new('ruby'))
+    # 
     # 
     # === Options
     # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
@@ -400,6 +445,15 @@ module WWW #:nodoc:
     #
     # Returns a list of dates with the number of posts at each date.
     # 
+    #   # get number of posts per date
+    #   d.posts_dates()
+    #   # => { '2008-05-05' => 12, '2008-05-06' => 3, ... }
+    # 
+    #   # get number posts per date tagged as ruby
+    #   d.posts_dates(:tag => WWW::Delicious::Tag.new('ruby'))
+    #   # => { '2008-05-05' => 10, '2008-05-06' => 3, ... }
+    # 
+    # 
     # === Options
     # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     #
@@ -412,6 +466,16 @@ module WWW #:nodoc:
     public
     #
     # Add a post to del.icio.us.
+    # +post_or_values+ can be either a +WWW::Delicious::Post+ instance
+    # or a Hash of params. This method accepts all params available
+    # to initialize a new +WWW::Delicious::Post+.
+    # 
+    #   # add a post from WWW::Delicious::Post
+    #   d.posts_add(WWW::Delicious::Post.new(:url => 'http://www.foobar.com', :title => 'Hello world!'))
+    # 
+    #   # add a post from values
+    #   d.posts_add(:url => 'http://www.foobar.com', :title => 'Hello world!')
+    # 
     #
     def posts_add(post_or_values)
       params = prepare_posts_add_params(post_or_values.clone)
@@ -421,12 +485,18 @@ module WWW #:nodoc:
 
     public
     #
-    # Deletes a post from del.icio.us.
+    # Deletes the post matching given +url+ from del.icio.us.
+    # +url+ can be either an URI instance or a string representation of a valid URL.
     # 
-    # === Params
-    # url::
-    #   the url of the item.
-    #   It can be either an +URI+ or a +String+.
+    # This method doesn't care whether a post with given +url+ exists.
+    # If not, the execution will silently return without rising any error.
+    # 
+    #   # delete a post from URI
+    #   d.post_delete(URI.parse('http://www.foobar.com/'))
+    # 
+    #   # delete a post from a string
+    #   d.post_delete('http://www.foobar.com/')
+    # 
     #
     def posts_delete(url)
       params = prepare_posts_params({:url => url}, [:url])
@@ -437,7 +507,8 @@ module WWW #:nodoc:
     
     protected
     #
-    # Initializes HTTP client.
+    # Initializes the HTTP client.
+    # It automatically enable +use_ssl+ flag according to +@base_uri+ scheme.
     #
     def init_http_client(options)
       http = Net::HTTP.new(@base_uri.host, 443)
@@ -466,6 +537,9 @@ module WWW #:nodoc:
     # * +NAME+ is the constant representing this library name
     # * +VERSION+ is the constant representing current library version
     # * +RUBY_VERSION+ is the version of Ruby interpreter the library is interpreted by
+    # 
+    #   default_user_agent
+    #   # => WWW::Delicious/0.1.0 (Ruby/1.8.6)
     #
     def default_user_agent()
       return "#{NAME}/#{VERSION} (Ruby/#{RUBY_VERSION})"
@@ -475,6 +549,10 @@ module WWW #:nodoc:
     protected
     #
     # Composes an HTTP query string from an hash of +options+.
+    # The result is URI encoded.
+    # 
+    #   http_build_query(:foo => 'baa', :bar => 'boo')
+    #   # => foo=baa&bar=boo
     #
     def http_build_query(params = {})
       return params.collect do |k,v| 
@@ -491,6 +569,9 @@ module WWW #:nodoc:
     # provides an identifiable user agent by default,
     # or the custom user agent set by +user_agent+ option 
     # when this istance has been created.
+    # 
+    #   request('/v1/api/path', :foo => 1, :bar => 2)
+    #   # => sends a GET request to /v1/api/path?foo=1&bar=2
     #
     def request(path, params = {})
       raise Error, 'Invalid HTTP Client' unless http_client
@@ -645,12 +726,10 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the params for a `bundles_set` request.
+    # Prepares the params for a `bundles_set` call
+    # and returns a Hash with the params ready for the HTTP request.
     # 
-    # === Returns
-    # An +Hash+ with params to supply to the HTTP request.
-    # 
-    # Raises::
+    # Raises::  WWW::Delicious::Error
     #
     def prepare_bundles_set_params(name_or_bundle, tags = [])
       bundle = prepare_param_bundle(name_or_bundle, tags) do |b|
@@ -666,12 +745,10 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the params for a `bundles_set` request.
+    # Prepares the params for a `bundles_set` call
+    # and returns a Hash with the params ready for the HTTP request.
     # 
-    # === Returns
-    # An +Hash+ with params to supply to the HTTP request.
-    # 
-    # Raises::
+    # Raises::  WWW::Delicious::Error
     #
     def prepare_bundles_delete_params(name_or_bundle)
       bundle = prepare_param_bundle(name_or_bundle) do |b|
@@ -682,12 +759,10 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the params for a `tags_rename` request.
+    # Prepares the params for a `tags_rename` call
+    # and returns a Hash with the params ready for the HTTP request.
     # 
-    # === Returns
-    # An +Hash+ with params to supply to the HTTP request.
-    # 
-    # Raises::
+    # Raises::  WWW::Delicious::Error
     #
     def prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
       from, to = [from_name_or_tag, to_name_or_tag].collect do |v|
@@ -698,12 +773,10 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the params for a `post_*` request.
+    # Prepares the params for a `post_*` call
+    # and returns a Hash with the params ready for the HTTP request.
     # 
-    # === Returns
-    # An +Hash+ with params to supply to the HTTP request.
-    # 
-    # Raises::
+    # Raises::  WWW::Delicious::Error
     #
     def prepare_posts_params(params, allowed_params = [])
       compare_params(params, allowed_params)
@@ -727,12 +800,10 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the params for a `post_add` request.
+    # Prepares the params for a `post_add` call
+    # and returns a Hash with the params ready for the HTTP request.
     # 
-    # === Returns
-    # An +Hash+ with params to supply to the HTTP request.
-    # 
-    # Raises::
+    # Raises::  WWW::Delicious::Error
     #
     def prepare_posts_add_params(post_or_values)
       post = case post_or_values
@@ -750,7 +821,7 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the +bundle+ params.
+    # Prepares the +bundle+ params for an API request.
     # 
     # If +name_or_bundle+ is a string,
     # creates a new <tt>WWW::Delicious::Bundle</tt> with
@@ -770,7 +841,7 @@ module WWW #:nodoc:
     
     protected
     #
-    # Prepares the +tag+ params.
+    # Prepares the +tag+ params for an API request.
     # 
     # If +name_or_tag+ is a string,
     # it creates a new <tt>WWW::Delicious::Tag</tt> with
@@ -792,14 +863,8 @@ module WWW #:nodoc:
     
     protected
     #
-    # Checks whether user given params are valid against valid params.
+    # Checks whether user given +params+ are valid against a defined collection of +valid_params+.
     # 
-    # === Params
-    # params::
-    #   an +Hash+ with user given params to validate
-    # valid_params::
-    #   an +Array+ of valid params keys to check against
-    #   
     # === Examples
     # 
     #   params = {:foo => 1, :bar => 2}
@@ -832,18 +897,24 @@ module WWW #:nodoc:
       #
       # Returns the +xmlattr+ attribute value for given +node+.
       # 
-      # If block is given and attrivute value is not nil
+      # If block is given and attribute value is not nil,
       # the content of the block is executed.
       # 
-      # === Params
-      # node::
-      #   The REXML::Element node context
-      # xmlattr::
-      #   A String corresponding to the name of the XML attribute to search for
-      #   
-      # === Return
-      # The value of the +xmlattr+ if the attribute exists for given +node+,
-      # +nil+ otherwise.
+      # === Examples
+      # 
+      #   dom = REXML::Document.new('<a name="1"><b>foo</b><b>bar</b></a>')
+      # 
+      #   dom.root.attribute_value(:name)
+      #   # => "1"
+      # 
+      #   dom.root.attribute_value(:name) { |v| v.to_i }
+      #   # => 1
+      # 
+      #   dom.root.attribute_value(:foo)
+      #   # => nil
+      # 
+      #   dom.root.attribute_value(:name) { |v| v.to_i }
+      #   # => nil
       #
       def attribute_value(xmlattr, &block) #:nodoc:
         value = if attr = self.attribute(xmlattr.to_s())
