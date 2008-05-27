@@ -94,6 +94,9 @@ module WWW #:nodoc:
     
     # del.icio.us account password
     attr_reader :password
+    
+    # base URI for del.icio.us API
+    attr_reader :base_uri
 
     
     # API Base URL
@@ -151,18 +154,28 @@ module WWW #:nodoc:
     #     d.update() # => Fri May 02 18:02:48 UTC 2008
     #   end
     #   # => self
+    # 
+    # You can also specify some additional options, including a custom user agent
+    # or the base URI for del.icio.us API.
+    #
+    #   WWW::Delicious('user', 'psw', :base_uri => 'https://ma.gnolia.com/api/mirrord') do |d|
+    #     # the following call is mirrored by ma.gnolia
+    #     d.update() # => Fri May 02 18:02:48 UTC 2008
+    #   end
+    #   # => self
     #   
     # === Options
     # This class accepts an Hash with additional options.
     # Here's the list of valid keys:
     #
     # <tt>:user_agent</tt>:: User agent to display in HTTP requests.
+    # <tt>:base_uri</tt>:: The base URI to del.icio.us API.
     # 
     def initialize(username, password, options = {}, &block) #  :yields: delicious
       @username, @password = username.to_s, password.to_s
 
       # set API base URI
-      @base_uri = URI.parse(API_BASE_URI)
+      @base_uri = URI.parse(options[:base_uri] || API_BASE_URI)
 
       init_user_agent(options)
       init_http_client(options)

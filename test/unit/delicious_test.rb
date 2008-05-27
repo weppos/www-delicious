@@ -25,9 +25,9 @@ class DeliciousTest < Test::Unit::TestCase
   # =========================================================================
   
   def test_initialize
-    obj = nil
-    assert_nothing_raised() { obj = WWW::Delicious.new(TEST_USERNAME, TEST_PASSWORD) }
-    assert_instance_of(WWW::Delicious, obj)
+    assert_nothing_raised() do 
+      assert_instance_of(WWW::Delicious, WWW::Delicious.new(TEST_USERNAME, TEST_PASSWORD))
+    end
   end
   
   def test_initialize_with_block
@@ -38,9 +38,9 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   def test_initialize_with_options
-    obj = nil
-    assert_nothing_raised() { obj = WWW::Delicious.new(TEST_USERNAME, TEST_PASSWORD, {:user_agent => 'ruby/test'}) }
-    assert_instance_of(WWW::Delicious, obj)
+    assert_nothing_raised() do
+      assert_instance_of(WWW::Delicious, WWW::Delicious.new(TEST_USERNAME, TEST_PASSWORD, {:user_agent => 'ruby/test'}))
+    end
   end
   
   def test_initialize_raises_without_account
@@ -60,16 +60,30 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   def test_initialize_option_user_agent
-    obj = nil
     useragent = 'MyClass/1.0 (Foo/Bar +http://foo.com/)'
-    assert_nothing_raised() { obj = instance(:user_agent => useragent) }
-    assert_equal(useragent, obj.user_agent)
+    assert_nothing_raised() do 
+      obj = instance(:user_agent => useragent)
+      assert_equal(useragent, obj.user_agent)
+    end
   end
   
   def test_initialize_option_user_agent_default
     useragent = instance.user_agent
     assert_match("Ruby/#{RUBY_VERSION}", useragent)
     assert_match("#{WWW::Delicious::NAME}/#{WWW::Delicious::VERSION}", useragent)
+  end
+  
+  def test_initialize_option_base_uri
+    base_uri = 'https://ma.gnolia.com/api/mirrord'
+    assert_nothing_raised() do 
+      obj = instance(:base_uri => base_uri)
+      assert_equal(URI.parse(base_uri), obj.base_uri)
+    end
+  end
+  
+  def test_initialize_option_base_uri_default
+    base_uri = instance.base_uri
+    assert_equal(URI.parse('https://api.del.icio.us'), base_uri)
   end
 
   
