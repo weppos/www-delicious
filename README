@@ -176,13 +176,18 @@ You can also create new bundles or delete existing ones.
 
 == Documentation
 
-Visit the website[http://code.simonecarletti.com/] for the full documentation
+Visit the website[http://code.simonecarletti.com/www-delicious] for the full documentation
 and more examples.
+
+
+== Author
+
+* {Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
 
 
 == Website and Project Home
 
-* {Project Homepage}[http://code.simonecarletti.com/]
+* {Project Homepage}[http://code.simonecarletti.com/www-delicious]
 * {At GitHub}[http://github.com/weppos/www-delicious/]
 * {At RubyForge}[http://rubyforge.org/projects/www-delicious/]
 
@@ -193,7 +198,7 @@ Feel free to email {Simone Carletti}[mailto:weppos@weppos.net]
 with any questions or feedback.
 
 Please submit your bug reports to the Redmine installation for WWW::Delicious
-available at http://code.simonecarletti.com/.
+available at http://code.simonecarletti.com/www-delicious.
 
 
 == TODO
