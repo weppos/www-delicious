@@ -165,7 +165,7 @@ module WWW #:nodoc:
     #   # => self
     #   
     # === Options
-    # This class accepts an Hash with additional options.
+    # This class accepts a Hash with additional options.
     # Here's the list of valid keys:
     #
     # <tt>:user_agent</tt>:: User agent to display in HTTP requests.
