@@ -184,6 +184,8 @@ and more examples.
 
 * {Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
 
+If you like this software, please {recommend me}[http://www.workingwithrails.com/person/11967-simone-carletti] at Working with Rails.
+
 
 == Website and Project Home
 
