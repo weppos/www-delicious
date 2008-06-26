@@ -20,7 +20,9 @@ require 'test/unit'
 require 'www/delicious'
 
 # testcase file path
-TESTCASE_PATH   = File.dirname(__FILE__) + '/_files' unless defined?(TESTCASE_PATH)
+TESTCASE_PATH   = File.dirname(__FILE__) + '/testcases' unless defined?(TESTCASE_PATH)
+# TODO: use a less side effect prone check.
+#       consider to split tests into offline + online tests
 TEST_REAL_TESTS = ENV['DUSERNAME'] && ENV['DPASSWORD'] unless defined?(TEST_REAL_TESTS)
 
 
@@ -39,46 +41,38 @@ module WWW
       end
 
       protected
-      #
-      # Returns a valid instance of <tt>WWW::Delicious</tt>
-      # initialized with given +options+.
-      #
-      def instance(options = {}, &block)
-        username = options.delete(:username) || @default_username
-        password = options.delete(:password) || @default_password
-        return WWW::Delicious.new(username, password, options, &block)
-      end
-
-      protected
-      #
-      # Returns true if tests that requires an HTTP connection must be skipped.
-      #
-      def skip_online?
-        return !@run_online_tests
-      end
-
-      protected
-      #
-      # Loads a marshaled response for given +path+.
-      #
-      def load_response(path)
-        return Marshal.load(File.read(path))
-      end
-
-      protected
-      #
-      # Loads a marshaled response for given +path+.
-      #
-      def set_response(content, path = nil)
-        path ||= TESTCASE_PATH + '/marshaled_response'
-        response = Marshal.load(File.read(path))
-        response.instance_variable_set(:@body, content)
-        Net::HTTP.response = response
-      end
+        
+        # Returns a valid instance of <tt>WWW::Delicious</tt>
+        # initialized with given +options+.
+        def instance(options = {}, &block)
+          username = options.delete(:username) || @default_username
+          password = options.delete(:password) || @default_password
+          return WWW::Delicious.new(username, password, options, &block)
+        end
+        
+        # Returns true if tests that requires an HTTP connection must be skipped.
+        def skip_online?
+          return !@run_online_tests
+        end
+        
+        # Loads a marshaled response for given +path+.
+        def load_response(path)
+          return Marshal.load(File.read(path))
+        end
+        
+        # Loads a marshaled response for given +path+.
+        def set_response(content, path = nil)
+          path ||= TESTCASE_PATH + '/marshaled_response'
+          response = Marshal.load(File.read(path))
+          response.instance_variable_set(:@body, content)
+          Net::HTTP.response = response
+        end
       
     end
   end
 end
+
+# TODO: use mocha gem instead of tweaking Net::HTTP classes
 
 module Net
   class HTTP < Protocol
