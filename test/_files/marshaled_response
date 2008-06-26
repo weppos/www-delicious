@@ -1,8 +1,0 @@
-o:Net::HTTPOK:@http_version"1.1:@socket0:
-@body"S<?xml version='1.0' standalone='yes'?>
-<update time="2008-03-12T08:41:20Z" />
-:@message"OK:
-@readT:@header{
-"connection["
-close"p3p["Ìpolicyref="http://p3p.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE GOV""content-type["application/xml"	date[""Sat, 15 Mar 2008 15:51:23 GMT"transfer-encoding["chunked:
-@code"200:@body_existT
