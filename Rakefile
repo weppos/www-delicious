@@ -13,7 +13,7 @@ PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
 PKG_SUMMARY = "Ruby client for del.icio.us API."
 PKG_FILES   = FileList.new("{lib,test}/**/*.rb") do |fl|
   fl.exclude 'TODO'
-  fl.include %w(README.rdoc README CHANGELOG MIT-LICENSE)
+  fl.include %w(README.rdoc CHANGELOG.rdoc MIT-LICENSE.rdoc)
   fl.include %w(Rakefile setup.rb)
 end
 RUBYFORGE_PROJECT = 'www-delicious'
@@ -45,11 +45,11 @@ desc "Generate RDoc documentation"
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir   = 'doc'
   rdoc.title      = "#{PKG_NAME} -- #{PKG_SUMMARY}"
-  rdoc.main       = "README"
+  rdoc.main       = "README.rdoc"
   rdoc.options   << "--inline-source" << "--line-numbers"
   rdoc.options   << '--charset' << 'utf-8'
   rdoc.options   << '--force-update'
-  rdoc.rdoc_files.include("README.rdoc", "README", "CHANGELOG", "MIT-LICENSE")
+  rdoc.rdoc_files.include("README.rdoc", "CHANGELOG.rdoc", "MIT-LICENSE.rdoc")
   rdoc.rdoc_files.include("lib/**/*.rb")
 end
 
