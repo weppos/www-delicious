@@ -439,7 +439,7 @@ module WWW #:nodoc:
     # Returns a list of all posts, filtered by argument.
     # 
     #   # get all (this is a very expensive query)
-    #   d.posts_all()
+    #   d.posts_all
     # 
     #   # get all posts matching ruby
     #   d.posts_all(:tag => WWW::Delicious::Tag.new('ruby'))
@@ -459,7 +459,7 @@ module WWW #:nodoc:
     # Returns a list of dates with the number of posts at each date.
     # 
     #   # get number of posts per date
-    #   d.posts_dates()
+    #   d.posts_dates
     #   # => { '2008-05-05' => 12, '2008-05-06' => 3, ... }
     # 
     #   # get number posts per date tagged as ruby
@@ -666,9 +666,10 @@ module WWW #:nodoc:
     def parse_and_eval_execution_response(body)
       dom = parse_and_validate_response(body, :root_name => 'result')
 
-      rsp = dom.root.attribute_value(:code)
-      rsp = dom.root.text if rsp.nil?
-      raise Error, "Invalid response, #{rsp}" unless %w(done ok).include?(rsp)
+      response = dom.root.attribute_value(:code)
+      response = dom.root.text if response.nil?
+      raise Error, "Invalid response, #{response}" unless %w(done ok).include?(response)
+      true
     end
     
     protected
@@ -942,6 +943,28 @@ module WWW #:nodoc:
     end
 
   end
+end
+
+
+class Object
+  
+  # An object is blank if it's false, empty, or a whitespace string.
+  # For example, "", "   ", +nil+, [], and {} are blank.
+  #
+  # This simplifies
+  # 
+  #   if !address.nil? && !address.empty?
+  # 
+  # to
+  # 
+  #   if !address.blank?
+  #
+  # Object#blank? comes from the GEM ActiveSupport 2.1.
+  # 
+  def blank? 
+    respond_to?(:empty?) ? empty? : !self
+  end unless Object.method_defined? :blanks?
+  
 end
 
 

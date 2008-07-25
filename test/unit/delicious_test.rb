@@ -17,7 +17,6 @@ require File.dirname(__FILE__) + '/../helper'
 
 
 class DeliciousTest < Test::Unit::TestCase
-  include WWW::Delicious::TestCase
   
   
   # =========================================================================
@@ -417,18 +416,26 @@ class DeliciousTest < Test::Unit::TestCase
   def test_parse_posts_response_without_bundles_root_node
     _test_parse_invalid_node(:parse_posts_response, /`posts`/)
   end
-
   
   
   protected
-  #
-  # Tests a typical invalid node response.
-  #
-  def _test_parse_invalid_node(method, match)
-    exception = assert_raise(WWW::Delicious::ResponseError) do
-      instance.send(method, File.read(TESTCASE_PATH + '/invalid_root.xml'))
+  
+    #
+    # Tests a typical invalid node response.
+    #
+    def _test_parse_invalid_node(method, match)
+      exception = assert_raise(WWW::Delicious::ResponseError) do
+        instance.send(method, File.read(TESTCASE_PATH + '/invalid_root.xml'))
+      end
+      assert_match(match, exception.message)
     end
-    assert_match(match, exception.message)
-  end
+    
+    # Loads a marshaled response for given +path+.
+    def set_response(content, path = nil)
+      path ||= TESTCASE_PATH + '/marshaled_response'
+      response = Marshal.load(File.read(path))
+      response.instance_variable_set(:@body, content)
+      Net::HTTP.response = response
+    end
   
 end
