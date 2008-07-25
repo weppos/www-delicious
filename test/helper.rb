@@ -20,10 +20,27 @@ require 'test/unit'
 require 'www/delicious'
 
 # testcase file path
-TESTCASE_PATH   = File.dirname(__FILE__) + '/testcases' unless defined?(TESTCASE_PATH)
+TESTCASES_PATH   = File.dirname(__FILE__) + '/testcases' unless defined?(TESTCASES_PATH)
 
 # prevent online tests to be run automatically
 RUN_ONLINE_TESTS = (ENV['ONLINE'] == "1") unless defined? RUN_ONLINE_TESTS
+
+module Test
+  module Unit
+    class TestCase
+      
+      # asserts all given attributes match mapped value in +instance+.
+      # +instance+ is the instance to be tested, 
+      # +expected_mapping+ is the attribute => value mapping.
+      def assert_attributes(instance, expected_mapping)
+        expected_mapping.each do |key, value|
+          assert_equal(value, instance.send(key.to_sym), "Expected `#{key}` to be `#{value}`")
+        end
+      end
+      
+    end
+  end
+end
 
 
 # TODO: use mocha gem instead of tweaking Net::HTTP classes
@@ -33,7 +50,7 @@ RUN_ONLINE_TESTS = (ENV['ONLINE'] == "1") unless defined? RUN_ONLINE_TESTS
 #     
 #     class << self
 #       def response()
-#         r = @@offline_response ||= Marshal.load(File.read(TESTCASE_PATH + '/marshaled_response'))
+#         r = @@offline_response ||= Marshal.load(File.read(TESTCASES_PATH + '/marshaled_response'))
 #         @@offline_response = nil
 #         r
 #       end

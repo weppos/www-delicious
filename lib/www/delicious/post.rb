@@ -60,14 +60,14 @@ module WWW #:nodoc:
       # Initializes <tt>WWW::Delicious::Post</tt> from a REXML fragment.
       #
       def initialize_from_rexml(element)
-        self.url    = element.attribute_value(:href) { |v| URI.parse(v) }
-        self.title  = element.attribute_value(:description)
-        self.notes  = element.attribute_value(:extended)
-        self.others = element.attribute_value(:others).to_i() # cast nil to 0
-        self.uid    = element.attribute_value(:hash)
-        self.tags   = element.attribute_value(:tag)  { |v| v.split(' ') }.to_a()
-        self.time   = element.attribute_value(:time) { |v| Time.parse(v) }
-        self.shared = element.attribute_value(:shared) { |v| v == 'no' ? false : true }
+        self.url    = element.if_attribute_value(:href) { |v| URI.parse(v) }
+        self.title  = element.if_attribute_value(:description)
+        self.notes  = element.if_attribute_value(:extended)
+        self.others = element.if_attribute_value(:others).to_i() # cast nil to 0
+        self.uid    = element.if_attribute_value(:hash)
+        self.tags   = element.if_attribute_value(:tag)  { |v| v.split(' ') }.to_a()
+        self.time   = element.if_attribute_value(:time) { |v| Time.parse(v) }
+        self.shared = element.if_attribute_value(:shared) { |v| v == 'no' ? false : true }
       end
       
       public

@@ -101,7 +101,7 @@ class DeliciousTest < Test::Unit::TestCase
   def test_request_waits_necessary_time_between_requests
     # use valid_account? as a safe request to prevent tests 
     # run with invalid credential to fail
-    r = File.read(TESTCASE_PATH + '/update_success.xml')
+    r = File.read(TESTCASES_PATH + '/update_success.xml')
     
     obj = instance
     set_response(r)
@@ -122,14 +122,14 @@ class DeliciousTest < Test::Unit::TestCase
   # =========================================================================
   
   def test_update
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     results = nil
     assert_nothing_raised() { results = instance.update() }
     assert_equal(results, Time.parse("2008-03-12T08:41:20Z"))
   end
   
   def test_update_raises_without_update_root_node
-    set_response(File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/bundles_all_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.update()
     end
@@ -146,7 +146,7 @@ class DeliciousTest < Test::Unit::TestCase
   # * bundles_delete
   
   def test_bundles_all
-    set_response(File.read(TESTCASE_PATH + '/bundles_all_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/bundles_all_success.xml'))
     results = nil
     
     assert_nothing_raised() { results = instance.bundles_all() }
@@ -167,7 +167,7 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   def test_bundles_all_empty
-    set_response(File.read(TESTCASE_PATH + '/bundles_all_success_empty.xml'))
+    set_response(File.read(TESTCASES_PATH + '/bundles_all_success_empty.xml'))
     results = nil
     assert_nothing_raised() { results = instance.bundles_all() }
     assert_instance_of(Array, results)
@@ -175,7 +175,7 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   def test_bundles_all_raises_without_bundles_root_node
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.bundles_all()
     end
@@ -184,12 +184,12 @@ class DeliciousTest < Test::Unit::TestCase
 
 
   def test_bundles_set
-    set_response(File.read(TESTCASE_PATH + '/bundles_set_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/bundles_set_success.xml'))
     assert_nothing_raised() { instance.bundles_set('name', %w(foo bar)) }
   end
   
   def test_bundles_delete_raises_without_result_root_node
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.bundles_set('name', %w(foo bar))
     end
@@ -198,12 +198,12 @@ class DeliciousTest < Test::Unit::TestCase
 
   
   def test_bundles_delete
-    set_response(File.read(TESTCASE_PATH + '/bundles_delete_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/bundles_delete_success.xml'))
     assert_nothing_raised() { instance.bundles_delete('name') }
   end
   
   def test_bundles_delete_raises_without_result_root_node
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.bundles_delete('name')
     end
@@ -220,7 +220,7 @@ class DeliciousTest < Test::Unit::TestCase
 
   
   def test_tags_get
-    set_response(File.read(TESTCASE_PATH + '/tags_get_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/tags_get_success.xml'))
     results = nil
 
     assert_nothing_raised() { results = instance.tags_get() }
@@ -241,7 +241,7 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   def test_tags_get_empty
-    set_response(File.read(TESTCASE_PATH + '/tags_get_success_empty.xml'))
+    set_response(File.read(TESTCASES_PATH + '/tags_get_success_empty.xml'))
     results = nil
     assert_nothing_raised() { results = instance.tags_get() }
     assert_instance_of(Array, results)
@@ -249,7 +249,7 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   def test_tags_get_raises_without_bundles_root_node
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.tags_get()
     end
@@ -258,12 +258,12 @@ class DeliciousTest < Test::Unit::TestCase
 
   
   def test_tags_rename
-    set_response(File.read(TESTCASE_PATH + '/tags_rename_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/tags_rename_success.xml'))
     assert_nothing_raised() { instance.tags_rename('old', 'new') }
   end
   
   def test_tags_rename_raises_without_result_root_node
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.tags_rename('old', 'new')
     end
@@ -306,14 +306,14 @@ class DeliciousTest < Test::Unit::TestCase
   # =========================================================================
   
   def test_posts_dates
-    set_response(File.read(TESTCASE_PATH + '/posts_dates_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/posts_dates_success.xml'))
     results = nil
     assert_nothing_raised() { results = instance.posts_dates() }
     assert_instance_of(Hash, results)
   end
   
   def test_posts_dates_raises_without_dates_root_node
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.posts_dates()
     end
@@ -327,10 +327,10 @@ class DeliciousTest < Test::Unit::TestCase
   def test_posts_add
     params = {:url => 'http://localhost', :title => 'Just a test'}
     
-    set_response(File.read(TESTCASE_PATH + '/posts_add_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/posts_add_success.xml'))
     assert_nothing_raised() { instance.posts_add(WWW::Delicious::Post.new(params)) }
     
-    set_response(File.read(TESTCASE_PATH + '/posts_add_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/posts_add_success.xml'))
     assert_nothing_raised() { instance.posts_add(params) }
   end
 
@@ -340,12 +340,12 @@ class DeliciousTest < Test::Unit::TestCase
   # =========================================================================
   
   def test_posts_delete
-    set_response(File.read(TESTCASE_PATH + '/posts_delete_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/posts_delete_success.xml'))
     assert_nothing_raised() { instance.posts_delete('test') }
   end
   
   def test_posts_delete_raises_without_result_root_node
-    set_response(File.read(TESTCASE_PATH + '/update_success.xml'))
+    set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
     exception = assert_raise(WWW::Delicious::ResponseError) do
       instance.posts_delete('test')
     end
@@ -390,7 +390,7 @@ class DeliciousTest < Test::Unit::TestCase
 
   def test_parse_posts_response
     response = instance.send(:parse_posts_response, 
-      File.read(TESTCASE_PATH + '/posts_success.xml'))
+      File.read(TESTCASES_PATH + '/posts_success.xml'))
     assert_instance_of(Array, response)
     assert_equal(1, response.length)
     
@@ -408,7 +408,7 @@ class DeliciousTest < Test::Unit::TestCase
 
   def test_parse_posts_response_empty
     response = instance.send(:parse_posts_response, 
-      File.read(TESTCASE_PATH + '/posts_success_empty.xml'))
+      File.read(TESTCASES_PATH + '/posts_success_empty.xml'))
     assert_instance_of(Array, response)
     assert_equal(0, response.length)
   end
@@ -425,14 +425,14 @@ class DeliciousTest < Test::Unit::TestCase
     #
     def _test_parse_invalid_node(method, match)
       exception = assert_raise(WWW::Delicious::ResponseError) do
-        instance.send(method, File.read(TESTCASE_PATH + '/invalid_root.xml'))
+        instance.send(method, File.read(TESTCASES_PATH + '/invalid_root.xml'))
       end
       assert_match(match, exception.message)
     end
     
     # Loads a marshaled response for given +path+.
     def set_response(content, path = nil)
-      path ||= TESTCASE_PATH + '/marshaled_response'
+      path ||= TESTCASES_PATH + '/marshaled_response'
       response = Marshal.load(File.read(path))
       response.instance_variable_set(:@body, content)
       Net::HTTP.response = response

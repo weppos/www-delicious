@@ -666,7 +666,7 @@ module WWW #:nodoc:
     def parse_and_eval_execution_response(body)
       dom = parse_and_validate_response(body, :root_name => 'result')
 
-      response = dom.root.attribute_value(:code)
+      response = dom.root.if_attribute_value(:code)
       response = dom.root.text if response.nil?
       raise Error, "Invalid response, #{response}" unless %w(done ok).include?(response)
       true
@@ -678,7 +678,7 @@ module WWW #:nodoc:
     #
     def parse_update_response(body)
       dom = parse_and_validate_response(body, :root_name => 'update')
-      return dom.root.attribute_value(:time) { |v| Time.parse(v) }
+      return dom.root.if_attribute_value(:time) { |v| Time.parse(v) }
     end
     
     protected
@@ -730,8 +730,8 @@ module WWW #:nodoc:
       results = {}
       
       dom.root.elements.each('date') do |xml|
-        date  = xml.attribute_value(:date) 
-        count = xml.attribute_value(:count).to_i()
+        date  = xml.if_attribute_value(:date) 
+        count = xml.if_attribute_value(:count).to_i()
         results[date] = count
       end
       return results
@@ -906,10 +906,9 @@ module WWW #:nodoc:
 
     
     module XMLUtils #:nodoc:
-
-      public
+      
       #
-      # Returns the +xmlattr+ attribute value for given +node+.
+      # Returns the +xmlattr+ attribute value for current <tt>REXML::Element</tt>.
       # 
       # If block is given and attribute value is not nil,
       # the content of the block is executed.
@@ -918,29 +917,56 @@ module WWW #:nodoc:
       # 
       #   dom = REXML::Document.new('<a name="1"><b>foo</b><b>bar</b></a>')
       # 
-      #   dom.root.attribute_value(:name)
+      #   dom.root.if_attribute_value(:name)
       #   # => "1"
       # 
-      #   dom.root.attribute_value(:name) { |v| v.to_i }
+      #   dom.root.if_attribute_value(:name) { |v| v.to_i }
       #   # => 1
       # 
-      #   dom.root.attribute_value(:foo)
+      #   dom.root.if_attribute_value(:foo)
       #   # => nil
       # 
-      #   dom.root.attribute_value(:name) { |v| v.to_i }
+      #   dom.root.if_attribute_value(:name) { |v| v.to_i }
       #   # => nil
       #
-      def attribute_value(xmlattr, &block) #:nodoc:
+      def if_attribute_value(xmlattr, &block) #:nodoc:
         value = if attr = self.attribute(xmlattr.to_s())
             attr.value()
           else
             nil
           end
         value = yield value if !value.nil? and block_given?
-        return value
+        value
+      end unless Element.method_defined? :if_attribute_value
+      
+      #
+      # Returns the value of +expression+ child of this element, if it exists.
+      # If blog is given, block is called on +expression+ element value
+      # and the result is returned.
+      #
+      def if_element_value(expression, &block)
+        if_element(expression) do |element|
+          value = element.text
+          value = yield value if block_given?
+          value
+        end
       end
-
-    end
+      
+      #
+      # Executes the content of +block+ on +expression+
+      # child of this element, if it exists.
+      # Returns the result or +nil+ if +xmlelement+ doesn't exist.
+      #
+      def if_element(expression, &block)
+        raise LocalJumpError, "no block given" unless block_given?
+        if element = self.elements[expression.to_s]
+          yield element
+        else
+          nil
+        end
+      end
+    
+    end # XMLUtils
 
   end
 end

@@ -14,82 +14,45 @@
 #++
 
 
-module WWW #:nodoc:
+require 'www/delicious/element'
+
+
+module WWW
   class Delicious
 
-    class Tag
+    #
+    # = Delicious Tag
+    # 
+    # Represents a single Tag element.
+    #
+    class Tag < Element
       
-      # The name of the tag
-      attr_reader :name
+      # The name of the tag.
+      attr_accessor :name
       
       # The number of links tagged with this tag.
       # It should be set only from an API response.
-      attr_reader :count
+      attr_accessor :count
       
       
-      public
-      #
-      # Creates a new <tt>WWW::Delicious::Tag</tt>.
-      #
-      def initialize(values_or_rexml, &block) # :yields: tag
-        case values_or_rexml
-        when Hash
-          initialize_from_hash(values_or_rexml)
-        when REXML::Element
-          initialize_from_rexml(values_or_rexml)
-        else
-          raise ArgumentError, 'Expected `values_or_rexml` to be `Hash` or `REXML::Element`'
-        end
-        
-        yield(self) if block_given?
-        self
+      # Returns value for <tt>name</tt> attribute.
+      # Value is always normalized as lower string.
+      def name
+        @name.to_s.strip unless @name.nil?
       end
       
-      public
-      #
-      # Initializes <tt>WWW::Delicious::Tag</tt> from a REXML fragment.
-      #
-      def initialize_from_rexml(element)
-        self.name  = element.attribute_value(:tag)
-        self.count = element.attribute_value(:count)
+      # Returns value for <tt>count</tt> attribute.
+      # Value is always normalized to Fixnum.
+      def count
+        @count.to_i
       end
       
-      public
-      #
-      # Initializes <tt>WWW::Delicious::Tag</tt> from an Hash.
-      #
-      def initialize_from_hash(values)
-        self.name  = values[:name]
-        self.count = values[:count]
-      end
-      
-      
-      public
-      #
-      # Sets +name+ for this instance to given +value+.
-      # +value+ is always cast to a +String+.
-      # 
-      # Leading and trailing whitespaces are stripped.
-      #
-      def name=(value)
-	@name = value.to_s().strip()
-      end
-      
-      public
-      #
-      # Sets +count+ for this instance to given +value+.
-      # +value+ is always cast to +Integer+.
-      # 
-      def count=(value)
-	@count = value.to_i()
-      end
-      
-      public
       #
       # Returns a string representation of this Tag.
+      # In case name is nil this method will return an empty string.
       #
-      def to_s()
-	return self.name
+      def to_s
+        name.to_s
       end
       
       
@@ -111,7 +74,25 @@ module WWW #:nodoc:
       #   # => false
       #
       def api_valid?
-	return !name.empty?
+        return !name.empty?
+      end
+      
+      
+      class << self
+        
+        # 
+        # Creates and returns new instance from a REXML +element+.
+        # 
+        # Implements Element#from_rexml.
+        # 
+        def from_rexml(element)
+          raise ArgumentError, "`element` expected to be a `REXML::Element`" unless element.kind_of? REXML::Element
+          self.new do |instance|
+            instance.name  = element.if_attribute_value(:tag)
+            instance.count = element.if_attribute_value(:count) { |value| value.to_i }
+          end
+        end
+        
       end
       
     end

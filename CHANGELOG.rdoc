@@ -5,9 +5,21 @@
 
 * ADDED: :base_uri initialization option allows to create a new instance specifying a custom base_uri for all API calls. This is useful, for example, if you want to use ma.gno.lia Mirror'd APIs (http://wiki.ma.gnolia.com/Mirror%27d_API) instead the del.icio.us one (thanks to Jörg Battermann).
 
+* ADDED: two new REXML::Element core extension elements to enhance interaction with node elements.
+
 * FIXED: a wrong indentation in README file causes all list items to be rendered as source code.
 
 * CHANGED: improved documentation and added more examples (closes #21).
+
+* CHANGED: REXML::Element#attribute_value core extension has been renamed to REXML::Element#if_attribute_value.
+
+* CHANGED: Renamed TESTCASE_PATH to TESTCASES_PATH.
+
+* CHANGED: WWW::Delicious::Tag now extends WWW::Delicious::Element. Simplified WWW::Delicious::Tag class.
+
+* CHANGED: WWW::Delicious::Tag#to_s always returns a string even if name is nil.
+
+* CHANGED: WWW::Delicious::Tag :count attribute is now stored and returned as Fixnum instead of String.
 
 
 == Release 0.1.0 (2008-05-11)

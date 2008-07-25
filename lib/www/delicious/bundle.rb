@@ -44,8 +44,8 @@ module WWW #:nodoc:
       # Creates a new <tt>WWW::Delicious::Bundle</tt> from a REXML fragment.
       #
       def self.from_rexml(element)
-        return new(element.attribute_value(:name) { |v| v.to_s() },
-                   element.attribute_value(:tags) { |v| v.to_s().split(' ') })
+        return new(element.if_attribute_value(:name) { |v| v.to_s() },
+                   element.if_attribute_value(:tags) { |v| v.to_s().split(' ') })
       end
       
     end
