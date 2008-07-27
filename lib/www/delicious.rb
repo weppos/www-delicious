@@ -665,7 +665,6 @@ module WWW #:nodoc:
     #
     def parse_and_eval_execution_response(body)
       dom = parse_and_validate_response(body, :root_name => 'result')
-
       response = dom.root.if_attribute_value(:code)
       response = dom.root.text if response.nil?
       raise Error, "Invalid response, #{response}" unless %w(done ok).include?(response)
@@ -708,7 +707,7 @@ module WWW #:nodoc:
     #
     def parse_posts_response(body)
       dom  = parse_and_validate_response(body, :root_name => 'posts')
-      return dom.root.elements.collect('post') { |xml| Post.new(xml) }
+      return dom.root.elements.collect('post') { |xml| Post.from_rexml(xml) }
     end
     
     protected

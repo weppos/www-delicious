@@ -14,82 +14,68 @@
 #++
 
 
-module WWW #:nodoc:
-  class Delicious
+require 'www/delicious/element'
 
-    class Post
+
+module WWW
+  class Delicious
+    
+    class Post < Element
       
-      # TODO: filter and validate
-      attr_accessor :url, :title, :notes, :others, :uid, :tags, :time
-      attr_accessor :replace, :shared
+      # The Post URL
+      attr_accessor :url
       
-      public
-      #
-      # Creates a new <tt>WWW::Delicious::Post</tt> with given values.
-      # If +values_or_rexml+ is a REXML element, the element is parsed
-      # and all values assigned to this instance attributes.
-      #
-      def initialize(values_or_rexml, &block) #  :yields: post
-        case values_or_rexml
-          when Hash
-            initialize_from_hash(values_or_rexml)
-          when REXML::Element
-            initialize_from_rexml(values_or_rexml)
-          else
-            raise ArgumentError, 'Expected `values_or_rexml` to be `Hash` or `REXML::Element`'
-        end
-        
-        yield(self) if block_given?
-        self
+      # The title of the Post
+      attr_accessor :title
+      
+      # The extended description for the Post
+      attr_accessor :notes
+      
+      # The number of other users who saved this Post
+      attr_accessor :others
+      
+      # The unique Id for this Post
+      attr_accessor :uid
+      
+      # Tags for this Post
+      attr_accessor :tags
+      
+      # Timestamp this Post was last saved at
+      attr_accessor :time
+      
+      # Whether this Post must replace previous version of the same Post.
+      attr_accessor :replace
+      
+      # Whether this Post is private
+      attr_accessor :shared
+      
+      
+      # Returns the value for <tt>shared</tt> attribute.
+      def shared
+        !(@shared == false)
       end
       
-      public
-      #
-      # Initializes <tt>WWW::Delicious::Post</tt> from an +Hash+.
-      #
-      def initialize_from_hash(values)
-        %w(url title notes others udi tags time shared replace).each do |v|
-          self.instance_variable_set("@#{v}".to_sym(), values[v.to_sym()])
-        end
-        self.shared  = true    if self.shared.nil?
-        self.replace = true    if self.replace.nil?
+      # Returns the value for <tt>replace</tt> attribute.
+      def shared
+        !(@replace == false)
       end
       
-      public
-      #
-      # Initializes <tt>WWW::Delicious::Post</tt> from a REXML fragment.
-      #
-      def initialize_from_rexml(element)
-        self.url    = element.if_attribute_value(:href) { |v| URI.parse(v) }
-        self.title  = element.if_attribute_value(:description)
-        self.notes  = element.if_attribute_value(:extended)
-        self.others = element.if_attribute_value(:others).to_i() # cast nil to 0
-        self.uid    = element.if_attribute_value(:hash)
-        self.tags   = element.if_attribute_value(:tag)  { |v| v.split(' ') }.to_a()
-        self.time   = element.if_attribute_value(:time) { |v| Time.parse(v) }
-        self.shared = element.if_attribute_value(:shared) { |v| v == 'no' ? false : true }
-      end
-      
-      public
-      #
       # Returns a params-style representation suitable for API calls.
-      #
       def to_params()
         params = {}
-        params[:url] = self.url
-        params[:description] = self.title
-        params[:extended] = self.notes if self.notes
-        params[:shared] = self.shared
-        params[:tags] = self.tags.join(' ') if self.tags
-        params[:replace] = self.replace
-        params[:dt] = WWW::Delicious::TIME_CONVERTER.call(self.time) if self.time
-        return params
+        params[:url]          = url
+        params[:description]  = title
+        params[:extended]     = notes if notes
+        params[:shared]       = shared
+        params[:tags]         = tags.join(' ') if tags.respond_to? :join
+        params[:replace]      = replace
+        params[:dt]           = WWW::Delicious::TIME_CONVERTER.call(time) if time
+        params
       end
       
       
-      public
       #
-      # Returns wheter this object is valid for an API request.
+      # Returns whether this object is valid for an API request.
       # 
       # To be valid +url+ and +title+ must not be empty.
       # 
@@ -105,6 +91,30 @@ module WWW #:nodoc:
       #
       def api_valid?
         return !(url.nil? or url.empty? or title.nil? or title.empty?)
+      end
+      
+      
+      class << self
+        
+        # 
+        # Creates and returns new instance from a REXML +element+.
+        # 
+        # Implements Element#from_rexml.
+        # 
+        def from_rexml(element)
+          raise ArgumentError, "`element` expected to be a `REXML::Element`" unless element.kind_of? REXML::Element
+          self.new do |instance|
+            instance.url    = element.if_attribute_value(:href) { |v| URI.parse(v) }
+            instance.title  = element.if_attribute_value(:description)
+            instance.notes  = element.if_attribute_value(:extended)
+            instance.others = element.if_attribute_value(:others).to_i # cast nil to 0
+            instance.uid    = element.if_attribute_value(:hash)
+            instance.tags   = element.if_attribute_value(:tag)  { |v| v.split(' ') }.to_a
+            instance.time   = element.if_attribute_value(:time) { |v| Time.parse(v) }
+            instance.shared = element.if_attribute_value(:shared) { |v| v == 'no' ? false : true }
+          end
+        end
+        
       end
       
     end

@@ -17,11 +17,13 @@
 
 * CHANGED: Renamed TESTCASE_PATH to TESTCASES_PATH.
 
-* CHANGED: WWW::Delicious::Tag, WWW::Delicious::Bundle now extend WWW::Delicious::Element. Simplified classes.
+* CHANGED: WWW::Delicious::Tag, WWW::Delicious::Bundle, WWW::Delicious::Post now extend WWW::Delicious::Element. Simplified classes.
 
 * CHANGED: WWW::Delicious::Tag#to_s always returns a string even if name is nil.
 
 * CHANGED: WWW::Delicious::Tag :count attribute is now stored and returned as Fixnum instead of String.
+
+* CHANGED: Unit test reorganization (closes #22).
 
 
 == Release 0.1.0 (2008-05-11)

@@ -13,7 +13,7 @@
 #++
 
 
-module WWW #:nodoc:
+module WWW
   class Delicious
 
     
@@ -39,7 +39,7 @@ module WWW #:nodoc:
     # Usually raised in case of a malformed, invalid or empty XML response.
     #
     class ResponseError < Error; end
-
+    
     
   end
 end
