@@ -688,10 +688,7 @@ module WWW #:nodoc:
     #
     def parse_bundles_all_response(body)
       dom = parse_and_validate_response(body, :root_name => 'bundles')
-      bundles = []
-      
-      dom.root.elements.each('bundle') { |xml| bundles << Bundle.from_rexml(xml) }
-      return bundles
+      return dom.root.elements.collect('bundle') { |xml| Bundle.from_rexml(xml) }
     end
     
     protected
@@ -700,11 +697,8 @@ module WWW #:nodoc:
     # and returns an array of <tt>WWW::Delicious::Tag</tt>.
     #
     def parse_tags_get_response(body)
-      dom = parse_and_validate_response(body, :root_name => 'tags')
-      tags = []
-      
-      dom.root.elements.each('tag') { |xml| tags << Tag.new(xml) }
-      return tags
+      dom  = parse_and_validate_response(body, :root_name => 'tags')
+      return dom.root.elements.collect('tag') { |xml| Tag.from_rexml(xml) }
     end
     
     protected
@@ -713,11 +707,8 @@ module WWW #:nodoc:
     # and returns an array of <tt>WWW::Delicious::Post</tt>.
     #
     def parse_posts_response(body)
-      dom = parse_and_validate_response(body, :root_name => 'posts')
-      posts = []
-      
-      dom.root.elements.each('post') { |xml| posts << Post.new(xml) }
-      return posts
+      dom  = parse_and_validate_response(body, :root_name => 'posts')
+      return dom.root.elements.collect('post') { |xml| Post.new(xml) }
     end
     
     protected
@@ -726,15 +717,12 @@ module WWW #:nodoc:
     # and returns an +Hash+ of date => count.
     #
     def parse_posts_dates_response(body)
-      dom = parse_and_validate_response(body, :root_name => 'dates')
-      results = {}
-      
-      dom.root.elements.each('date') do |xml|
+      dom  = parse_and_validate_response(body, :root_name => 'dates')
+      return dom.root.get_elements('date').inject({}) do |collection, xml|
         date  = xml.if_attribute_value(:date) 
-        count = xml.if_attribute_value(:count).to_i()
-        results[date] = count
+        count = xml.if_attribute_value(:count)
+        collection.merge({ date => count })
       end
-      return results
     end
     
     
@@ -750,11 +738,7 @@ module WWW #:nodoc:
         raise Error, "Bundle name is empty" if b.name.empty?
         raise Error, "Bundle must contain at least one tag" if b.tags.empty?
       end
-
-      return {
-        :bundle => bundle.name,
-        :tags   => bundle.tags.join(' '),
-      }
+      return { :bundle => bundle.name, :tags => bundle.tags.join(' ') }
     end
     
     protected
@@ -844,13 +828,14 @@ module WWW #:nodoc:
     #
     def prepare_param_bundle(name_or_bundle, tags = [], &block) #  :yields: bundle
       bundle = case name_or_bundle
-      when WWW::Delicious::Bundle
-        name_or_bundle
-      else
-        Bundle.new(name_or_bundle.to_s(), tags)
-      end
+        when WWW::Delicious::Bundle
+          name_or_bundle
+        else
+          Bundle.new(:name => name_or_bundle, :tags => tags)
+        end
+      
       yield(bundle) if block_given?
-      return bundle
+      bundle
     end
     
     protected
@@ -863,16 +848,16 @@ module WWW #:nodoc:
     #
     def prepare_param_tag(name_or_tag, &block) #  :yields: tag
       tag = case name_or_tag
-      when WWW::Delicious::Tag
-        name_or_tag
-      else
-        Tag.new(:name => name_or_tag.to_s())
-      end
+        when WWW::Delicious::Tag
+          name_or_tag
+        else
+          Tag.new(:name => name_or_tag.to_s)
+        end
       
       yield(tag) if block_given?
       raise "Invalid `tag` value supplied" unless tag.api_valid?
 
-      return tag
+      tag
     end
     
     protected
@@ -900,8 +885,7 @@ module WWW #:nodoc:
 
       # compute options difference
       difference = params.keys - valid_params
-      raise Error, 
-        "Invalid params: `#{difference.join('`, `')}`" unless difference.empty?
+      raise Error, "Invalid params: `#{difference.join('`, `')}`" unless difference.empty?
     end
 
     
@@ -937,7 +921,7 @@ module WWW #:nodoc:
           end
         value = yield value if !value.nil? and block_given?
         value
-      end unless Element.method_defined? :if_attribute_value
+      end
       
       #
       # Returns the value of +expression+ child of this element, if it exists.

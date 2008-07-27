@@ -9,13 +9,15 @@
 
 * FIXED: a wrong indentation in README file causes all list items to be rendered as source code.
 
+* FIXED: Missing WWW::Delicious::Bundle#to_s method causes a class ID representation to be returned.
+
 * CHANGED: improved documentation and added more examples (closes #21).
 
 * CHANGED: REXML::Element#attribute_value core extension has been renamed to REXML::Element#if_attribute_value.
 
 * CHANGED: Renamed TESTCASE_PATH to TESTCASES_PATH.
 
-* CHANGED: WWW::Delicious::Tag now extends WWW::Delicious::Element. Simplified WWW::Delicious::Tag class.
+* CHANGED: WWW::Delicious::Tag, WWW::Delicious::Bundle now extend WWW::Delicious::Element. Simplified classes.
 
 * CHANGED: WWW::Delicious::Tag#to_s always returns a string even if name is nil.
 
