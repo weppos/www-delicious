@@ -185,66 +185,55 @@ class DeliciousTest < Test::Unit::TestCase
   # end
   # 
   # 
-  # # =========================================================================
-  # # Tags
-  # # =========================================================================
-  # # Test all tag calls and related methods.
-  # # * tags_get
-  # # * tags_rename
-  # 
-  # 
-  # def test_tags_get
-  #   set_response(File.read(TESTCASES_PATH + '/tags_get_success.xml'))
-  #   results = nil
-  # 
-  #   assert_nothing_raised() { results = instance.tags_get() }
-  #   assert_instance_of(Array, results)
-  #   assert_equal(2, results.length)
-  #   
-  #   expected = [
-  #     ['activedesktop', 1],
-  #     ['business', 14],
-  #   ]
-  #   
-  #   results.each_with_index do |tag, index|
-  #     assert_instance_of(WWW::Delicious::Tag, tag)
-  #     name, count = expected[index]
-  #     assert_equal(name, tag.name)
-  #     assert_equal(count, tag.count)
-  #   end
-  # end
-  # 
-  # def test_tags_get_empty
-  #   set_response(File.read(TESTCASES_PATH + '/tags_get_success_empty.xml'))
-  #   results = nil
-  #   assert_nothing_raised() { results = instance.tags_get() }
-  #   assert_instance_of(Array, results)
-  #   assert_equal(0, results.length)
-  # end
-  # 
-  # def test_tags_get_raises_without_bundles_root_node
-  #   set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
-  #   exception = assert_raise(WWW::Delicious::ResponseError) do
-  #     instance.tags_get()
-  #   end
-  #   assert_match(/`tags`/, exception.message)
-  # end
-  # 
-  # 
-  # def test_tags_rename
-  #   set_response(File.read(TESTCASES_PATH + '/tags_rename_success.xml'))
-  #   assert_nothing_raised() { instance.tags_rename('old', 'new') }
-  # end
-  # 
-  # def test_tags_rename_raises_without_result_root_node
-  #   set_response(File.read(TESTCASES_PATH + '/update_success.xml'))
-  #   exception = assert_raise(WWW::Delicious::ResponseError) do
-  #     instance.tags_rename('old', 'new')
-  #   end
-  #   assert_match(/`result`/, exception.message)
-  # end
-  # 
-  # 
+  # =========================================================================
+  # Tags
+  # =========================================================================
+
+  def test_tags_get
+    @delicious.expects(:request).once.returns(mock_response('/response/tags_get_success.xml'))
+    expected = [ ['activedesktop', 1], ['business', 14] ]
+    
+    results = @delicious.tags_get
+    assert_instance_of(Array, results)
+    assert_equal(2, results.length)
+    
+    results.each_with_index do |tag, index|
+      assert_instance_of(WWW::Delicious::Tag, tag)
+      name, count = expected[index]
+      assert_equal(name, tag.name)
+      assert_equal(count, tag.count)
+    end
+  end
+
+  def test_tags_get_empty
+    @delicious.expects(:request).once.returns(mock_response('/response/tags_get_success_empty.xml'))
+    results = @delicious.tags_get
+    assert_instance_of(Array, results)
+    assert_equal(0, results.length)
+  end
+  
+  def test_tags_get_raises_without_bundles_root_node
+    @delicious.expects(:request).once.returns(mock_response('/response/update_success.xml'))
+    error = assert_raise(WWW::Delicious::ResponseError) do
+      @delicious.tags_get
+    end
+    assert_match(/`tags`/, error.message)
+  end
+
+  def test_tags_rename
+    @delicious.expects(:request).once.returns(mock_response('/response/tags_rename_success.xml'))
+    assert(@delicious.tags_rename('old', 'new'))
+  end
+  
+  def test_tags_rename_raises_without_result_root_node
+    @delicious.expects(:request).once.returns(mock_response('/response/update_success.xml'))
+    error = assert_raise(WWW::Delicious::ResponseError) do
+      @delicious.tags_rename('foo', 'bar')
+    end
+    assert_match(/`result`/, error.message)
+  end
+  
+  
   # # =========================================================================
   # # These tests check posts_get call and all related methods.
   # # TODO: as soon as a full offline test system is ready,
