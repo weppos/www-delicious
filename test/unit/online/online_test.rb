@@ -30,12 +30,6 @@ class OnlineTest < Test::Unit::TestCase
   end
   
   
-  def test_invalid_account
-    # Hopefully nobody will create an account with the following credentials
-    invalid_account = WWW::Delicious.new('foo', 'bar')
-    assert(!invalid_account.valid_account?)
-  end
-  
   def test_update
     response = @delicious.update
     assert_instance_of(Time, response)

@@ -1,0 +1,23 @@
+--- !ruby/object:Net::HTTPOK 
+body: |
+  <?xml version="1.0" encoding="UTF-8"?>
+  <update time="2008-07-29T19:29:39Z" inboxnew="0"/>
+  <!-- fe01.api.del.ac4.yahoo.net uncompressed/chunked Tue Jul 29 13:51:05 PDT 2008 -->
+
+body_exist: true
+code: "200"
+header: 
+  connection: 
+  - close
+  p3p: 
+  - policyref="http://p3p.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE GOV"
+  content-type: 
+  - text/xml; charset=utf-8
+  date: 
+  - Tue, 29 Jul 2008 20:51:05 GMT
+  transfer-encoding: 
+  - chunked
+http_version: "1.1"
+message: OK
+read: true
+socket: 

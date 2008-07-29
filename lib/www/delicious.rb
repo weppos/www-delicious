@@ -559,7 +559,6 @@ module WWW #:nodoc:
     end
     
     
-    protected
     #
     # Composes an HTTP query string from an hash of +options+.
     # The result is URI encoded.
@@ -573,7 +572,6 @@ module WWW #:nodoc:
       end.compact.join('&')
     end
     
-    protected
     #
     # Sends an HTTP GET request to +path+ and appends given +params+.
     # 
@@ -596,11 +594,7 @@ module WWW #:nodoc:
       begin
         @last_request = Time.now  # see #wait_before_new_request
         @last_request_uri = uri   # useful for debug
-        response = http_client.start do |http|
-          req = Net::HTTP::Get.new(uri.request_uri, @headers)
-          req.basic_auth(@username, @password)
-          http.request(req)
-        end
+        response = make_request(uri)
       rescue => e # catch EOFError, SocketError and more
         raise HTTPError, e.message
       end
@@ -618,7 +612,16 @@ module WWW #:nodoc:
       end
     end
     
-    protected
+    # Makes the real HTTP request to given +uri+ and returns the +response+.
+    # This method exists basically to simplify unit testing with mocha.
+    def make_request(uri)
+      http_client.start do |http|
+        req = Net::HTTP::Get.new(uri.request_uri, @headers)
+        req.basic_auth(@username, @password)
+        http.request(req)
+      end
+    end
+    
     #
     # Delicious API reference requests to wait AT LEAST ONE SECOND 
     # between queries or the client is likely to get automatically throttled.
@@ -630,7 +633,7 @@ module WWW #:nodoc:
     # The difference is not rounded. If you only have to wait for 0.034 seconds
     # then your don't have to wait 0 or 1 seconds, but 0.034 seconds!
     #
-    def wait_before_new_request()
+    def wait_before_new_request
       return unless @last_request # this is the first request
       # puts "Last request at #{TIME_CONVERTER.call(@last_request)}" if debug?
       diff = Time.now - @last_request

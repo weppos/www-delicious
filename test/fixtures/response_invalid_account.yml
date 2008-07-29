@@ -1,0 +1,25 @@
+--- !ruby/object:Net::HTTPUnauthorized 
+body: |
+  <?xml version="1.0" standalone="yes"?>
+  <result code="access denied" />
+  <!-- fe02.api.del.ac4.yahoo.net uncompressed/chunked Tue Jul 29 13:53:52 PDT 2008 -->
+
+body_exist: true
+code: "401"
+header: 
+  connection: 
+  - close
+  p3p: 
+  - policyref="http://p3p.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE GOV"
+  content-type: 
+  - text/xml; charset=utf-8
+  date: 
+  - Tue, 29 Jul 2008 20:53:52 GMT
+  www-authenticate: 
+  - Basic realm="del.icio.us API"
+  transfer-encoding: 
+  - chunked
+http_version: "1.1"
+message: Unauthorized
+read: true
+socket: 
