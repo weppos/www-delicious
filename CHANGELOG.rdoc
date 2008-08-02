@@ -13,6 +13,8 @@
 
 * FIXED: Missing unit tests for post_ calls (closes #18).
 
+* FIXED: Added test for `shared` Post attribute and fixed an issue with duplicate `replace` method definition (closes #11).
+
 * CHANGED: improved documentation and added more examples (closes #21).
 
 * CHANGED: REXML::Element#attribute_value core extension has been renamed to REXML::Element#if_attribute_value.

@@ -56,7 +56,7 @@ module WWW
       end
       
       # Returns the value for <tt>replace</tt> attribute.
-      def shared
+      def replace
         !(@replace == false)
       end
       
