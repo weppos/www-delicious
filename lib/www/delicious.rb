@@ -138,8 +138,7 @@ module WWW #:nodoc:
     TIME_CONVERTER = lambda { |time| time.iso8601() }
     
     
-    public
-    #
+    # 
     # Constructs a new <tt>WWW::Delicious</tt> object 
     # with given +username+ and +password+.
     #   
@@ -157,7 +156,7 @@ module WWW #:nodoc:
     # 
     # You can also specify some additional options, including a custom user agent
     # or the base URI for del.icio.us API.
-    #
+    # 
     #   WWW::Delicious('user', 'psw', :base_uri => 'https://ma.gnolia.com/api/mirrord') do |d|
     #     # the following call is mirrored by ma.gnolia
     #     d.update() # => Fri May 02 18:02:48 UTC 2008
@@ -173,10 +172,10 @@ module WWW #:nodoc:
     # 
     def initialize(username, password, options = {}, &block) #  :yields: delicious
       @username, @password = username.to_s, password.to_s
-
+      
       # set API base URI
       @base_uri = URI.parse(options[:base_uri] || API_BASE_URI)
-
+      
       init_user_agent(options)
       init_http_client(options)
       
@@ -184,9 +183,8 @@ module WWW #:nodoc:
       self # ensure to always return self even if block is given
     end
     
-
-    public
-    #
+    
+    # 
     # Returns the reference to current <tt>@http_client</tt>.
     # The http is always valid unless it has been previously set to +nil+.
     # 
@@ -195,15 +193,14 @@ module WWW #:nodoc:
     #   
     #   # valid client
     #   obj.http_client # => Net::HTTP
-    #
+    # 
     def http_client()
       return @http_client
     end
 
-    public
-    #
+    # 
     # Sets the internal <tt>@http_client</tt> to +client+.
-    #
+    # 
     #   # nil client
     #   obj.http_client = nil
     # 
@@ -219,18 +216,14 @@ module WWW #:nodoc:
       end
       @http_client = client
     end
-
-    public
-    #
+    
     # Returns current user agent string.
-    #
     def user_agent()
       return @headers['User-Agent']
     end
     
     
-    public
-    #
+    # 
     # Returns true if given account credentials are valid.
     # 
     #   d = WWW::Delicious.new('username', 'password')
@@ -247,7 +240,7 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def valid_account?
       update()
       return true
@@ -256,8 +249,7 @@ module WWW #:nodoc:
       raise 
     end
 
-    public
-    #
+    # 
     # Checks to see when a user last posted an item
     # and returns the last update +Time+ for the user.
     # 
@@ -267,14 +259,13 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def update()
       response = request(API_PATH_UPDATE)
       return parse_update_response(response.body)
     end
     
-    public
-    #
+    # 
     # Retrieves all of a user's bundles
     # and returns an array of <tt>WWW::Delicious::Bundle</tt>.
     # 
@@ -285,14 +276,13 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def bundles_all()
       response = request(API_PATH_BUNDLES_ALL)
       return parse_bundles_all_response(response.body)
     end
     
-    public
-    #
+    # 
     # Assignes a set of tags to a single bundle, 
     # wipes away previous settings for bundle.
     # 
@@ -306,15 +296,14 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def bundles_set(bundle_or_name, tags = [])
       params = prepare_bundles_set_params(bundle_or_name, tags)
       response = request(API_PATH_BUNDLES_SET, params)
       return parse_and_eval_execution_response(response.body)
     end
     
-    public
-    #
+    # 
     # Deletes +bundle_or_name+ bundle from del.icio.us.
     # +bundle_or_name+ can be either a WWW::Delicious::Bundle instance 
     # or a string with the name of the bundle.
@@ -332,15 +321,14 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def bundles_delete(bundle_or_name)
       params = prepare_bundles_delete_params(bundle_or_name)
       response = request(API_PATH_BUNDLES_DELETE, params)
       return parse_and_eval_execution_response(response.body)
     end
     
-    public
-    #
+    # 
     # Retrieves the list of tags and number of times used by the user
     # and returns an array of <tt>WWW::Delicious::Tag</tt>.
     # 
@@ -351,14 +339,13 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def tags_get()
       response = request(API_PATH_TAGS_GET)
       return parse_tags_get_response(response.body)
     end
     
-    public
-    #
+    # 
     # Renames an existing tag with a new tag name.
     # 
     #   # rename from a tag
@@ -371,15 +358,14 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def tags_rename(from_name_or_tag, to_name_or_tag)
       params = prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
       response = request(API_PATH_TAGS_RENAME, params)
       return parse_and_eval_execution_response(response.body)
     end
     
-    public
-    #
+    # 
     # Returns an array of <tt>WWW::Delicious::Post</tt> matching +options+.
     # If no option is given, the last post is returned.
     # If no date or url is given, most recent date will be used.
@@ -406,15 +392,14 @@ module WWW #:nodoc:
     # Raises::  WWW::Delicious::Error
     # Raises::  WWW::Delicious::HTTPError
     # Raises::  WWW::Delicious::ResponseError
-    #
+    # 
     def posts_get(options = {})
       params = prepare_posts_params(options.clone, [:dt, :tag, :url])
       response = request(API_PATH_POSTS_GET, params)
       return parse_posts_response(response.body)
     end
 
-    public
-    #
+    # 
     # Returns a list of the most recent posts, filtered by argument.
     # 
     #   # get the most recent posts
@@ -427,15 +412,14 @@ module WWW #:nodoc:
     # === Options
     # <tt>:tag</tt>::   a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     # <tt>:count</tt>:: number of items to retrieve. (default: 15, maximum: 100).
-    #
+    # 
     def posts_recent(options = {})
       params = prepare_posts_params(options.clone, [:count, :tag])
       response = request(API_PATH_POSTS_RECENT, params)
       return parse_posts_response(response.body)
     end
-
-    public
-    #
+    
+    # 
     # Returns a list of all posts, filtered by argument.
     # 
     #   # get all (this is a very expensive query)
@@ -454,7 +438,6 @@ module WWW #:nodoc:
       return parse_posts_response(response.body)
     end
 
-    public
     #
     # Returns a list of dates with the number of posts at each date.
     # 
@@ -476,7 +459,6 @@ module WWW #:nodoc:
       return parse_posts_dates_response(response.body)
     end
 
-    public
     #
     # Add a post to del.icio.us.
     # +post_or_values+ can be either a +WWW::Delicious::Post+ instance
@@ -496,7 +478,6 @@ module WWW #:nodoc:
       return parse_and_eval_execution_response(response.body)
     end
 
-    public
     #
     # Deletes the post matching given +url+ from del.icio.us.
     # +url+ can be either an URI instance or a string representation of a valid URL.
@@ -519,377 +500,355 @@ module WWW #:nodoc:
 
     
     protected
-    #
-    # Initializes the HTTP client.
-    # It automatically enable +use_ssl+ flag according to +@base_uri+ scheme.
-    #
-    def init_http_client(options)
-      http = Net::HTTP.new(@base_uri.host, 443)
-      http.use_ssl = true if @base_uri.scheme == "https"
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE # FIXME: not 100% supported
-      self.http_client = http
-    end
     
-    protected
-    #
-    # Initializes user agent value for HTTP requests.
-    #
-    def init_user_agent(options)
-      user_agent = options[:user_agent] || default_user_agent()
-      @headers ||= {}
-      @headers['User-Agent'] = user_agent
-    end
-    
-    protected
-    #
-    # Creates and returns the default user agent string.
-    # 
-    # By default, the user agent is composed by the following schema:
-    # <tt>NAME/VERSION (Ruby/RUBY_VERSION)</tt>
-    # 
-    # * +NAME+ is the constant representing this library name
-    # * +VERSION+ is the constant representing current library version
-    # * +RUBY_VERSION+ is the version of Ruby interpreter the library is interpreted by
-    # 
-    #   default_user_agent
-    #   # => WWW::Delicious/0.1.0 (Ruby/1.8.6)
-    #
-    def default_user_agent()
-      return "#{NAME}/#{VERSION} (Ruby/#{RUBY_VERSION})"
-    end
-    
-    
-    #
-    # Composes an HTTP query string from an hash of +options+.
-    # The result is URI encoded.
-    # 
-    #   http_build_query(:foo => 'baa', :bar => 'boo')
-    #   # => foo=baa&bar=boo
-    #
-    def http_build_query(params = {})
-      return params.collect do |k,v| 
-        "#{URI.encode(k.to_s)}=#{URI.encode(v.to_s)}" unless v.nil?
-      end.compact.join('&')
-    end
-    
-    #
-    # Sends an HTTP GET request to +path+ and appends given +params+.
-    # 
-    # This method is 100% compliant with Delicious API reference.
-    # It waits at least 1 second between each HTTP request and
-    # provides an identifiable user agent by default,
-    # or the custom user agent set by +user_agent+ option 
-    # when this istance has been created.
-    # 
-    #   request('/v1/api/path', :foo => 1, :bar => 2)
-    #   # => sends a GET request to /v1/api/path?foo=1&bar=2
-    #
-    def request(path, params = {})
-      raise Error, 'Invalid HTTP Client' unless http_client
-      wait_before_new_request
-
-      uri = @base_uri.merge(path)
-      uri.query = http_build_query(params) unless params.empty?
-
-      begin
-        @last_request = Time.now  # see #wait_before_new_request
-        @last_request_uri = uri   # useful for debug
-        response = make_request(uri)
-      rescue => e # catch EOFError, SocketError and more
-        raise HTTPError, e.message
-      end
-
-      case response
-        when Net::HTTPSuccess
-          return response
-        when Net::HTTPUnauthorized        # 401
-          raise HTTPError, 'Invalid username or password'
-        when Net::HTTPServiceUnavailable  # 503
-          raise HTTPError, 'You have been throttled.' +
-            'Please ensure you are waiting at least one second before each request.'
-        else
-          raise HTTPError, "HTTP #{response.code}: #{response.message}"
-      end
-    end
-    
-    # Makes the real HTTP request to given +uri+ and returns the +response+.
-    # This method exists basically to simplify unit testing with mocha.
-    def make_request(uri)
-      http_client.start do |http|
-        req = Net::HTTP::Get.new(uri.request_uri, @headers)
-        req.basic_auth(@username, @password)
-        http.request(req)
-      end
-    end
-    
-    #
-    # Delicious API reference requests to wait AT LEAST ONE SECOND 
-    # between queries or the client is likely to get automatically throttled.
-    # 
-    # This method calculates the difference between current time
-    # and the last request time and wait for the necessary time to meet
-    # SECONDS_BEFORE_NEW_REQUEST requirement.
-    # 
-    # The difference is not rounded. If you only have to wait for 0.034 seconds
-    # then your don't have to wait 0 or 1 seconds, but 0.034 seconds!
-    #
-    def wait_before_new_request
-      return unless @last_request # this is the first request
-      # puts "Last request at #{TIME_CONVERTER.call(@last_request)}" if debug?
-      diff = Time.now - @last_request
-      if diff < SECONDS_BEFORE_NEW_REQUEST
-        # puts "Sleeping for #{diff} before new request..." if debug?
-        sleep(SECONDS_BEFORE_NEW_REQUEST - diff) 
-      end
-    end
-    
-    
-    protected
-    #
-    # Parses the response +body+ and runs a common set of validators.
-    #
-    def parse_and_validate_response(body, options = {})
-      dom = REXML::Document.new(body)
-      
-      if (value = options[:root_name]) && dom.root.name != value
-        raise ResponseError, "Invalid response, root node is not `#{value}`"
-      end
-      if (value = options[:root_text]) && dom.root.text != value
-        raise ResponseError, value
-      end
-
-      return dom
-    end
-    
-    protected
-    #
-    # Parses and evaluates the response returned by an execution,
-    # usually an update/delete/insert operation.
-    #
-    def parse_and_eval_execution_response(body)
-      dom = parse_and_validate_response(body, :root_name => 'result')
-      response = dom.root.if_attribute_value(:code)
-      response = dom.root.text if response.nil?
-      raise Error, "Invalid response, #{response}" unless %w(done ok).include?(response)
-      true
-    end
-    
-    protected
-    #
-    # Parses the response of an 'update' request.
-    #
-    def parse_update_response(body)
-      dom = parse_and_validate_response(body, :root_name => 'update')
-      return dom.root.if_attribute_value(:time) { |v| Time.parse(v) }
-    end
-    
-    protected
-    #
-    # Parses the response of a 'bundles_all' request
-    # and returns an array of <tt>WWW::Delicious::Bundle</tt>.
-    #
-    def parse_bundles_all_response(body)
-      dom = parse_and_validate_response(body, :root_name => 'bundles')
-      return dom.root.elements.collect('bundle') { |xml| Bundle.from_rexml(xml) }
-    end
-    
-    protected
-    #
-    # Parses the response of a 'tags_get' request
-    # and returns an array of <tt>WWW::Delicious::Tag</tt>.
-    #
-    def parse_tags_get_response(body)
-      dom  = parse_and_validate_response(body, :root_name => 'tags')
-      return dom.root.elements.collect('tag') { |xml| Tag.from_rexml(xml) }
-    end
-    
-    protected
-    #
-    # Parses a response containing a list of Posts
-    # and returns an array of <tt>WWW::Delicious::Post</tt>.
-    #
-    def parse_posts_response(body)
-      dom  = parse_and_validate_response(body, :root_name => 'posts')
-      return dom.root.elements.collect('post') { |xml| Post.from_rexml(xml) }
-    end
-    
-    protected
-    #
-    # Parses the response of a 'posts_dates' request
-    # and returns an +Hash+ of date => count.
-    #
-    def parse_posts_dates_response(body)
-      dom  = parse_and_validate_response(body, :root_name => 'dates')
-      return dom.root.get_elements('date').inject({}) do |collection, xml|
-        date  = xml.if_attribute_value(:date) 
-        count = xml.if_attribute_value(:count)
-        collection.merge({ date => count })
-      end
-    end
-    
-    
-    protected
-    #
-    # Prepares the params for a `bundles_set` call
-    # and returns a Hash with the params ready for the HTTP request.
-    # 
-    # Raises::  WWW::Delicious::Error
-    #
-    def prepare_bundles_set_params(name_or_bundle, tags = [])
-      bundle = prepare_param_bundle(name_or_bundle, tags) do |b|
-        raise Error, "Bundle name is empty" if b.name.empty?
-        raise Error, "Bundle must contain at least one tag" if b.tags.empty?
-      end
-      return { :bundle => bundle.name, :tags => bundle.tags.join(' ') }
-    end
-    
-    protected
-    #
-    # Prepares the params for a `bundles_set` call
-    # and returns a Hash with the params ready for the HTTP request.
-    # 
-    # Raises::  WWW::Delicious::Error
-    #
-    def prepare_bundles_delete_params(name_or_bundle)
-      bundle = prepare_param_bundle(name_or_bundle) do |b|
-        raise Error, "Bundle name is empty" if b.name.empty?
-      end
-      return { :bundle => bundle.name }
-    end
-    
-    protected
-    #
-    # Prepares the params for a `tags_rename` call
-    # and returns a Hash with the params ready for the HTTP request.
-    # 
-    # Raises::  WWW::Delicious::Error
-    #
-    def prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
-      from, to = [from_name_or_tag, to_name_or_tag].collect do |v|
-        prepare_param_tag(v)
-      end
-      return { :old => from, :new => to }
-    end
-    
-    protected
-    #
-    # Prepares the params for a `post_*` call
-    # and returns a Hash with the params ready for the HTTP request.
-    # 
-    # Raises::  WWW::Delicious::Error
-    #
-    def prepare_posts_params(params, allowed_params = [])
-      compare_params(params, allowed_params)
-      
-      # we don't need to check whether the following parameters
-      # are valid for this request because compare_params
-      # would raise if an invalid param is supplied
-      
-      params[:tag]    = prepare_param_tag(params[:tag])  if params[:tag]
-      params[:dt]     = TIME_CONVERTER.call(params[:dt]) if params[:dt]
-      params[:url]    = URI.parse(params[:url])          if params[:url]
-      params[:count]  = if value = params[:count]
-        raise Error, 'Expected `count` <= 100' if value.to_i() > 100 # requirement
-        value.to_i()
-      else
-        15 # default value
+      # Initializes the HTTP client.
+      # It automatically enable +use_ssl+ flag according to +@base_uri+ scheme.
+      def init_http_client(options)
+        http = Net::HTTP.new(@base_uri.host, 443)
+        http.use_ssl = true if @base_uri.scheme == "https"
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE # FIXME: not 100% supported
+        self.http_client = http
       end
       
-      return params
-    end
-    
-    protected
-    #
-    # Prepares the params for a `post_add` call
-    # and returns a Hash with the params ready for the HTTP request.
-    # 
-    # Raises::  WWW::Delicious::Error
-    #
-    def prepare_posts_add_params(post_or_values)
-      post = case post_or_values
-      when WWW::Delicious::Post
-        post_or_values
-      when Hash
-        value = Post.new(post_or_values)
-        raise ArgumentError, 'Both `url` and `title` are required' unless value.api_valid?
-        value
-      else
-        raise ArgumentError, 'Expected `args` to be `WWW::Delicious::Post` or `Hash`'
+      # Initializes user agent value for HTTP requests.
+      def init_user_agent(options)
+        user_agent = options[:user_agent] || default_user_agent()
+        @headers ||= {}
+        @headers['User-Agent'] = user_agent
       end
-      return post.to_params()
-    end
-    
-    protected
-    #
-    # Prepares the +bundle+ params for an API request.
-    # 
-    # If +name_or_bundle+ is a string,
-    # creates a new <tt>WWW::Delicious::Bundle</tt> with
-    # +name_or_bundle+ as name and a collection of +tags+.
-    # If +name_or_bundle+, +tags+ is ignored.
-    #
-    def prepare_param_bundle(name_or_bundle, tags = [], &block) #  :yields: bundle
-      bundle = case name_or_bundle
-        when WWW::Delicious::Bundle
-          name_or_bundle
-        else
-          Bundle.new(:name => name_or_bundle, :tags => tags)
+      
+      # 
+      # Creates and returns the default user agent string.
+      # 
+      # By default, the user agent is composed by the following schema:
+      # <tt>NAME/VERSION (Ruby/RUBY_VERSION)</tt>
+      # 
+      # * +NAME+ is the constant representing this library name
+      # * +VERSION+ is the constant representing current library version
+      # * +RUBY_VERSION+ is the version of Ruby interpreter the library is interpreted by
+      # 
+      #   default_user_agent
+      #   # => WWW::Delicious/0.1.0 (Ruby/1.8.6)
+      # 
+      def default_user_agent()
+        return "#{NAME}/#{VERSION} (Ruby/#{RUBY_VERSION})"
+      end
+      
+      
+      # 
+      # Composes an HTTP query string from an hash of +options+.
+      # The result is URI encoded.
+      # 
+      #   http_build_query(:foo => 'baa', :bar => 'boo')
+      #   # => foo=baa&bar=boo
+      # 
+      def http_build_query(params = {})
+        return params.collect do |k,v| 
+          "#{URI.encode(k.to_s)}=#{URI.encode(v.to_s)}" unless v.nil?
+        end.compact.join('&')
+      end
+      
+      # 
+      # Sends an HTTP GET request to +path+ and appends given +params+.
+      # 
+      # This method is 100% compliant with Delicious API reference.
+      # It waits at least 1 second between each HTTP request and
+      # provides an identifiable user agent by default,
+      # or the custom user agent set by +user_agent+ option 
+      # when this istance has been created.
+      # 
+      #   request('/v1/api/path', :foo => 1, :bar => 2)
+      #   # => sends a GET request to /v1/api/path?foo=1&bar=2
+      # 
+      def request(path, params = {})
+        raise Error, 'Invalid HTTP Client' unless http_client
+        wait_before_new_request
+      
+        uri = @base_uri.merge(path)
+        uri.query = http_build_query(params) unless params.empty?
+      
+        begin
+          @last_request = Time.now  # see #wait_before_new_request
+          @last_request_uri = uri   # useful for debug
+          response = make_request(uri)
+        rescue => e # catch EOFError, SocketError and more
+          raise HTTPError, e.message
         end
       
-      yield(bundle) if block_given?
-      bundle
-    end
-    
-    protected
-    #
-    # Prepares the +tag+ params for an API request.
-    # 
-    # If +name_or_tag+ is a string,
-    # it creates a new <tt>WWW::Delicious::Tag</tt> with
-    # +name_or_tag+ as name.
-    #
-    def prepare_param_tag(name_or_tag, &block) #  :yields: tag
-      tag = case name_or_tag
-        when WWW::Delicious::Tag
-          name_or_tag
-        else
-          Tag.new(:name => name_or_tag.to_s)
+        case response
+          when Net::HTTPSuccess
+            return response
+          when Net::HTTPUnauthorized        # 401
+            raise HTTPError, 'Invalid username or password'
+          when Net::HTTPServiceUnavailable  # 503
+            raise HTTPError, 'You have been throttled.' +
+              'Please ensure you are waiting at least one second before each request.'
+          else
+            raise HTTPError, "HTTP #{response.code}: #{response.message}"
+        end
+      end
+      
+      # Makes the real HTTP request to given +uri+ and returns the +response+.
+      # This method exists basically to simplify unit testing with mocha.
+      def make_request(uri)
+        http_client.start do |http|
+          req = Net::HTTP::Get.new(uri.request_uri, @headers)
+          req.basic_auth(@username, @password)
+          http.request(req)
+        end
+      end
+      
+      # 
+      # Delicious API reference requests to wait AT LEAST ONE SECOND 
+      # between queries or the client is likely to get automatically throttled.
+      # 
+      # This method calculates the difference between current time
+      # and the last request time and wait for the necessary time to meet
+      # SECONDS_BEFORE_NEW_REQUEST requirement.
+      # 
+      # The difference is not rounded. If you only have to wait for 0.034 seconds
+      # then your don't have to wait 0 or 1 seconds, but 0.034 seconds!
+      # 
+      def wait_before_new_request
+        return unless @last_request # this is the first request
+        # puts "Last request at #{TIME_CONVERTER.call(@last_request)}" if debug?
+        diff = Time.now - @last_request
+        if diff < SECONDS_BEFORE_NEW_REQUEST
+          # puts "Sleeping for #{diff} before new request..." if debug?
+          sleep(SECONDS_BEFORE_NEW_REQUEST - diff) 
+        end
+      end
+      
+      
+      # Parses the response +body+ and runs a common set of validators.
+      def parse_and_validate_response(body, options = {})
+        dom = REXML::Document.new(body)
+        
+        if (value = options[:root_name]) && dom.root.name != value
+          raise ResponseError, "Invalid response, root node is not `#{value}`"
+        end
+        if (value = options[:root_text]) && dom.root.text != value
+          raise ResponseError, value
         end
       
-      yield(tag) if block_given?
-      raise "Invalid `tag` value supplied" unless tag.api_valid?
-
-      tag
-    end
+        return dom
+      end
+      
+      # 
+      # Parses and evaluates the response returned by an execution,
+      # usually an update/delete/insert operation.
+      # 
+      def parse_and_eval_execution_response(body)
+        dom = parse_and_validate_response(body, :root_name => 'result')
+        response = dom.root.if_attribute_value(:code)
+        response = dom.root.text if response.nil?
+        raise Error, "Invalid response, #{response}" unless %w(done ok).include?(response)
+        true
+      end
+      
+      #
+      # Parses the response of an 'update' request.
+      #
+      def parse_update_response(body)
+        dom = parse_and_validate_response(body, :root_name => 'update')
+        return dom.root.if_attribute_value(:time) { |v| Time.parse(v) }
+      end
+      
+      # 
+      # Parses the response of a 'bundles_all' request
+      # and returns an array of <tt>WWW::Delicious::Bundle</tt>.
+      # 
+      def parse_bundles_all_response(body)
+        dom = parse_and_validate_response(body, :root_name => 'bundles')
+        return dom.root.elements.collect('bundle') { |xml| Bundle.from_rexml(xml) }
+      end
+      
+      # 
+      # Parses the response of a 'tags_get' request
+      # and returns an array of <tt>WWW::Delicious::Tag</tt>.
+      # 
+      def parse_tags_get_response(body)
+        dom  = parse_and_validate_response(body, :root_name => 'tags')
+        return dom.root.elements.collect('tag') { |xml| Tag.from_rexml(xml) }
+      end
+      
+      # 
+      # Parses a response containing a list of Posts
+      # and returns an array of <tt>WWW::Delicious::Post</tt>.
+      # 
+      def parse_posts_response(body)
+        dom  = parse_and_validate_response(body, :root_name => 'posts')
+        return dom.root.elements.collect('post') { |xml| Post.from_rexml(xml) }
+      end
+      
+      # 
+      # Parses the response of a 'posts_dates' request
+      # and returns an +Hash+ of date => count.
+      # 
+      def parse_posts_dates_response(body)
+        dom  = parse_and_validate_response(body, :root_name => 'dates')
+        return dom.root.get_elements('date').inject({}) do |collection, xml|
+          date  = xml.if_attribute_value(:date) 
+          count = xml.if_attribute_value(:count)
+          collection.merge({ date => count })
+        end
+      end
+      
+      
+      # 
+      # Prepares the params for a `bundles_set` call
+      # and returns a Hash with the params ready for the HTTP request.
+      # 
+      # Raises::  WWW::Delicious::Error
+      # 
+      def prepare_bundles_set_params(name_or_bundle, tags = [])
+        bundle = prepare_param_bundle(name_or_bundle, tags) do |b|
+          raise Error, "Bundle name is empty" if b.name.empty?
+          raise Error, "Bundle must contain at least one tag" if b.tags.empty?
+        end
+        return { :bundle => bundle.name, :tags => bundle.tags.join(' ') }
+      end
+      
+      # 
+      # Prepares the params for a `bundles_set` call
+      # and returns a Hash with the params ready for the HTTP request.
+      # 
+      # Raises::  WWW::Delicious::Error
+      # 
+      def prepare_bundles_delete_params(name_or_bundle)
+        bundle = prepare_param_bundle(name_or_bundle) do |b|
+          raise Error, "Bundle name is empty" if b.name.empty?
+        end
+        return { :bundle => bundle.name }
+      end
+      
+      # 
+      # Prepares the params for a `tags_rename` call
+      # and returns a Hash with the params ready for the HTTP request.
+      # 
+      # Raises::  WWW::Delicious::Error
+      # 
+      def prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
+        from, to = [from_name_or_tag, to_name_or_tag].collect do |v|
+          prepare_param_tag(v)
+        end
+        return { :old => from, :new => to }
+      end
+      
+      # 
+      # Prepares the params for a `post_*` call
+      # and returns a Hash with the params ready for the HTTP request.
+      # 
+      # Raises::  WWW::Delicious::Error
+      # 
+      def prepare_posts_params(params, allowed_params = [])
+        compare_params(params, allowed_params)
+        
+        # we don't need to check whether the following parameters
+        # are valid for this request because compare_params
+        # would raise if an invalid param is supplied
+        
+        params[:tag]    = prepare_param_tag(params[:tag])  if params[:tag]
+        params[:dt]     = TIME_CONVERTER.call(params[:dt]) if params[:dt]
+        params[:url]    = URI.parse(params[:url])          if params[:url]
+        params[:count]  = if value = params[:count]
+          raise Error, 'Expected `count` <= 100' if value.to_i() > 100 # requirement
+          value.to_i()
+        else
+          15 # default value
+        end
+        
+        return params
+      end
+      
+      # 
+      # Prepares the params for a `post_add` call
+      # and returns a Hash with the params ready for the HTTP request.
+      # 
+      # Raises::  WWW::Delicious::Error
+      # 
+      def prepare_posts_add_params(post_or_values)
+        post = case post_or_values
+        when WWW::Delicious::Post
+          post_or_values
+        when Hash
+          value = Post.new(post_or_values)
+          raise ArgumentError, 'Both `url` and `title` are required' unless value.api_valid?
+          value
+        else
+          raise ArgumentError, 'Expected `args` to be `WWW::Delicious::Post` or `Hash`'
+        end
+        return post.to_params()
+      end
+      
+      # 
+      # Prepares the +bundle+ params for an API request.
+      # 
+      # If +name_or_bundle+ is a string,
+      # creates a new <tt>WWW::Delicious::Bundle</tt> with
+      # +name_or_bundle+ as name and a collection of +tags+.
+      # If +name_or_bundle+, +tags+ is ignored.
+      # 
+      def prepare_param_bundle(name_or_bundle, tags = [], &block) #  :yields: bundle
+        bundle = case name_or_bundle
+          when WWW::Delicious::Bundle
+            name_or_bundle
+          else
+            Bundle.new(:name => name_or_bundle, :tags => tags)
+          end
+        
+        yield(bundle) if block_given?
+        bundle
+      end
+      
+      # 
+      # Prepares the +tag+ params for an API request.
+      # 
+      # If +name_or_tag+ is a string,
+      # it creates a new <tt>WWW::Delicious::Tag</tt> with
+      # +name_or_tag+ as name.
+      # 
+      def prepare_param_tag(name_or_tag, &block) #  :yields: tag
+        tag = case name_or_tag
+          when WWW::Delicious::Tag
+            name_or_tag
+          else
+            Tag.new(:name => name_or_tag.to_s)
+          end
+        
+        yield(tag) if block_given?
+        raise "Invalid `tag` value supplied" unless tag.api_valid?
+      
+        tag
+      end
+      
+      # 
+      # Checks whether user given +params+ are valid against a defined collection of +valid_params+.
+      # 
+      # === Examples
+      # 
+      #   params = {:foo => 1, :bar => 2}
+      #
+      #   compare_params(params, [:foo, :bar])
+      #   # => valid
+      # 
+      #   compare_params(params, [:foo, :bar, :baz])
+      #   # => raises
+      # 
+      #   compare_params(params, [:foo])
+      #   # => raises
+      # 
+      # Raises::  WWW::Delicious::Error
+      # 
+      def compare_params(params, valid_params)
+        raise ArgumentError, "Expected `params` to be a kind of `Hash`" unless params.kind_of?(Hash)
+        raise ArgumentError, "Expected `valid_params` to be a kind of `Array`" unless valid_params.kind_of?(Array)
+      
+        # compute options difference
+        difference = params.keys - valid_params
+        raise Error, "Invalid params: `#{difference.join('`, `')}`" unless difference.empty?
+      end
     
-    protected
-    #
-    # Checks whether user given +params+ are valid against a defined collection of +valid_params+.
-    # 
-    # === Examples
-    # 
-    #   params = {:foo => 1, :bar => 2}
-    #
-    #   compare_params(params, [:foo, :bar])
-    #   # => valid
-    # 
-    #   compare_params(params, [:foo, :bar, :baz])
-    #   # => raises
-    # 
-    #   compare_params(params, [:foo])
-    #   # => raises
-    # 
-    # Raises::  WWW::Delicious::Error
-    #
-    def compare_params(params, valid_params)
-      raise ArgumentError, "Expected `params` to be a kind of `Hash`" unless params.kind_of?(Hash)
-      raise ArgumentError, "Expected `valid_params` to be a kind of `Array`" unless valid_params.kind_of?(Array)
-
-      # compute options difference
-      difference = params.keys - valid_params
-      raise Error, "Invalid params: `#{difference.join('`, `')}`" unless difference.empty?
-    end
-
     
     module XMLUtils #:nodoc:
       
@@ -962,7 +921,7 @@ class Object
   
   # An object is blank if it's false, empty, or a whitespace string.
   # For example, "", "   ", +nil+, [], and {} are blank.
-  #
+  # 
   # This simplifies
   # 
   #   if !address.nil? && !address.empty?

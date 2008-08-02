@@ -11,6 +11,8 @@
 
 * FIXED: Missing WWW::Delicious::Bundle#to_s method causes a class ID representation to be returned.
 
+* FIXED: Missing unit tests for post_ calls (closes #18).
+
 * CHANGED: improved documentation and added more examples (closes #21).
 
 * CHANGED: REXML::Element#attribute_value core extension has been renamed to REXML::Element#if_attribute_value.
@@ -24,6 +26,8 @@
 * CHANGED: WWW::Delicious::Tag :count attribute is now stored and returned as Fixnum instead of String.
 
 * CHANGED: Unit test reorganization (closes #22).
+
+* CHANGED: Simplified and tidyfied test system with Mocha (closes #19).
 
 
 == Release 0.1.0 (2008-05-11)

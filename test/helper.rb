@@ -46,32 +46,3 @@ module Test
     end
   end
 end
-
-
-# TODO: use mocha gem instead of tweaking Net::HTTP classes
-# module Net
-#   class HTTP < Protocol
-#     @@offline_response = nil
-#     
-#     class << self
-#       def response()
-#         r = @@offline_response ||= Marshal.load(File.read(TESTCASES_PATH + '/marshaled_response'))
-#         @@offline_response = nil
-#         r
-#       end
-#       def response=(r)
-#         @@offline_response = r
-#       end
-#     end
-#     
-#     alias :request_online :request
-#     def request_offline(req, body = nil, &block)
-#       return self.class.response
-#     end
-#     
-#     # prepare for offline tests
-#     remove_method :request 
-#     alias :request :request_offline
-#   end
-# end
-# 
