@@ -279,7 +279,7 @@ module WWW #:nodoc:
     # 
     def bundles_all()
       response = request(API_PATH_BUNDLES_ALL)
-      return parse_bundles_all_response(response.body)
+      return parse_bundle_collection(response.body)
     end
     
     # 
@@ -342,7 +342,7 @@ module WWW #:nodoc:
     # 
     def tags_get()
       response = request(API_PATH_TAGS_GET)
-      return parse_tags_get_response(response.body)
+      return parse_tag_collection(response.body)
     end
     
     # 
@@ -396,7 +396,7 @@ module WWW #:nodoc:
     def posts_get(options = {})
       params = prepare_posts_params(options.clone, [:dt, :tag, :url])
       response = request(API_PATH_POSTS_GET, params)
-      return parse_posts_response(response.body)
+      return parse_post_collection(response.body)
     end
 
     # 
@@ -416,7 +416,7 @@ module WWW #:nodoc:
     def posts_recent(options = {})
       params = prepare_posts_params(options.clone, [:count, :tag])
       response = request(API_PATH_POSTS_RECENT, params)
-      return parse_posts_response(response.body)
+      return parse_post_collection(response.body)
     end
     
     # 
@@ -435,7 +435,7 @@ module WWW #:nodoc:
     def posts_all(options = {})
       params = prepare_posts_params(options.clone, [:tag])
       response = request(API_PATH_POSTS_ALL, params)
-      return parse_posts_response(response.body)
+      return parse_post_collection(response.body)
     end
 
     #
@@ -473,7 +473,7 @@ module WWW #:nodoc:
     # 
     #
     def posts_add(post_or_values)
-      params = prepare_posts_add_params(post_or_values.clone)
+      params = prepare_param_post(post_or_values).to_params
       response = request(API_PATH_POSTS_ADD, params)
       return parse_and_eval_execution_response(response.body)
     end
@@ -530,7 +530,7 @@ module WWW #:nodoc:
       #   default_user_agent
       #   # => WWW::Delicious/0.1.0 (Ruby/1.8.6)
       # 
-      def default_user_agent()
+      def default_user_agent
         return "#{NAME}/#{VERSION} (Ruby/#{RUBY_VERSION})"
       end
       
@@ -620,7 +620,12 @@ module WWW #:nodoc:
       end
       
       
-      # Parses the response +body+ and runs a common set of validators.
+      # 
+      # Parses the response <tt>body</tt> and runs a common set of validators.
+      # Returns <tt>body</tt> as parsed REXML::Document on success.
+      # 
+      # Raises::  WWW::Delicious::ResponseError in case of invalid response.
+      # 
       def parse_and_validate_response(body, options = {})
         dom = REXML::Document.new(body)
         
@@ -630,13 +635,16 @@ module WWW #:nodoc:
         if (value = options[:root_text]) && dom.root.text != value
           raise ResponseError, value
         end
-      
+        
         return dom
       end
       
       # 
       # Parses and evaluates the response returned by an execution,
       # usually an update/delete/insert operation.
+      # 
+      # Raises::  WWW::Delicious::ResponseError in case of invalid response
+      # Raises::  WWW::Delicious::Error in case of execution error
       # 
       def parse_and_eval_execution_response(body)
         dom = parse_and_validate_response(body, :root_name => 'result')
@@ -646,45 +654,36 @@ module WWW #:nodoc:
         true
       end
       
-      #
-      # Parses the response of an 'update' request.
-      #
+      # Parses the response of an Update request
+      # and returns the update Timestamp.
       def parse_update_response(body)
         dom = parse_and_validate_response(body, :root_name => 'update')
-        return dom.root.if_attribute_value(:time) { |v| Time.parse(v) }
+        dom.root.if_attribute_value(:time) { |v| Time.parse(v) }
       end
       
-      # 
-      # Parses the response of a 'bundles_all' request
+      # Parses a response containing a collection of Bundles
       # and returns an array of <tt>WWW::Delicious::Bundle</tt>.
-      # 
-      def parse_bundles_all_response(body)
+      def parse_bundle_collection(body)
         dom = parse_and_validate_response(body, :root_name => 'bundles')
-        return dom.root.elements.collect('bundle') { |xml| Bundle.from_rexml(xml) }
+        dom.root.elements.collect('bundle') { |xml| Bundle.from_rexml(xml) }
       end
       
-      # 
-      # Parses the response of a 'tags_get' request
+      # Parses a response containing a collection of Tags
       # and returns an array of <tt>WWW::Delicious::Tag</tt>.
-      # 
-      def parse_tags_get_response(body)
+      def parse_tag_collection(body)
         dom  = parse_and_validate_response(body, :root_name => 'tags')
-        return dom.root.elements.collect('tag') { |xml| Tag.from_rexml(xml) }
+        dom.root.elements.collect('tag') { |xml| Tag.from_rexml(xml) }
       end
       
-      # 
-      # Parses a response containing a list of Posts
+      # Parses a response containing a collection of Posts
       # and returns an array of <tt>WWW::Delicious::Post</tt>.
-      # 
-      def parse_posts_response(body)
+      def parse_post_collection(body)
         dom  = parse_and_validate_response(body, :root_name => 'posts')
-        return dom.root.elements.collect('post') { |xml| Post.from_rexml(xml) }
+        dom.root.elements.collect('post') { |xml| Post.from_rexml(xml) }
       end
       
-      # 
-      # Parses the response of a 'posts_dates' request
-      # and returns an +Hash+ of date => count.
-      # 
+      # Parses the response of a <tt>posts_dates</tt> request
+      # and returns a +Hash+ of date => count.
       def parse_posts_dates_response(body)
         dom  = parse_and_validate_response(body, :root_name => 'dates')
         return dom.root.get_elements('date').inject({}) do |collection, xml|
@@ -753,7 +752,7 @@ module WWW #:nodoc:
         params[:url]    = URI.parse(params[:url])          if params[:url]
         params[:count]  = if value = params[:count]
           raise Error, 'Expected `count` <= 100' if value.to_i() > 100 # requirement
-          value.to_i()
+          value.to_i
         else
           15 # default value
         end
@@ -761,33 +760,36 @@ module WWW #:nodoc:
         return params
       end
       
+      
       # 
-      # Prepares the params for a `post_add` call
-      # and returns a Hash with the params ready for the HTTP request.
+      # Prepares the +post+ param for an API request.
       # 
-      # Raises::  WWW::Delicious::Error
+      # Creates and returns a <tt>WWW::Delicious::Post</tt> instance from <tt>post_or_values</tt>.
+      # <tt>post_or_values</tt> can be either an Hash with post attributes
+      # or a <tt>WWW::Delicious::Post</tt> instance.
       # 
-      def prepare_posts_add_params(post_or_values)
+      def prepare_param_post(post_or_values, &block)
         post = case post_or_values
-        when WWW::Delicious::Post
-          post_or_values
-        when Hash
-          value = Post.new(post_or_values)
-          raise ArgumentError, 'Both `url` and `title` are required' unless value.api_valid?
-          value
-        else
-          raise ArgumentError, 'Expected `args` to be `WWW::Delicious::Post` or `Hash`'
-        end
-        return post.to_params()
+          when WWW::Delicious::Post
+            post_or_values
+          when Hash
+            Post.new(post_or_values)
+          else
+            raise ArgumentError, 'Expected `args` to be `WWW::Delicious::Post` or `Hash`'
+          end
+          
+        yield(post) if block_given?
+        # TODO: validate post with post.validate!
+        raise ArgumentError, 'Both `url` and `title` are required' unless post.api_valid?
+        post
       end
       
       # 
-      # Prepares the +bundle+ params for an API request.
+      # Prepares the +bundle+ param for an API request.
       # 
-      # If +name_or_bundle+ is a string,
-      # creates a new <tt>WWW::Delicious::Bundle</tt> with
-      # +name_or_bundle+ as name and a collection of +tags+.
-      # If +name_or_bundle+, +tags+ is ignored.
+      # Creates and returns a <tt>WWW::Delicious::Bundle</tt> instance from <tt>name_or_bundle</tt>.
+      # <tt>name_or_bundle</tt> can be either a string holding bundle name
+      # or a <tt>WWW::Delicious::Bundle</tt> instance.
       # 
       def prepare_param_bundle(name_or_bundle, tags = [], &block) #  :yields: bundle
         bundle = case name_or_bundle
@@ -798,15 +800,16 @@ module WWW #:nodoc:
           end
         
         yield(bundle) if block_given?
+        # TODO: validate bundle with bundle.validate!
         bundle
       end
       
       # 
-      # Prepares the +tag+ params for an API request.
+      # Prepares the +tag+ param for an API request.
       # 
-      # If +name_or_tag+ is a string,
-      # it creates a new <tt>WWW::Delicious::Tag</tt> with
-      # +name_or_tag+ as name.
+      # Creates and returns a <tt>WWW::Delicious::Tag</tt> instance from <tt>name_or_tag</tt>.
+      # <tt>name_or_tag</tt> can be either a string holding tag name
+      # or a <tt>WWW::Delicious::Tag</tt> instance.
       # 
       def prepare_param_tag(name_or_tag, &block) #  :yields: tag
         tag = case name_or_tag
@@ -817,8 +820,8 @@ module WWW #:nodoc:
           end
         
         yield(tag) if block_given?
+        # TODO: validate tag with tag.validate!
         raise "Invalid `tag` value supplied" unless tag.api_valid?
-      
         tag
       end
       
@@ -875,8 +878,8 @@ module WWW #:nodoc:
       #   # => nil
       #
       def if_attribute_value(xmlattr, &block) #:nodoc:
-        value = if attr = self.attribute(xmlattr.to_s())
-            attr.value()
+        value = if attr = self.attribute(xmlattr.to_s)
+            attr.value
           else
             nil
           end

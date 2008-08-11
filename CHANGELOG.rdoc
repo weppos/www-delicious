@@ -31,6 +31,8 @@
 
 * CHANGED: Simplified and tidyfied test system with Mocha (closes #19).
 
+* CHANGED: Various internal API methods have been renamed for coherence with their new scope.
+
 
 == Release 0.1.0 (2008-05-11)
 
