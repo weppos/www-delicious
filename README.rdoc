@@ -203,14 +203,6 @@ Please submit your bug reports to the Redmine installation for WWW::Delicious
 available at http://code.simonecarletti.com/www-delicious.
 
 
-== TODO
-
-* allow Tags and Bundles to be passed as params for API calls
-* allow Tags, Bundles and Posts to be used for API call (no longer readonly)
-* improve the way new posts are created and updated
-* more (see issue tracker on the website)
-
-
 == Changelog
 
 See CHANGELOG file.

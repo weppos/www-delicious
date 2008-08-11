@@ -33,6 +33,8 @@
 
 * CHANGED: Various internal API methods have been renamed for coherence with their new scope.
 
+* CHANGED: Integrated Echoe, cleaned Rakefile (closes #23).
+
 
 == Release 0.1.0 (2008-05-11)
 
