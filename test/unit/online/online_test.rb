@@ -17,10 +17,10 @@ require File.dirname(__FILE__) + '/../../helper'
 
 
 # overwrite if file is called alone
-RUN_ONLINE_TESTS = ($0 == __FILE__)
+RUN_ONLINE_TESTS = ($0 == __FILE__) unless defined? RUN_ONLINE_TESTS and RUN_ONLINE_TESTS
 
-puts "Online test #{__FILE__} skipped. \
-      Set `DELICIOUS_USERNAME` and `DELICIOUS_USERNAME` environment variables to run them." unless RUN_ONLINE_TESTS
+puts "Online test #{__FILE__} skipped.\n" +
+     "Use `ONLINE=1` to run online tests.\n" unless RUN_ONLINE_TESTS
 
 
 class OnlineTest < Test::Unit::TestCase
