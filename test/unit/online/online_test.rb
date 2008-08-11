@@ -48,12 +48,12 @@ class OnlineTest < Test::Unit::TestCase
   end
   
   def test_bundles_set
-    bundle = WWW::Delicious::Bundle.new('test_bundle', %w(ruby python).sort)
+    bundle = WWW::Delicious::Bundle.new(:name => 'test_bundle', :tags => %w(ruby python).sort)
     assert_nothing_raised() { @delicious.bundles_set(bundle) }
   end
   
   def test_bundles_delete
-    bundle = WWW::Delicious::Bundle.new('test_bundle')
+    bundle = WWW::Delicious::Bundle.new(:name => 'test_bundle')
     assert_nothing_raised() { @delicious.bundles_delete(bundle) }
   end
   
