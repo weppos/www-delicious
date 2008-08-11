@@ -1,7 +1,7 @@
 = Changelog
 
 
-== development
+== Release 0.2.0
 
 * ADDED: :base_uri initialization option allows to create a new instance specifying a custom base_uri for all API calls. This is useful, for example, if you want to use ma.gno.lia Mirror'd APIs (http://wiki.ma.gnolia.com/Mirror%27d_API) instead the del.icio.us one (thanks to Jörg Battermann).
 
