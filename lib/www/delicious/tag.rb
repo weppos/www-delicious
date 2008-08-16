@@ -4,10 +4,10 @@
 # Ruby client for del.icio.us API.
 # 
 #
-# Category::   WWW
-# Package::    WWW::Delicious
-# Subpackage:: WWW::Delicious::Tag
-# Author::     Simone Carletti <weppos@weppos.net>
+# Category::    WWW
+# Package::     WWW::Delicious
+# Author::      Simone Carletti <weppos@weppos.net>
+# License::     MIT License
 #
 #--
 # SVN: $Id$

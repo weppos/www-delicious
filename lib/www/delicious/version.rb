@@ -4,19 +4,20 @@
 # Ruby client for del.icio.us API.
 # 
 #
-# Category::   WWW
-# Package::    WWW::Delicious
-# Author::     Simone Carletti <weppos@weppos.net>
+# Category::    WWW
+# Package::     WWW::Delicious
+# Author::      Simone Carletti <weppos@weppos.net>
+# License::     MIT License
 #
 #--
-# SVN: $Id: delicious.rb 34 2008-04-23 20:27:30Z weppos $
+# SVN: $Id$
 #++
 
 
-module WWW #:nodoc:
+module WWW
   class Delicious
 
-    module Version #:nodoc:
+    module Version
       MAJOR = 0
       MINOR = 2
       TINY = 0

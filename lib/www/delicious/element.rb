@@ -4,10 +4,10 @@
 # Ruby client for del.icio.us API.
 # 
 #
-# Category::   WWW
-# Package::    WWW::Delicious
-# Subpackage:: WWW::Delicious::Post
-# Author::     Simone Carletti <weppos@weppos.net>
+# Category::    WWW
+# Package::     WWW::Delicious
+# Author::      Simone Carletti <weppos@weppos.net>
+# License::     MIT License
 #
 #--
 # SVN: $Id$
@@ -54,6 +54,7 @@ module WWW
         yield self if block_given?
         self
       end
+      
       
       class << self
         
