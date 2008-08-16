@@ -6,7 +6,7 @@ lib/www/delicious/post.rb
 lib/www/delicious/tag.rb
 lib/www/delicious/version.rb
 lib/www/delicious.rb
-MIT-LICENSE.rdoc
+LICENSE.rdoc
 Rakefile
 README.rdoc
 setup.rb

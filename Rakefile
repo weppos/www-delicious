@@ -11,7 +11,7 @@ PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
 PKG_SUMMARY = "Ruby client for del.icio.us API."
 PKG_FILES = FileList.new("{lib,test}/**/*.rb") do |fl|
   fl.exclude 'TODO'
-  fl.include %w(README.rdoc CHANGELOG.rdoc MIT-LICENSE.rdoc)
+  fl.include %w(README.rdoc CHANGELOG.rdoc LICENSE.rdoc)
   fl.include %w(Rakefile setup.rb)
 end
 RUBYFORGE_PROJECT = 'www-delicious'
