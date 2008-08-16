@@ -10,7 +10,7 @@ and Bundles but you can create new Posts, Tags and Bundles as well.
 
 {Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
 
-If you like this software, please {recommend me}[http://www.workingwithrails.com/person/11967-simone-carletti] at Working with Rails.
+If you like this software, consider to {recommend me}[http://www.workingwithrails.com/person/11967-simone-carletti] at Working with Rails.
 
 
 == Website
@@ -27,12 +27,12 @@ If you like this software, please {recommend me}[http://www.workingwithrails.com
 
 == Dependencies
 
-* Ruby 1.8.6
+* Ruby >= 1.8.6 (not tested with previous versions)
 
 
 == Download and Installation
 
-RubyGems[http://rubyforge.org/projects/rubygems/] is the preferred easy install method.
+RubyGems[http://rubyforge.org/projects/rubygems/] is the preferred install method.
 To get the latest version, simply type the following instruction into your command prompt:
 
   $ sudo gem install www-delicious
@@ -45,8 +45,8 @@ navigate to the root library directory and enter:
   $ sudo ruby setup.rb
 
 If you need the latest development version you can download the source code
-from the GIT repositories listed above.
-Beware that the code might not as stable as the official release.
+from one of the GIT repositories listed above.
+Beware that the code might not be as stable as the official release.
 
 
 == Overview
