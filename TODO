@@ -1,4 +1,0 @@
-== tags_delete(foo)
-
-This method should fetch all posts with :tag => foo and update them deleting the foo tag.
-
