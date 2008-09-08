@@ -17,11 +17,11 @@
 require 'net/https'
 require 'rexml/document'
 require 'time'
-require File.dirname(__FILE__) + '/delicious/bundle'
-require File.dirname(__FILE__) + '/delicious/post'
-require File.dirname(__FILE__) + '/delicious/tag'
-require File.dirname(__FILE__) + '/delicious/errors'
-require File.dirname(__FILE__) + '/delicious/version'
+require 'www/delicious/bundle'
+require 'www/delicious/post'
+require 'www/delicious/tag'
+require 'www/delicious/errors'
+require 'www/delicious/version'
 
 
 module WWW #:nodoc:
