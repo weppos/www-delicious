@@ -1,16 +1,21 @@
 = WWW::Delicious
 
+  http://www-delicious.rubyforge.org/
+  http://code.simonecarletti.com/www-delicious
+
+
+== Description
+
 WWW::Delicious is a Ruby client for http://del.icio.us XML API.
 
-It provides both read and write functionalities. You can read user Posts, Tags
+It provides both read and write functionality. You can read user Posts, Tags
 and Bundles but you can create new Posts, Tags and Bundles as well.
 
 
 == Authors
 
-{Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
-
-If you like this software, consider to {recommend me}[http://www.workingwithrails.com/person/11967-simone-carletti] at Working with Rails.
+* {Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
+  If you like this software, consider to {recommend me}[http://www.workingwithrails.com/person/11967-simone-carletti] at Working with Rails.
 
 
 == Website

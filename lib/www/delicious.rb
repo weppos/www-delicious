@@ -76,7 +76,6 @@ module WWW #:nodoc:
   #   datetime.strftime('%Y') # => 2008
   # 
   # 
-  # 
   # Category::   WWW
   # Package::    WWW::Delicious
   # Author::     Simone Carletti <weppos@weppos.net>
