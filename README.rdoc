@@ -45,20 +45,19 @@ from one of the GIT repositories listed above.
 Beware that the code might not be as stable as the official release.
 
 
-== Usage
+== Getting Started
 
 In order to use this library you need a valid del.icio.us account.
-Go to http://del.icio.us/ and register for a new account if you don't
-already have one.
+Go to http://del.icio.us/ and register for a new account if you don't already have one.
 
-Then create a valid instance of WWW::Delicious with the account credentials.
+Then create a valid instance of WWW::Delicious providing your account credentials.
 
   require 'www/delicious'
   
   # create a new instance with given username and password
   d = WWW::Delicious.new('username', 'password')
   
-Now you can use your delicious instance to call on of the API methods available.
+Now you can use your instance to interact with the API interface.
 
 
 === Last account update
