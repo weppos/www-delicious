@@ -6,23 +6,19 @@ It provides both read and write functionalities. You can read user Posts, Tags
 and Bundles but you can create new Posts, Tags and Bundles as well.
 
 
-== Authors
+== Overview
 
-{Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
+WWW::Delicious maps all the original del.icio.us API calls and provides some
+additional convenient methods to perform common tasks.
+Please read the official documentation (http://del.icio.us/help/api/)
+to learn more about del.icio.us API.
 
-If you like this software, consider to {recommend me}[http://www.workingwithrails.com/person/11967-simone-carletti] at Working with Rails.
-
-
-== Website
-
-* {Homepage}[http://code.simonecarletti.com/www-delicious]
-* {API}[http://www-delicious.rubyforge.org/]
-
-
-== Source
-
-* {at GitHub}[http://github.com/weppos/www-delicious/]
-* {at RubyForge}[http://rubyforge.org/projects/www-delicious/]
+WWW::Delicious is 100% compatible with all del.icio.us API constraints,
+including the requirement to set a valid user agent or wait at least
+one second between queries.
+Basically, the main benefit from using this library is that you don't need
+to take care of all these low level details, if you don't want:
+WWW::Delicious will try to give you the most with less efforts.
 
 
 == Dependencies
@@ -47,21 +43,6 @@ navigate to the root library directory and enter:
 If you need the latest development version you can download the source code
 from one of the GIT repositories listed above.
 Beware that the code might not be as stable as the official release.
-
-
-== Overview
-
-WWW::Delicious maps all the original del.icio.us API calls and provides some
-additional convenient methods to perform common tasks.
-Please read the official documentation (http://del.icio.us/help/api/)
-to learn more about del.icio.us API.
-
-WWW::Delicious is 100% compatible with all del.icio.us API constraints,
-including the requirement to set a valid user agent or wait at least
-one second between queries.
-Basically, the main benefit from using this library is that you don't need
-to take care of all these low level details, if you don't want:
-WWW::Delicious will try to give you the most with less efforts.
 
 
 == Usage
@@ -189,16 +170,32 @@ You can also create new bundles or delete existing ones.
   d.bundles_delete('OldBundle')
 
 
+== Author
+
+{Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
+
+
+== Resources
+
+* {Homepage}[http://code.simonecarletti.com/www-delicious]
+* {API}[http://www-delicious.rubyforge.org/]
+* {GitHub}[http://github.com/weppos/www-delicious/]
+* {RubyForge}[http://rubyforge.org/projects/www-delicious/]
+
+
 == FeedBack and Bug reports
 
-Feel free to email {Simone Carletti}[mailto:weppos@weppos.net] 
-with any questions or feedback.
+Feel free to email {Simone Carletti}[mailto:weppos@weppos.net] with any questions or feedback.
 
-Please submit your bug reports to the Redmine installation for WWW::Delicious
-available at http://code.simonecarletti.com/www-delicious.
+Please submit bug reports or feature request to our {Redmine Ticket System}[http://code.simonecarletti.com/www-delicious].
 
 
 == Changelog
 
-See CHANGELOG for details.
+See the CHANGELOG.rdoc file for details.
+
+
+== License
+
+WWW::Delicious is released under the MIT license. 
 
