@@ -4,7 +4,7 @@ require 'echoe'
 $LOAD_PATH.unshift(File.dirname(__FILE__) + "/lib")
 require 'www/delicious'
 
- 
+
 # Common package properties
 PKG_NAME = ENV['PKG_NAME'] || WWW::Delicious::GEM
 PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
