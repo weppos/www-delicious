@@ -74,20 +74,12 @@ module WWW #:nodoc:
   #   
   #   datetime = d.update # => Wed Mar 12 08:41:20 UTC 2008
   #   datetime.strftime('%Y') # => 2008
-  # 
-  # 
-  # Category::   WWW
-  # Package::    WWW::Delicious
-  # Author::     Simone Carletti <weppos@weppos.net>
   #
   class Delicious
     
     NAME            = 'WWW::Delicious'
     GEM             = 'www-delicious'
     AUTHOR          = 'Simone Carletti <weppos@weppos.net>'
-    VERSION         = defined?(Version) ? Version::STRING : nil
-    STATUS          = 'alpha'
-    BUILD           = ''.match(/(\d+)/).to_a.first
     
     # del.icio.us account username
     attr_reader :username

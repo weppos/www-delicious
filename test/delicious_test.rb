@@ -14,7 +14,7 @@
 #++
 
 
-require File.dirname(__FILE__) + '/../helper'
+require 'test_helper'
 
 
 class DeliciousTest < Test::Unit::TestCase
@@ -28,35 +28,35 @@ class DeliciousTest < Test::Unit::TestCase
   end
   
   
-  def test_initialize_raises_without_account
+  def test_initialize_should_raise_without_account
     assert_raise(ArgumentError) { WWW::Delicious.new() }
     assert_raise(ArgumentError) { WWW::Delicious.new(TEST_USERNAME) }
   end
   
-  def test_initialize_account
+  def test_initialize_should_set_account_credentials
     assert_equal(TEST_USERNAME, @delicious.username)
     assert_equal(TEST_PASSWORD, @delicious.password)
   end
   
-  def test_initialize_option_user_agent
+  def test_initialize_should_allow_option_user_agent
     useragent = 'MyClass/1.0 (Foo/Bar +http://foo.com/)'
     delicious = instance(:user_agent => useragent)
     assert_equal(useragent, delicious.user_agent)
   end
   
-  def test_initialize_option_user_agent_default
+  def test_initialize_should_default_option_user_agent_unless_option
     useragent = instance.user_agent
     assert_match("Ruby/#{RUBY_VERSION}", useragent)
     assert_match("#{WWW::Delicious::NAME}/#{WWW::Delicious::VERSION}", useragent)
   end
   
-  def test_initialize_option_base_uri
+  def test_initialize_should_allow_option_base_uri
     base_uri = 'https://ma.gnolia.com/api/mirrord'
     delicious = instance(:base_uri => base_uri)
     assert_equal(URI.parse(base_uri), delicious.base_uri)
   end
   
-  def test_initialize_option_base_uri_default
+  def test_initialize_should_default_option_base_uri_unless_option
     base_uri = instance.base_uri
     assert_equal(URI.parse('https://api.del.icio.us'), base_uri)
   end

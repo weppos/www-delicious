@@ -1,16 +1,16 @@
 require 'rubygems'
+require 'rake'
 require 'echoe'
 
-$LOAD_PATH.unshift(File.dirname(__FILE__) + "/lib")
+$:.unshift(File.dirname(__FILE__) + "/lib")
 require 'www/delicious'
 
 
 # Common package properties
-PKG_NAME = ENV['PKG_NAME'] || WWW::Delicious::GEM
+PKG_NAME    = ENV['PKG_NAME'] || WWW::Delicious::GEM
 PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
 PKG_SUMMARY = "Ruby client for del.icio.us API."
 PKG_FILES = FileList.new("{lib,test}/**/*.rb") do |fl|
-  fl.exclude 'TODO'
   fl.include %w(README.rdoc CHANGELOG.rdoc LICENSE.rdoc)
   fl.include %w(Rakefile setup.rb)
 end

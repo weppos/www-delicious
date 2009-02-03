@@ -14,34 +14,34 @@
 #++
 
 
-require File.dirname(__FILE__) + '/../helper'
-require 'www/delicious/tag'
+require 'test_helper'
+require 'www/delicious/bundle'
 
 
-class TagTest < Test::Unit::TestCase
+class BundleTest < Test::Unit::TestCase
   
-  def test_tag
-    expected = { :name => 'MyTag', :count => 2 }
+  def test_bundle
+    expected = { :name => 'MyTag', :tags => %w(foo bar) }
     assert_attributes(instance(expected), expected)
   end
   
   def test_tag_from_rexml
-    dom = REXML::Document.new(File.read(TESTCASES_PATH + '/element/tag.xml'))
-    expected = { :count => 1, :name => 'activedesktop' }
+    dom = REXML::Document.new(File.read(TESTCASES_PATH + '/element/bundle.xml'))
+    expected = { :name => 'music', :tags => %w(ipod mp3 music) }
     
-    element = WWW::Delicious::Tag.from_rexml(dom.root)
+    element = WWW::Delicious::Bundle.from_rexml(dom.root)
     assert_attributes(element, expected)
   end
   
   
-  def test_tag_name_strips_whitespaces
+  def test_bundle_name_strips_whitespaces
     [' foo   ', 'foo  ', ' foo ', '  foo'].each do |v|
       assert_equal('foo', instance(:name => v).name) # => 'foo'
     end
   end
   
   def test_to_s_returns_name_as_string
-    assert_equal('foobar', instance(:name => 'foobar', :count => 4).to_s)
+    assert_equal('foobar', instance(:name => 'foobar', :tags => %w(foo bar)).to_s)
   end
   
   def test_to_s_returns_empty_string_with_name_nil
@@ -49,13 +49,7 @@ class TagTest < Test::Unit::TestCase
   end
   
   
-  # def test_api_valid
-  #   ['foo', ' foo '].each do |v|
-  #     assert(instance(v).api_valid?)
-  #   end
-  #   ['', '  '].each do |v|
-  #     assert(!instance(v).api_valid?)
-  #   end
+  # def test_valid
   # end
   
   
@@ -63,7 +57,7 @@ class TagTest < Test::Unit::TestCase
   
     # returns a stub instance
     def instance(values = {}, &block)
-      WWW::Delicious::Tag.new(values)
+      WWW::Delicious::Bundle.new(values)
     end
 
 end

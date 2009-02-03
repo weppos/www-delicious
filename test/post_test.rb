@@ -14,7 +14,7 @@
 #++
 
 
-require File.dirname(__FILE__) + '/../helper'
+require 'test_helper'
 require 'www/delicious/post'
 
 
