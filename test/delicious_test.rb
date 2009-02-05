@@ -248,7 +248,7 @@ class DeliciousTest < Test::Unit::TestCase
     results = @delicious.posts_get
     assert_instance_of(Array, results)
     assert_equal(3, results.length)
-    assert_equal('New to Git? — GitHub', results.first.title)
+    assert_equal('New to Git? - GitHub', results.first.title)
     assert_equal('.c( whytheluckystiff )o. -- The Fully Upturned Bin', results.last.title)
   end
   
@@ -266,7 +266,7 @@ class DeliciousTest < Test::Unit::TestCase
     results = @delicious.posts_recent
     assert_instance_of(Array, results)
     assert_equal(15, results.length)
-    assert_equal('New to Git? — GitHub', results.first.title)
+    assert_equal('New to Git? - GitHub', results.first.title)
     assert_equal('RichText | Lightview for modal dialogs on Rails', results.last.title)
   end
   
@@ -284,7 +284,7 @@ class DeliciousTest < Test::Unit::TestCase
     results = @delicious.posts_all
     assert_instance_of(Array, results)
     assert_equal(8, results.length)
-    assert_equal('New to Git? — GitHub', results.first.title)
+    assert_equal('New to Git? - GitHub', results.first.title)
     assert_equal('ASP 101 - Object Oriented ASP: Using Classes in Classic ASP', results.last.title)
   end
   

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <posts user="weppos" update="2008-08-02T11:55:35Z" tag="" total="1702">
-  <post href="http://github.com/blog/120-new-to-git" hash="eca1f8a028417349f71077adf64faee8" description="New to Git? — GitHub" tag="scm git" time="2008-07-31T15:44:54Z" others="-1" extended=""/>
-  <post href="http://arthurkoziel.com/2008/05/02/git-configuration/" hash="fd68cebf1efc8267755fffdf83d34a65" description="Git Configuration — Arthur Koziel’s Blog" tag="scm git" time="2008-07-31T15:44:19Z" others="-1" extended="Here are some useful configuration options for Git."/>
+  <post href="http://github.com/blog/120-new-to-git" hash="eca1f8a028417349f71077adf64faee8" description="New to Git? - GitHub" tag="scm git" time="2008-07-31T15:44:54Z" others="-1" extended=""/>
+  <post href="http://arthurkoziel.com/2008/05/02/git-configuration/" hash="fd68cebf1efc8267755fffdf83d34a65" description="Git Configuration - Arthur Koziel’s Blog" tag="scm git" time="2008-07-31T15:44:19Z" others="-1" extended="Here are some useful configuration options for Git."/>
   <post href="http://whytheluckystiff.net/articles/theFullyUpturnedBin.html" hash="02ae7e6473e6ad87d6d5a8fc254dd274" description=".c( whytheluckystiff )o. -- The Fully Upturned Bin" tag="programming ruby garbagecollection" time="2008-07-31T13:09:26Z" others="-1" extended="About memory management and Garbage Collection in Ruby."/>
   <post href="http://www.learnasp.com/learn/subgetrows.asp" hash="14f798447ad0e8b3f98d6c89773ce345" description="dbtable" tag="programming asp vbscript database" time="2008-07-29T19:29:38Z" others="-1" extended=""/>
   <post href="http://www.xmlfiles.com/articles/seth/xmldatatransfer/default.asp" hash="e3dfcc0f5cf9ce519783b7a9b1904998" description="XML Files - An ASP Class for XML Data Transfer" tag="programming asp vbscript classes xml" time="2008-07-29T19:29:17Z" others="-1" extended=""/>
