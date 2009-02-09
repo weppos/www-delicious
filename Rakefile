@@ -15,7 +15,7 @@ PKG_FILES = FileList.new("{lib,test}/**/*.rb") do |files|
   files.include %w(Rakefile setup.rb)
 end
 RUBYFORGE_PROJECT = 'www-delicious'
- 
+
 if ENV['SNAPSHOT'].to_i == 1
   PKG_VERSION << "." << Time.now.utc.strftime("%Y%m%d%H%M%S")
 end
@@ -25,11 +25,11 @@ Echoe.new(PKG_NAME, PKG_VERSION) do |p|
   p.author        = "Simone Carletti"
   p.email         = "weppos@weppos.net"
   p.summary       = PKG_SUMMARY
-  p.description   = <<-EOF
+  p.description   = <<-EOD
     WWW::Delicious is a del.icio.us API client implemented in Ruby. \
     It provides access to all available del.icio.us API queries \
     and returns the original XML response as a friendly Ruby object.
-  EOF
+  EOD
   p.url           = "http://code.simonecarletti.com/www-delicious"
   p.project       = RUBYFORGE_PROJECT
 
