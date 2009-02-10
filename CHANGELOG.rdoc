@@ -5,6 +5,8 @@
 
 * FIXED: Compatibility fixes for Ruby 1.9. WWW::Delicious is now 100% compatible with 1.9. You should remember to define the proper content encoding with magic comments when working with UTF-8/MultiByte XML or Ruby files, see http://redmine.ruby-lang.org/wiki/ruby-19/ScriptEncoding (closes #142).
 
+* FIXED: Forced Rakefile to require Echoe >= 3.1 to prevent outdated .gemspec files (closes #143).
+
 * CHANGED: Don't use File.dirname(__FILE__) in require statement to prevent recursive inclusions.
 
 
