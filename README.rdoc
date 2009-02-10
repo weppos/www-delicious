@@ -25,6 +25,8 @@ WWW::Delicious will try to give you the most with less efforts.
 
 * Ruby >= 1.8.6 (not tested with previous versions)
 
+As of release 0.3.0, WWW::Delicious is compatible with Ruby 1.9.1.
+
 
 == Download and Installation
 
