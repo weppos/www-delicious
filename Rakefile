@@ -9,10 +9,10 @@ require 'www/delicious'
 
 
 # Common package properties
-PKG_NAME    = ENV['PKG_NAME'] || WWW::Delicious::GEM
+PKG_NAME    = ENV['PKG_NAME']    || WWW::Delicious::GEM
 PKG_VERSION = ENV['PKG_VERSION'] || WWW::Delicious::VERSION
 PKG_SUMMARY = "Ruby client for del.icio.us API."
-PKG_FILES = FileList.new("{lib,test}/**/*.rb") do |files|
+PKG_FILES   = FileList.new("{lib,test}/**/*.rb") do |files|
   files.include %w(README.rdoc CHANGELOG.rdoc LICENSE.rdoc)
   files.include %w(Rakefile setup.rb)
 end
