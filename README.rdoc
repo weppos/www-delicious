@@ -50,7 +50,7 @@ Beware that the code might not be as stable as the official release.
 == Getting Started
 
 In order to use this library you need a valid del.icio.us account.
-Go to http://del.icio.us/ and register for a new account if you don't already have one.
+Go to http://del.icio.us and register for a new account if you don't already have one.
 
 Then create a valid instance of WWW::Delicious providing your account credentials.
 
@@ -171,9 +171,9 @@ You can also create new bundles or delete existing ones.
   d.bundles_delete('OldBundle')
 
 
-== Author
+== Credits
 
-{Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
+Author:: {Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
 
 
 == Resources
@@ -187,7 +187,6 @@ You can also create new bundles or delete existing ones.
 == FeedBack and Bug reports
 
 Feel free to email {Simone Carletti}[mailto:weppos@weppos.net] with any questions or feedback.
-
 Please use the {Ticket System}[http://code.simonecarletti.com/projects/show/www-delicious] to submit bug reports or feature request.
 
 
