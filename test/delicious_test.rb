@@ -78,7 +78,10 @@ class DeliciousTest < Test::Unit::TestCase
       lr = @delicious.instance_variable_get(:@last_request)
       @delicious.valid_account? # N request
       nr = @delicious.instance_variable_get(:@last_request)
-      assert((nr - lr) > WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST)
+      time_diff = (nr - lr)
+      assert !(time_diff < WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST), 
+            "Request ##{time} run after `#{time_diff}' seconds " +
+            "but it should wait at least `#{WWW::Delicious::SECONDS_BEFORE_NEW_REQUEST}' seconds"
     end
   end
   
