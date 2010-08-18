@@ -6,6 +6,8 @@
 
 * FIXED: Object#blank? is always redefined regardless already defined before.
 
+* CHANGED: Removed dependency from Echoe.
+
 * REMOVED: Removed old setup.rb installation method.
 
 
