@@ -166,7 +166,7 @@ Author:: {Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
 
 * {Homepage}[http://www.simonecarletti.com/code/www-delicious]
 * {Repository}[http://github.com/weppos/www-delicious/]
-* {API Documentation}[http://www.simonecarletti.com/code/www-delicious/api/] (RDdoc)
+* {API Documentation}[http://www.simonecarletti.com/code/www-delicious/api/] (RDoc)
 * {RubyForge}[http://rubyforge.org/projects/www-delicious/]
 
 
@@ -185,4 +185,3 @@ See the CHANGELOG.rdoc file for details.
 == License
 
 Copyright (c) 2008-2010 Simone Carletti, WWW::Delicious is released under the MIT license. 
-
