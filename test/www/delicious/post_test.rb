@@ -1,19 +1,3 @@
-# 
-# = WWW::Delicious
-#
-# Ruby client for del.icio.us API.
-# 
-#
-# Category::    WWW
-# Package::     WWW::Delicious
-# Author::      Simone Carletti <weppos@weppos.net>
-# License::     MIT License
-#
-#--
-#
-#++
-
-
 require 'test_helper'
 require 'www/delicious/post'
 
