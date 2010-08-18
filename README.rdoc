@@ -1,19 +1,13 @@
 = WWW::Delicious
 
-WWW::Delicious is a Ruby client for http://del.icio.us XML API.
+WWW::Delicious is a Ruby client for {delicious.com}[http://delicious.com] XML API.
 
 It provides both read and write functionality. You can read user Posts, Tags
 and Bundles but you can create new Posts, Tags and Bundles as well.
 
+WWW::Delicious maps all the original del.icio.us API calls and provides some additional convenient methods to perform common tasks. For a full API overview, visit the official {Delicious API documentation}[http://delicious.com/help/api].
 
-== Overview
-
-WWW::Delicious maps all the original del.icio.us API calls and provides some
-additional convenient methods to perform common tasks.
-Please read the official documentation (http://del.icio.us/help/api/)
-to learn more about del.icio.us API.
-
-WWW::Delicious is 100% compatible with all del.icio.us API constraints,
+WWW::Delicious is compatible with all {delicious.com}[http://delicious.com] API constraints,
 including the requirement to set a valid user agent or wait at least
 one second between queries.
 Basically, the main benefit from using this library is that you don't need
@@ -21,11 +15,11 @@ to take care of all these low level details, if you don't want:
 WWW::Delicious will try to give you the most with less efforts.
 
 
-== Dependencies
+== Requirements
 
 * Ruby >= 1.8.6 (not tested with previous versions)
 
-As of release 0.3.0, WWW::Delicious is compatible with Ruby 1.9.1.
+As of release 0.3.0, WWW::Delicious is compatible with Ruby 1.9.
 
 
 == Download and Installation
@@ -49,8 +43,8 @@ Beware that the code might not be as stable as the official release.
 
 == Getting Started
 
-In order to use this library you need a valid del.icio.us account.
-Go to http://del.icio.us and register for a new account if you don't already have one.
+In order to use this library you need a valid Delicious account.
+Go to http://delicious.com and register for a new account if you don't already have one.
 
 Then create a valid instance of WWW::Delicious providing your account credentials.
 
@@ -179,6 +173,7 @@ Author:: {Simone Carletti}[http://www.simonecarletti.com/] <weppos@weppos.net>
 == Resources
 
 * {Homepage}[http://code.simonecarletti.com/www-delicious]
+* {Documentation}[http://code.simonecarletti.com/wiki/www-delicious]
 * {API}[http://www-delicious.rubyforge.org/]
 * {GitHub}[http://github.com/weppos/www-delicious/]
 * {RubyForge}[http://rubyforge.org/projects/www-delicious/]
@@ -197,5 +192,5 @@ See the CHANGELOG.rdoc file for details.
 
 == License
 
-Copyright (c) 2008-2009 Simone Carletti, WWW::Delicious is released under the MIT license. 
+Copyright (c) 2008-2010 Simone Carletti, WWW::Delicious is released under the MIT license. 
 
