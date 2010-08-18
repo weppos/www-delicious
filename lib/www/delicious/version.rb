@@ -19,15 +19,14 @@ module WWW
 
     module Version
       MAJOR = 0
-      MINOR = 3
-      TINY  = 0
+      MINOR = 4
+      PATCH = 0
+      BUILD = nil
 
-      STRING = [MAJOR, MINOR, TINY].join('.')
+      STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join(".")
     end
 
-    VERSION         = Version::STRING
-    STATUS          = 'beta'
-    BUILD           = ''.match(/(\d+)/).to_a.first
+    VERSION = Version::STRING
 
   end
 end

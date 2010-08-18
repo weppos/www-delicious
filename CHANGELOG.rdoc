@@ -1,6 +1,7 @@
 = Changelog
 
-== master
+
+== Release 0.4.0
 
 * FIXED: A trivial bug causes the test `test_request_waits_necessary_time_between_requests` to fail in case the subsequent request is sent exactly 1 second after the prior one.
 
