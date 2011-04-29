@@ -52,12 +52,12 @@ module WWW
 
       # Returns the value for <tt>shared</tt> attribute.
       def shared
-        !(@shared == false)
+        !!@shared
       end
 
       # Returns the value for <tt>replace</tt> attribute.
       def replace
-        !(@replace == false)
+        !!@replace
       end
 
       # Returns a params-style representation suitable for API calls.
@@ -66,9 +66,9 @@ module WWW
         params[:url]          = url
         params[:description]  = title
         params[:extended]     = notes if notes
-        params[:shared]       = shared
         params[:tags]         = tags.join(' ') if tags.respond_to? :join
-        params[:replace]      = replace
+        (params[:shared]       = 'no') if shared
+        (params[:replace]      = 'no') if replace
         params[:dt]           = WWW::Delicious::TIME_CONVERTER.call(time) if time
         params
       end
