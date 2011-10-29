@@ -740,9 +740,11 @@ module WWW #:nodoc:
         # are valid for this request because compare_params
         # would raise if an invalid param is supplied
 
-        params[:tag]    = prepare_param_tag(params[:tag])  if params[:tag]
-        params[:dt]     = TIME_CONVERTER.call(params[:dt]) if params[:dt]
-        params[:url]    = URI.parse(params[:url])          if params[:url]
+        params[:tag]    = prepare_param_tag(params[:tag])      if params[:tag]
+        params[:dt]     = TIME_CONVERTER.call(params[:dt])     if params[:dt]
+        params[:fromdt] = TIME_CONVERTER.call(params[:fromdt]) if params[:fromdt]
+        params[:todt]   = TIME_CONVERTER.call(params[:todt])   if params[:todt]
+        params[:url]    = URI.parse(params[:url])              if params[:url]
         params[:count]  = if value = params[:count]
           raise Error, 'Expected `count` <= 100' if value.to_i() > 100 # requirement
           value.to_i
