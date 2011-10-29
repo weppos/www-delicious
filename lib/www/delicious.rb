@@ -426,7 +426,7 @@ module WWW #:nodoc:
     # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     #
     def posts_all(options = {})
-      params = prepare_posts_params(options.clone, [:tag])
+      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt])
       response = request(API_PATH_POSTS_ALL, params)
       return parse_post_collection(response.body)
     end
