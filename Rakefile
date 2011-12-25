@@ -32,6 +32,7 @@ spec = Gem::Specification.new do |s|
   s.require_paths     = %w( lib )
 
   # If your tests use any gems, include them here
+  s.add_development_dependency("rake")
   s.add_development_dependency("mocha")
 end
 
