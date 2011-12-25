@@ -1,11 +1,12 @@
-= Changelog
+# Changelog
 
-== master
+
+## master
 
 * CHANGED: Ruby style.
 
 
-== Release 0.4.0
+## Release 0.4.0
 
 * FIXED: A trivial bug causes the test `test_request_waits_necessary_time_between_requests` to fail in case the subsequent request is sent exactly 1 second after the prior one.
 
@@ -16,7 +17,7 @@
 * REMOVED: Removed old setup.rb installation method.
 
 
-== Release 0.3.0
+## Release 0.3.0
 
 * FIXED: Compatibility fixes for Ruby 1.9. WWW::Delicious is now 100% compatible with 1.9. You should remember to define the proper content encoding with magic comments when working with UTF-8/MultiByte XML or Ruby files, see http://redmine.ruby-lang.org/wiki/ruby-19/ScriptEncoding (closes #142).
 
@@ -25,7 +26,7 @@
 * CHANGED: Don't use File.dirname(__FILE__) in require statement to prevent recursive inclusions.
 
 
-== Release 0.2.0
+## Release 0.2.0
 
 * ADDED: :base_uri initialization option allows to create a new instance specifying a custom base_uri for all API calls. This is useful, for example, if you want to use ma.gno.lia Mirror'd APIs (http://wiki.ma.gnolia.com/Mirror%27d_API) instead the del.icio.us one (thanks to Jörg Battermann).
 
@@ -60,6 +61,6 @@
 * CHANGED: Integrated Echoe, cleaned Rakefile (closes #23).
 
 
-== Release 0.1.0 (2008-05-11)
+## Release 0.1.0 (2008-05-11)
 
 * Initial public release.
