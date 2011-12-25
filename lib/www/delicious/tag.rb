@@ -73,7 +73,7 @@ module WWW
       #   # => false
       #
       def api_valid?
-        return !name.empty?
+        !name.empty?
       end
 
 

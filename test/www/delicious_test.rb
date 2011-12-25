@@ -13,7 +13,7 @@ class DeliciousTest < Test::Unit::TestCase
   
   
   def test_initialize_should_raise_without_account
-    assert_raise(ArgumentError) { WWW::Delicious.new() }
+    assert_raise(ArgumentError) { WWW::Delicious.new }
     assert_raise(ArgumentError) { WWW::Delicious.new(TEST_USERNAME) }
   end
   

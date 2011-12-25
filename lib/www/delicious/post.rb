@@ -61,7 +61,7 @@ module WWW
       end
 
       # Returns a params-style representation suitable for API calls.
-      def to_params()
+      def to_params
         params = {}
         params[:url]          = url
         params[:description]  = title
@@ -90,7 +90,7 @@ module WWW
       #   # => false
       #
       def api_valid?
-        return !(url.nil? or url.empty? or title.nil? or title.empty?)
+        !(url.nil? or url.empty? or title.nil? or title.empty?)
       end
 
 

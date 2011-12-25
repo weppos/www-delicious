@@ -33,12 +33,12 @@ class OnlineTest < Test::Unit::TestCase
   
   def test_bundles_set
     bundle = WWW::Delicious::Bundle.new(:name => 'test_bundle', :tags => %w(ruby python).sort)
-    assert_nothing_raised() { @delicious.bundles_set(bundle) }
+    assert_nothing_raised { @delicious.bundles_set(bundle) }
   end
   
   def test_bundles_delete
     bundle = WWW::Delicious::Bundle.new(:name => 'test_bundle')
-    assert_nothing_raised() { @delicious.bundles_delete(bundle) }
+    assert_nothing_raised { @delicious.bundles_delete(bundle) }
   end
   
   
@@ -56,7 +56,7 @@ class OnlineTest < Test::Unit::TestCase
   def test_tags_rename
     ftag = WWW::Delicious::Tag.new(:name => 'old_tag')
     otag = WWW::Delicious::Tag.new(:name => 'new_tag')
-    assert_nothing_raised() { @delicious.tags_rename(ftag, otag) }
+    assert_nothing_raised { @delicious.tags_rename(ftag, otag) }
   end
   
   

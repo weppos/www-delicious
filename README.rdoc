@@ -2,18 +2,11 @@
 
 WWW::Delicious is a Ruby client for {delicious.com}[http://delicious.com] XML API.
 
-It provides both read and write functionality. You can read user Posts, Tags
-and Bundles but you can create new Posts, Tags and Bundles as well.
-
-WWW::Delicious maps all the original del.icio.us API calls and provides some additional convenient methods to perform common tasks. For a full API overview, visit the official {Delicious API documentation}[http://delicious.com/help/api].
+WWW::Delicious maps all the original delicious.com API calls and provides some additional convenient methods to perform common tasks. For a full API overview, visit the official {Delicious API documentation}[http://delicious.com/help/api].
 
 WWW::Delicious is compatible with all {delicious.com}[http://delicious.com] API constraints,
 including the requirement to set a valid user agent or wait at least
 one second between queries.
-Basically, the main benefit from using this library is that you don't need
-to take care of all these low level details, if you don't want:
-WWW::Delicious will try to give you the most with less efforts.
-
 
 == Requirements
 

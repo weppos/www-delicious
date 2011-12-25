@@ -1,5 +1,9 @@
 = Changelog
 
+== master
+
+* CHANGED: Ruby style.
+
 
 == Release 0.4.0
 
