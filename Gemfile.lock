@@ -6,6 +6,9 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    bouncy-castle-java (1.5.0146.1)
+    jruby-openssl (0.7.4)
+      bouncy-castle-java
     metaclass (0.0.1)
     mocha (0.10.0)
       metaclass (~> 0.0.1)
@@ -13,9 +16,11 @@ GEM
     yard (0.7.4)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
+  jruby-openssl
   mocha
   rake
   www-delicious!
