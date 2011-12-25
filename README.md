@@ -5,7 +5,7 @@
 [![Build Status](https://secure.travis-ci.org/weppos/www-delicious.png)](http://travis-ci.org/weppos/www-delicious)
 
 
-*WWW::Delicious* maps all the original delicious.com API calls and provides some additional convenient methods to perform common tasks. For a full API overview, visit the official {Delicious API documentation}[http://delicious.com/help/api].
+*WWW::Delicious* maps all the original delicious.com API calls and provides some additional convenient methods to perform common tasks. For a full API overview, visit the official [Delicious API documentation](http://delicious.com/help/api).
 
 *WWW::Delicious* is compatible with all [delicious.com](http://delicious.com) API constraints, including the requirement to set a valid user agent or wait at least one second between queries.
 
