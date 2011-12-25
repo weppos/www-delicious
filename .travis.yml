@@ -6,6 +6,7 @@ rvm:
   - ree
   - jruby
   - rbx
+  - rbx-19mode
 notifications:
   recipients:
     - weppos@weppos.net
