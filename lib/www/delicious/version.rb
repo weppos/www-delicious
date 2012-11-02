@@ -1,8 +1,8 @@
-# 
+#
 # = WWW::Delicious
 #
 # Ruby client for del.icio.us API.
-# 
+#
 #
 # Category::    WWW
 # Package::     WWW::Delicious

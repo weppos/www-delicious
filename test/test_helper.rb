@@ -14,14 +14,14 @@ RUN_ONLINE_TESTS = (ENV['ONLINE'].to_i == 1) unless defined?(RUN_ONLINE_TESTS)
 
 
 class Test::Unit::TestCase
-  
+
   # asserts all given attributes match mapped value in +instance+.
-  # +instance+ is the instance to be tested, 
+  # +instance+ is the instance to be tested,
   # +expected_mapping+ is the attribute => value mapping.
   def assert_attributes(instance, expected_mapping)
     expected_mapping.each do |key, value|
       assert_equal(value, instance.send(key.to_sym), "Expected `#{key}` to be `#{value}`")
     end
   end
-  
+
 end

@@ -19,7 +19,7 @@ module WWW
 
     #
     # = WWW::Delicious::Error
-    # 
+    #
     # Base exception for all WWW::Delicious errors.
     #
     class Error < StandardError

@@ -35,7 +35,7 @@ Then create a valid instance of `WWW::Delicious` providing your account credenti
 
     # create a new instance with given username and password
     d = WWW::Delicious.new('username', 'password')
-  
+
 Now you can use your instance to interact with the API interface.
 
 ### Last account update
