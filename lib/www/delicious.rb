@@ -429,7 +429,7 @@ module WWW #:nodoc:
     # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     #
     def posts_all(options = {})
-      params = prepare_posts_params(options.clone, [:tag])
+      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt])
       response = request(API_PATH_POSTS_ALL, params)
       parse_post_collection(response.body)
     end
@@ -740,9 +740,11 @@ module WWW #:nodoc:
         # are valid for this request because compare_params
         # would raise if an invalid param is supplied
 
-        params[:tag]    = prepare_param_tag(params[:tag])  if params[:tag]
-        params[:dt]     = TIME_CONVERTER.call(params[:dt]) if params[:dt]
-        params[:url]    = URI.parse(params[:url])          if params[:url]
+        params[:tag]    = prepare_param_tag(params[:tag])      if params[:tag]
+        params[:dt]     = TIME_CONVERTER.call(params[:dt])     if params[:dt]
+        params[:fromdt] = TIME_CONVERTER.call(params[:fromdt]) if params[:fromdt]
+        params[:todt]   = TIME_CONVERTER.call(params[:todt])   if params[:todt]
+        params[:url]    = URI.parse(params[:url])              if params[:url]
         params[:count]  = if value = params[:count]
           raise Error, 'Expected `count` <= 100' if value.to_i > 100 # requirement
           value.to_i
