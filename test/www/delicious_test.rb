@@ -56,7 +56,7 @@ class DeliciousTest < Test::Unit::TestCase
   end
 
   def test_request_waits_necessary_time_between_requests
-    @delicious.expects(:make_request).times(4).returns(load_fixture('/net_response_success.yml'))
+    @delicious.expects(:get_response).times(4).returns(load_fixture('/net_response_success.yml'))
     @delicious.valid_account?   # 1st request
     3.times do |time|
       lr = @delicious.instance_variable_get(:@last_request)
@@ -71,12 +71,12 @@ class DeliciousTest < Test::Unit::TestCase
 
 
   def test_valid_account
-    @delicious.expects(:make_request).once.returns(load_fixture('/net_response_success.yml'))
+    @delicious.expects(:get_response).once.returns(load_fixture('/net_response_success.yml'))
     assert(@delicious.valid_account?)
   end
 
   def test_invalid_account
-    @delicious.expects(:make_request).once.returns(load_fixture('/net_response_invalid_account.yml'))
+    @delicious.expects(:get_response).once.returns(load_fixture('/net_response_invalid_account.yml'))
     assert(!@delicious.valid_account?)
   end
 
@@ -278,58 +278,63 @@ class DeliciousTest < Test::Unit::TestCase
   end
 
   def test_posts_all_with_meta_enabled
-    expected_params = {:meta => 'yes'}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?meta=yes")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
     @delicious.posts_all({:meta => true})
   end
 
   def test_posts_all_with_meta_disabled
-    expected_params = {}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge(expected_path)
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
     @delicious.posts_all({:meta => false})
   end
 
   def test_posts_all_with_start
-    expected_params = {:start => 33}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?start=33")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
     @delicious.posts_all({:start => 33})
   end
 
   def test_posts_all_with_count
-    expected_params = {:results => 345}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?results=345")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
     @delicious.posts_all({:count => 345})
   end
 
   def test_posts_all_with_results
-    expected_params = {:results => 345}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?results=345")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
     @delicious.posts_all({:results => 345})
   end
 
   def test_posts_all_with_fromdt
     fromdt = Time.parse('2012-11-01 12:34 AM')
-    params = {:fromdt => fromdt}
-    expected_params = {:fromdt => fromdt.iso8601}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
-    @delicious.posts_all(params)
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?fromdt=#{fromdt.iso8601}")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
+    @delicious.posts_all({:fromdt => fromdt})
   end
 
   def test_posts_all_with_todt
     todt = Time.parse('2012-11-02 12:34 AM')
-    params = {:todt => todt}
-    expected_params = {:todt => todt.iso8601}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
-    @delicious.posts_all(params)
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?todt=#{todt.iso8601}")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
+    @delicious.posts_all({:todt => todt})
   end
 
   def test_posts_all_with_fromdt_and_todt
     fromdt = Time.parse('2012-11-01 12:34 AM')
     todt = Time.parse('2012-11-02 12:34 AM')
-    params = {:fromdt => fromdt, :todt => todt}
-    expected_params = {:fromdt => fromdt.iso8601, :todt => todt.iso8601}
-    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
-    @delicious.posts_all(params)
+    expected_path = '/v1/posts/all'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?fromdt=#{fromdt.iso8601}&todt=#{todt.iso8601}")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_all.xml'))
+    @delicious.posts_all({:fromdt => fromdt, :todt => todt})
   end
 
   def test_posts_all_raises_without_posts_root_node

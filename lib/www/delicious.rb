@@ -561,16 +561,22 @@ module WWW #:nodoc:
       #   # => sends a GET request to /v1/api/path?foo=1&bar=2
       #
       def request(path, params = {})
-        raise Error, 'Invalid HTTP Client' unless http_client
-        wait_before_new_request
-
         uri = @base_uri.merge(path)
         uri.query = http_build_query(params) unless params.empty?
+        make_request(uri)
+      end
+
+      #
+      # Makes the real HTTP request to given +uri+ and returns the +response+.
+      # This method exists basically to simplify unit testing with mocha.
+      def make_request(uri)
+        raise Error, 'Invalid HTTP Client' unless http_client
+        wait_before_new_request
 
         begin
           @last_request = Time.now  # see #wait_before_new_request
           @last_request_uri = uri   # useful for debug
-          response = make_request(uri)
+          response = get_response(uri)
         rescue => e # catch EOFError, SocketError and more
           raise HTTPError, e.message
         end
@@ -588,9 +594,9 @@ module WWW #:nodoc:
         end
       end
 
+      #
       # Makes the real HTTP request to given +uri+ and returns the +response+.
-      # This method exists basically to simplify unit testing with mocha.
-      def make_request(uri)
+      def get_response(uri)
         http_client.start do |http|
           req = Net::HTTP::Get.new(uri.request_uri, @headers)
           req.basic_auth(@username, @password)
