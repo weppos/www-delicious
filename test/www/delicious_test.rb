@@ -239,6 +239,13 @@ class DeliciousTest < Test::Unit::TestCase
     assert_equal('.c( whytheluckystiff )o. -- The Fully Upturned Bin', results.last.title)
   end
 
+  def test_posts_get_when_no_results
+    @delicious.expects(:request).once.returns(mock_response('/response/posts_get_empty.xml'))
+    results = @delicious.posts_get
+    assert_instance_of(Array, results)
+    assert_equal(0, results.length)
+  end
+
   def test_posts_get_raises_without_posts_root_node
     @delicious.expects(:request).once.returns(mock_response('/response/update.xml'))
     error = assert_raise(WWW::Delicious::ResponseError) do
@@ -275,6 +282,13 @@ class DeliciousTest < Test::Unit::TestCase
     assert_equal(8, results.length)
     assert_equal('New to Git? - GitHub', results.first.title)
     assert_equal('ASP 101 - Object Oriented ASP: Using Classes in Classic ASP', results.last.title)
+  end
+
+  def test_posts_all_when_no_results
+    @delicious.expects(:request).once.returns(mock_response('/response/posts_all_empty.xml'))
+    results = @delicious.posts_all
+    assert_instance_of(Array, results)
+    assert_equal(0, results.length)
   end
 
   def test_posts_all_with_meta_enabled

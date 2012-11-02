@@ -630,12 +630,20 @@ module WWW #:nodoc:
       #
       # Raises::  WWW::Delicious::ResponseError in case of invalid response.
       #
+      # === Options
+      # <tt>:root_name</tt>:: verifies that the root node has this name.
+      # <tt>:alternative_root_name</tt>:: valid alternative root name (e.g. for a normal error result).
+      #
       def parse_and_validate_response(body, options = {})
         dom = REXML::Document.new(body)
 
-        if (value = options[:root_name]) && dom.root.name != value
-          raise ResponseError, "Invalid response, root node is not `#{value}`"
+        if expected_root_name = options[:root_name]
+          allowed_root_names = [expected_root_name,options[:alternative_root_name]].compact
+          unless allowed_root_names.include?(dom.root.name)
+            raise ResponseError, "Invalid response, root node is not `#{expected_root_name}`"
+          end
         end
+
         if (value = options[:root_text]) && dom.root.text != value
           raise ResponseError, value
         end
@@ -682,7 +690,7 @@ module WWW #:nodoc:
       # Parses a response containing a collection of Posts
       # and returns an array of <tt>WWW::Delicious::Post</tt>.
       def parse_post_collection(body)
-        dom  = parse_and_validate_response(body, :root_name => 'posts')
+        dom  = parse_and_validate_response(body, :root_name => 'posts', :alternative_root_name => 'result')
         dom.root.elements.collect('post') { |xml| Post.from_rexml(xml) }
       end
 
