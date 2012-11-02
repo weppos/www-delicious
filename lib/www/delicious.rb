@@ -431,9 +431,10 @@ module WWW #:nodoc:
     # <tt>:todt</tt>:: filter for posts on this +Time+ or earlier.
     # <tt>:count</tt>:: number of items to retrieve. (default: 1000). May also use the alias <tt>:results</tt>.
     # <tt>:start</tt>:: Start returning posts this many results into the set.
+    # <tt>:meta</tt>:: Include change detection signatures when +true+.
     #
     def posts_all(options = {})
-      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt, :results, :start])
+      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt, :results, :start, :meta])
       response = request(API_PATH_POSTS_ALL, params)
       parse_post_collection(response.body)
     end
@@ -754,6 +755,7 @@ module WWW #:nodoc:
         params[:fromdt] = TIME_CONVERTER.call(params[:fromdt]) if params[:fromdt]
         params[:todt]   = TIME_CONVERTER.call(params[:todt])   if params[:todt]
         params[:url]    = URI.parse(params[:url])              if params[:url]
+        params[:meta]   = 'yes'                                if params.delete(:meta)
         if uses_results_param
           params[:results] = params[:results].to_i             if params[:results]
         else
