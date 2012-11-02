@@ -427,9 +427,12 @@ module WWW #:nodoc:
     #
     # === Options
     # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
+    # <tt>:fromdt</tt>:: filter for posts on this +Time+ or later.
+    # <tt>:todt</tt>:: filter for posts on this +Time+ or earlier.
+    # <tt>:count</tt>:: number of items to retrieve. (default: 1000). May also use the alias <tt>:results</tt>.
     #
     def posts_all(options = {})
-      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt])
+      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt, :results])
       response = request(API_PATH_POSTS_ALL, params)
       parse_post_collection(response.body)
     end
@@ -734,6 +737,11 @@ module WWW #:nodoc:
       # Raises::  WWW::Delicious::Error
       #
       def prepare_posts_params(params, allowed_params = [])
+
+        # if we accept :results then allow :count as an alias
+        uses_results_param = allowed_params.include?(:results)
+        params[:results] = params.delete(:count) if uses_results_param && params[:count]
+
         compare_params(params, allowed_params)
 
         # we don't need to check whether the following parameters
@@ -745,11 +753,15 @@ module WWW #:nodoc:
         params[:fromdt] = TIME_CONVERTER.call(params[:fromdt]) if params[:fromdt]
         params[:todt]   = TIME_CONVERTER.call(params[:todt])   if params[:todt]
         params[:url]    = URI.parse(params[:url])              if params[:url]
-        params[:count]  = if value = params[:count]
-          raise Error, 'Expected `count` <= 100' if value.to_i > 100 # requirement
-          value.to_i
+        if uses_results_param
+          params[:results] = params[:results].to_i             if params[:results]
         else
-          15 # default value
+          params[:count]  = if value = params[:count]
+            raise Error, 'Expected `count` <= 100' if value.to_i > 100 # requirement
+            value.to_i
+          else
+            15 # default value
+          end
         end
 
         params

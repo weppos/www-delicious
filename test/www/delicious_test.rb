@@ -249,7 +249,8 @@ class DeliciousTest < Test::Unit::TestCase
 
 
   def test_posts_recent
-    @delicious.expects(:request).once.returns(mock_response('/response/posts_recent.xml'))
+    expected_params = {:count => 15}
+    @delicious.expects(:request).with('/v1/posts/recent',expected_params).once.returns(mock_response('/response/posts_recent.xml'))
     results = @delicious.posts_recent
     assert_instance_of(Array, results)
     assert_equal(15, results.length)
@@ -267,7 +268,7 @@ class DeliciousTest < Test::Unit::TestCase
 
 
   def test_posts_all
-    expected_params = {:count => 15}
+    expected_params = {}
     @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
     results = @delicious.posts_all
     assert_instance_of(Array, results)
@@ -276,29 +277,41 @@ class DeliciousTest < Test::Unit::TestCase
     assert_equal('ASP 101 - Object Oriented ASP: Using Classes in Classic ASP', results.last.title)
   end
 
+  def test_posts_all_with_count
+    expected_params = {:results => 345}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    @delicious.posts_all({:count => 345})
+  end
+
+  def test_posts_all_with_results
+    expected_params = {:results => 345}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    @delicious.posts_all({:results => 345})
+  end
+
   def test_posts_all_with_fromdt
     fromdt = Time.parse('2012-11-01 12:34 AM')
     params = {:fromdt => fromdt}
-    expected_params = {:fromdt => fromdt.iso8601, :count => 15}
+    expected_params = {:fromdt => fromdt.iso8601}
     @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
-    results = @delicious.posts_all(params)
+    @delicious.posts_all(params)
   end
 
   def test_posts_all_with_todt
     todt = Time.parse('2012-11-02 12:34 AM')
     params = {:todt => todt}
-    expected_params = {:todt => todt.iso8601, :count => 15}
+    expected_params = {:todt => todt.iso8601}
     @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
-    results = @delicious.posts_all(params)
+    @delicious.posts_all(params)
   end
 
   def test_posts_all_with_fromdt_and_todt
     fromdt = Time.parse('2012-11-01 12:34 AM')
     todt = Time.parse('2012-11-02 12:34 AM')
     params = {:fromdt => fromdt, :todt => todt}
-    expected_params = {:fromdt => fromdt.iso8601, :todt => todt.iso8601, :count => 15}
+    expected_params = {:fromdt => fromdt.iso8601, :todt => todt.iso8601}
     @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
-    results = @delicious.posts_all(params)
+    @delicious.posts_all(params)
   end
 
   def test_posts_all_raises_without_posts_root_node
