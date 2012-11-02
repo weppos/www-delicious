@@ -65,7 +65,7 @@ class OnlineTest < Test::Unit::TestCase
   end
 
   def test_post_all
-    response = @delicious.posts_get
+    response = @delicious.posts_all({:count => 1})
     assert_kind_of(Array, response)
 
     response.each do |post|
