@@ -267,12 +267,38 @@ class DeliciousTest < Test::Unit::TestCase
 
 
   def test_posts_all
-    @delicious.expects(:request).once.returns(mock_response('/response/posts_all.xml'))
+    expected_params = {:count => 15}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
     results = @delicious.posts_all
     assert_instance_of(Array, results)
     assert_equal(8, results.length)
     assert_equal('New to Git? - GitHub', results.first.title)
     assert_equal('ASP 101 - Object Oriented ASP: Using Classes in Classic ASP', results.last.title)
+  end
+
+  def test_posts_all_with_fromdt
+    fromdt = Time.parse('2012-11-01 12:34 AM')
+    params = {:fromdt => fromdt}
+    expected_params = {:fromdt => fromdt.iso8601, :count => 15}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    results = @delicious.posts_all(params)
+  end
+
+  def test_posts_all_with_todt
+    todt = Time.parse('2012-11-02 12:34 AM')
+    params = {:todt => todt}
+    expected_params = {:todt => todt.iso8601, :count => 15}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    results = @delicious.posts_all(params)
+  end
+
+  def test_posts_all_with_fromdt_and_todt
+    fromdt = Time.parse('2012-11-01 12:34 AM')
+    todt = Time.parse('2012-11-02 12:34 AM')
+    params = {:fromdt => fromdt, :todt => todt}
+    expected_params = {:fromdt => fromdt.iso8601, :todt => todt.iso8601, :count => 15}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    results = @delicious.posts_all(params)
   end
 
   def test_posts_all_raises_without_posts_root_node
