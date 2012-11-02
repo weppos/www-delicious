@@ -430,9 +430,10 @@ module WWW #:nodoc:
     # <tt>:fromdt</tt>:: filter for posts on this +Time+ or later.
     # <tt>:todt</tt>:: filter for posts on this +Time+ or earlier.
     # <tt>:count</tt>:: number of items to retrieve. (default: 1000). May also use the alias <tt>:results</tt>.
+    # <tt>:start</tt>:: Start returning posts this many results into the set.
     #
     def posts_all(options = {})
-      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt, :results])
+      params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt, :results, :start])
       response = request(API_PATH_POSTS_ALL, params)
       parse_post_collection(response.body)
     end

@@ -277,6 +277,12 @@ class DeliciousTest < Test::Unit::TestCase
     assert_equal('ASP 101 - Object Oriented ASP: Using Classes in Classic ASP', results.last.title)
   end
 
+  def test_posts_all_with_start
+    expected_params = {:start => 33}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    @delicious.posts_all({:start => 33})
+  end
+
   def test_posts_all_with_count
     expected_params = {:results => 345}
     @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
