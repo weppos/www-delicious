@@ -2,7 +2,10 @@ rvm:
   - 1.8.7
   - 1.9.2
   - 1.9.3
-  - ruby-head
+  # excluding ruby-head for now. It's a bit dynamic right now.
+  # Current issue: minitest in ruby 2.0.0 has bugs that conflict with bundler.
+  # See discussion around https://github.com/seattlerb/minitest/pull/170
+  #- ruby-head
   - ree
   - jruby
   - rbx
