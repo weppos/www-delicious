@@ -781,7 +781,6 @@ module WWW #:nodoc:
         params[:dt]     = TIME_CONVERTER.call(params[:dt])     if params[:dt]
         params[:fromdt] = TIME_CONVERTER.call(params[:fromdt]) if params[:fromdt]
         params[:todt]   = TIME_CONVERTER.call(params[:todt])   if params[:todt]
-        params[:url]    = URI.parse(params[:url])              if params[:url]
         params[:meta]   = 'yes'                                if params.delete(:meta)
         if uses_results_param
           params[:results] = posts_count                       if params[:results] == :all

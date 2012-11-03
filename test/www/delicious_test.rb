@@ -418,8 +418,20 @@ class DeliciousTest < Test::Unit::TestCase
 
 
   def test_posts_delete
-    @delicious.expects(:request).once.returns(mock_response('/response/posts_delete.xml'))
-    assert(@delicious.posts_delete('test'))
+    url = 'test'
+    expected_path = '/v1/posts/delete'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?url=#{url}")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_delete.xml'))
+    assert(@delicious.posts_delete(url))
+  end
+
+  def test_posts_delete_with_uri
+    url = URI.parse('http://google.com')
+    url_encoded = URI.encode(url.to_s)
+    expected_path = '/v1/posts/delete'
+    expected_uri = URI.parse(WWW::Delicious::API_BASE_URI).merge("#{expected_path}?url=#{url_encoded}")
+    @delicious.expects(:make_request).with(expected_uri).once.returns(mock_response('/response/posts_delete.xml'))
+    assert(@delicious.posts_delete(url))
   end
 
   def test_posts_delete_raises_without_result_root_node
