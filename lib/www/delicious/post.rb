@@ -104,7 +104,7 @@ module WWW
         def from_rexml(element)
           raise ArgumentError, "`element` expected to be a `REXML::Element`" unless element.kind_of? REXML::Element
           self.new do |instance|
-            instance.url    = element.if_attribute_value(:href) { |v| URI.parse(v) }
+            instance.url    = element.if_attribute_value(:href)
             instance.title  = element.if_attribute_value(:description)
             instance.notes  = element.if_attribute_value(:extended)
             instance.others = element.if_attribute_value(:others).to_i # cast nil to 0
