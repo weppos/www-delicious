@@ -256,13 +256,29 @@ class DeliciousTest < Test::Unit::TestCase
 
 
   def test_posts_recent
-    expected_params = {:count => 15}
-    @delicious.expects(:request).with('/v1/posts/recent',expected_params).once.returns(mock_response('/response/posts_recent.xml'))
+    @delicious.expects(:request).with('/v1/posts/recent',{}).once.returns(mock_response('/response/posts_recent.xml'))
     results = @delicious.posts_recent
     assert_instance_of(Array, results)
     assert_equal(15, results.length)
     assert_equal('New to Git? - GitHub', results.first.title)
     assert_equal('RichText | Lightview for modal dialogs on Rails', results.last.title)
+  end
+
+  def test_posts_recent_with_count
+    expected_params = {:count => 25}
+    @delicious.expects(:request).with('/v1/posts/recent',expected_params).once.returns(mock_response('/response/posts_recent.xml'))
+    results = @delicious.posts_recent({:count => 25})
+    assert_instance_of(Array, results)
+    assert_equal(15, results.length)
+    assert_equal('New to Git? - GitHub', results.first.title)
+    assert_equal('RichText | Lightview for modal dialogs on Rails', results.last.title)
+  end
+
+  def test_posts_recent_raises_over_max_count
+    error = assert_raise(WWW::Delicious::Error) do
+      @delicious.posts_recent({:count => 101})
+    end
+    assert_match(/`count`/, error.message)
   end
 
   def test_posts_recent_raises_without_posts_root_node

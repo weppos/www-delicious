@@ -786,13 +786,9 @@ module WWW #:nodoc:
         if uses_results_param
           params[:results] = posts_count                       if params[:results] == :all
           params[:results] = params[:results].to_i             if params[:results]
-        else
-          params[:count]  = if value = params[:count]
-            raise Error, 'Expected `count` <= 100' if value.to_i > 100 # requirement
-            value.to_i
-          else
-            15 # default value
-          end
+        elsif value = params[:count]
+          raise Error, 'Expected `count` <= 100' if value.to_i > 100 # requirement
+          params[:count] = value.to_i
         end
 
         params
