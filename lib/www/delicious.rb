@@ -416,6 +416,16 @@ module WWW #:nodoc:
     end
 
     #
+    # Returns the total number of posts (bookmarks) that exist.
+    #
+    def posts_count
+      if response = request(API_PATH_POSTS_ALL, {:results => 1})
+        dom  = parse_and_validate_response(response.body, :root_name => 'posts', :alternative_root_name => 'result')
+        dom.root.if_attribute_value(:total).to_i
+      end
+    end
+
+    #
     # Returns a list of all posts, filtered by argument.
     #
     #   # get all (this is a very expensive query)
@@ -429,9 +439,12 @@ module WWW #:nodoc:
     # <tt>:tag</tt>:: a tag to filter by. It can be either a <tt>WWW::Delicious::Tag</tt> or a +String+.
     # <tt>:fromdt</tt>:: filter for posts on this +Time+ or later.
     # <tt>:todt</tt>:: filter for posts on this +Time+ or earlier.
-    # <tt>:count</tt>:: number of items to retrieve. (default: 1000). May also use the alias <tt>:results</tt>.
     # <tt>:start</tt>:: Start returning posts this many results into the set.
     # <tt>:meta</tt>:: Include change detection signatures when +true+.
+    # <tt>:count</tt>:: number of items to retrieve. May also use the alias <tt>:results</tt>.
+    # NB: By default, the delicious API returns up to 1000 bookmarks if the :count is not specified, although
+    # this is an undocumented behaviour. You can specify a :count over 1000. To return absolutely all bookmarks,
+    # you may specify <tt>{:count => :all}</tt>
     #
     def posts_all(options = {})
       params = prepare_posts_params(options.clone, [:tag, :fromdt, :todt, :results, :start, :meta])
@@ -771,6 +784,7 @@ module WWW #:nodoc:
         params[:url]    = URI.parse(params[:url])              if params[:url]
         params[:meta]   = 'yes'                                if params.delete(:meta)
         if uses_results_param
+          params[:results] = posts_count                       if params[:results] == :all
           params[:results] = params[:results].to_i             if params[:results]
         else
           params[:count]  = if value = params[:count]

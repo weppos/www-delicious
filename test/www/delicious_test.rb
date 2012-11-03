@@ -274,6 +274,13 @@ class DeliciousTest < Test::Unit::TestCase
   end
 
 
+  def test_posts_count
+    expected_params = {:results => 1}
+    @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
+    assert_equal(1702, @delicious.posts_count)
+  end
+
+
   def test_posts_all
     expected_params = {}
     @delicious.expects(:request).with('/v1/posts/all',expected_params).once.returns(mock_response('/response/posts_all.xml'))
@@ -282,6 +289,12 @@ class DeliciousTest < Test::Unit::TestCase
     assert_equal(8, results.length)
     assert_equal('New to Git? - GitHub', results.first.title)
     assert_equal('ASP 101 - Object Oriented ASP: Using Classes in Classic ASP', results.last.title)
+  end
+
+  def test_posts_all_in_full
+    @delicious.expects(:posts_count).once.returns(333)
+    @delicious.expects(:request).with('/v1/posts/all',{:results => 333}).once.returns(mock_response('/response/posts_all.xml'))
+    @delicious.posts_all({:count => :all})
   end
 
   def test_posts_all_when_no_results
