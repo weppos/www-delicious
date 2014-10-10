@@ -109,6 +109,8 @@ module WWW #:nodoc:
     API_PATH_TAGS_GET       = '/v1/tags/get';
     # API Path Rename Tag
     API_PATH_TAGS_RENAME    = '/v1/tags/rename';
+    # API Path Delete Tag
+    API_PATH_TAGS_DELETE    = '/v1/tags/delete'
 
     # API Path Get Posts
     API_PATH_POSTS_GET      = '/v1/posts/get';
@@ -358,6 +360,21 @@ module WWW #:nodoc:
     def tags_rename(from_name_or_tag, to_name_or_tag)
       params = prepare_tags_rename_params(from_name_or_tag, to_name_or_tag)
       response = request(API_PATH_TAGS_RENAME, params)
+      parse_and_eval_execution_response(response.body)
+    end
+
+    #
+    # Deletes the tag from del.icio.us.
+    #
+    #   # delete from a tag object
+    #   d.tags_delete(WWW::Delicious::Tag.new('tagName'))
+    #
+    #   # delete a tag from a string
+    #   d.post_delete('tagName')
+    #
+    def tags_delete(tag)
+      params = prepare_tags_delete_param(tag)
+      response = request(API_PATH_TAGS_DELETE, params)
       parse_and_eval_execution_response(response.body)
     end
 
@@ -712,6 +729,13 @@ module WWW #:nodoc:
           raise Error, "Bundle name is empty" if b.name.empty?
         end
         { :bundle => bundle.name }
+      end
+
+      def prepare_tags_delete_param(tag)
+        tag = prepare_param_tag(tag) do |b|
+          raise Error, "Tag name is empty" if b.name.empty?
+        end
+        { :tag => tag.name }
       end
 
       #

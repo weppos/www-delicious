@@ -224,7 +224,19 @@ class DeliciousTest < Test::Unit::TestCase
     end
     assert_match(/`result`/, error.message)
   end
-  
+
+  def test_tags_delete
+    @delicious.expects(:request).once.returns(mock_response('/response/tags_delete.xml'))
+    assert(@delicious.tags_delete('name'))
+  end
+
+  def test_tags_delete_raises_without_result_root_node
+    @delicious.expects(:request).once.returns(mock_response('/response/update.xml'))
+    error = assert_raise(WWW::Delicious::ResponseError) do
+      @delicious.tags_delete('name')
+    end
+    assert_match(/`result`/, error.message)
+  end
   
   # =========================================================================
   # Posts
