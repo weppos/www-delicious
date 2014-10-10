@@ -1,3 +1,7 @@
+# Forked from the original author
+Added a functionality which will delete a single tag.
+
+
 # WWW::Delicious
 
 *WWW::Delicious* is a Ruby client for [delicious.com](http://delicious.com) XML API.
@@ -101,6 +105,9 @@ Working with tags it's really easy. You can get all your tags or rename an exist
 
     # rename the tag gems to gem
     d.tags_rename('gems', 'gem')
+
+    # delete a single tag
+    d.tags_delete('bookmarks')
 
 ### Bundles
 
