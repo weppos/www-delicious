@@ -1,3 +1,8 @@
+## 🚨 Discontinued
+
+The Delicious bookmark service was discontinued in 2017.
+
+
 # WWW::Delicious
 
 *WWW::Delicious* is a Ruby client for [delicious.com](http://delicious.com) XML API.
@@ -123,14 +128,7 @@ You can also create new bundles or delete existing ones.
 
 ## Credits
 
-* [Simone Carletti](http://www.simonecarletti.com/) <weppos@weppos.net> - The Author
-
-
-## More
-
-* [Homepage](http://www.simonecarletti.com/code/www-delicious)
-* [Repository](https://github.com/weppos/www-delicious/)
-* [API Documentation](http://rubydoc.info/gems/www-delicious)
+* [Simone Carletti](https://simonecarletti.com/) <weppos@weppos.net> - The Author
 
 
 ## Feedback and bug reports
